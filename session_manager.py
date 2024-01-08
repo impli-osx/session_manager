@@ -34,7 +34,7 @@ def afficher_popup(titre, texte, largeur, hauteur, police, taille_police, config
     texte_variable = StringVar()
     texte_variable.set(texte_popup)
 
-    etiquette = Label(fenetre, textvariable=texte_variable, font=(police, taille_police), justify=LEFT, padx=10, pady=10, wraplength=largeur-100)
+    etiquette = Label(fenetre, textvariable=texte_variable, font=(police, taille_police), justify=LEFT, padx=2, pady=2, wraplength=largeur-40)
     etiquette.pack(fill="both", expand=True)
 
     taille_police_bouton = config["popup"]["taille_police"]
