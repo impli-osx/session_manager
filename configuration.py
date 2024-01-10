@@ -2,6 +2,7 @@ import json
 import subprocess
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from Ui_configuration import Ui_Configuration
+from PyQt6.QtCore import Qt
 
 # Classe principale de l'application
 class MainWindow(QMainWindow):
@@ -14,7 +15,14 @@ class MainWindow(QMainWindow):
         self.charger_conf() # Charge les données à partir du fichier JSON
         self.ui.Enregistrer.clicked.connect(self.enregistrer_conf) # Enregistrement de la configuration
         self.ui.gpupdate.clicked.connect(self.make_gpupdate) # Exécution de gpupdate
-        self.ui.aide_titre.clicked.connect(self.aide_titre) # Affiche l'aide pour le titre
+        self.ui.aide_titres.clicked.connect(lambda: self.afficher_aide('titres')) # Affiche l'aide pour le titre
+        self.ui.aide_textes.clicked.connect(lambda: self.afficher_aide('textes')) # Affiche l'aide pour le texte
+        self.ui.aide_temps.clicked.connect(lambda: self.afficher_aide('temps')) # Affiche l'aide pour le timer
+        self.ui.aide_fiche.clicked.connect(lambda: self.afficher_aide('fiche')) # Affiche l'aide pour la fiche
+        self.ui.aide_gestion.clicked.connect(lambda: self.afficher_aide('gestion')) # Affiche l'aide pour la gestion
+        self.ui.aide_style.clicked.connect(lambda: self.afficher_aide('style')) # Affiche l'aide pour le style
+        self.ui.aide_accueil.clicked.connect(lambda: self.afficher_aide('accueil')) # Affiche l'aide pour l'accueil
+        
         
         # Charge les données à partir du fichier JSON
         try:
@@ -22,6 +30,21 @@ class MainWindow(QMainWindow):
                 data = json.load(f)
         except FileNotFoundError:
                 data = {}
+
+
+    # Fonction pour afficher l'aide
+    def afficher_aide(self, type_aide):
+        try:
+            with open(f"aide_{type_aide}.txt", "r") as f:
+                aide = f.read()
+            msgBox = QMessageBox()
+            msgBox.setTextFormat(Qt.PlainText)  # Utilise un format de texte simple
+            msgBox.setText(aide)
+            msgBox.setWindowTitle(f"Aide {type_aide.capitalize()}")
+            msgBox.exec()
+        except FileNotFoundError:
+            QMessageBox.warning(self, "Erreur", f"Le fichier d'aide pour {type_aide} n'a pas été trouvé.")
+
 
 
     # Fonction pour exécuter gpupdate
