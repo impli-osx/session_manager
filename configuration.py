@@ -1,6 +1,6 @@
 import json
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox
-from interface import Ui_Configuration  # Assurez-vous que c'est le bon chemin d'importation
+from Ui_configuration import Ui_Configuration  # Assurez-vous que c'est le bon chemin d'importation
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
