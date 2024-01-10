@@ -1,7 +1,8 @@
 import json
 import os
 import subprocess
-from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox
+from PyQt6.QtGui import QFontDatabase
 from Ui_configuration import Ui_Configuration
 from PyQt6.QtCore import Qt
 
@@ -23,6 +24,9 @@ class MainWindow(QMainWindow):
         self.ui.aide_gestion.clicked.connect(lambda: self.afficher_aide('gestion')) # Affiche l'aide pour la gestion
         self.ui.aide_style.clicked.connect(lambda: self.afficher_aide('style')) # Affiche l'aide pour le style
         self.ui.aide_accueil.clicked.connect(lambda: self.afficher_aide('accueil')) # Affiche l'aide pour l'accueil
+        self.ui.police.addItems(QFontDatabase.families()) # Ajoute les polices disponibles dans la liste déroulante
+                
+        
         
         
         # Charge les données à partir du fichier JSON
@@ -38,7 +42,7 @@ class MainWindow(QMainWindow):
         try:
             chemin_fichier = os.path.join("Aide", f"{type_aide}.txt")
             print(f"Ouverture du fichier : {chemin_fichier}")  # Affiche le chemin du fichier
-            with open(chemin_fichier, "r") as f:
+            with open(chemin_fichier, "r",encoding="utf-8") as f:
                 aide = f.read()
             msgBox = QMessageBox()
             msgBox.setTextFormat(Qt.TextFormat.PlainText)  # Utilise un format de texte simple
