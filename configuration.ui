@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Configuration</class>
+ <widget class="QMainWindow" name="Configuration">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>868</width>
+    <height>478</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTabWidget" name="onglet">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>851</width>
+      <height>381</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="accueil">
+     <attribute name="title">
+      <string>Accueil</string>
+     </attribute>
+     <widget class="QCheckBox" name="activation">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>20</y>
+        <width>261</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Activer Session Manager sur l'ordinateur</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="aide_accueil">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>10</y>
+        <width>75</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Aide</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="symlink">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>60</y>
+        <width>361</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Le raccourci de démarrage a bien été créé.</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="titres">
+     <attribute name="title">
+      <string>Titres</string>
+     </attribute>
+     <widget class="QPushButton" name="aide_titres">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>10</y>
+        <width>75</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Aide</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="textes">
+     <attribute name="title">
+      <string>Textes</string>
+     </attribute>
+     <widget class="QPushButton" name="aide_textes">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>10</y>
+        <width>75</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Aide</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="style">
+     <attribute name="title">
+      <string>Style</string>
+     </attribute>
+     <widget class="QPushButton" name="aide_style">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>10</y>
+        <width>75</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Aide</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="temps">
+     <attribute name="title">
+      <string>Temps</string>
+     </attribute>
+     <widget class="QPushButton" name="aide_temps">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>10</y>
+        <width>75</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Aide</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="gestion">
+     <attribute name="title">
+      <string>Gestion sessions</string>
+     </attribute>
+     <widget class="QPushButton" name="aide_gestion">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>10</y>
+        <width>75</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Aide</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="Enregistrer">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>400</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Enregistrer</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="annuler">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>400</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Annuler</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>868</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuConfiguration">
+    <property name="title">
+     <string>Configuration</string>
+    </property>
+   </widget>
+   <addaction name="menuConfiguration"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
