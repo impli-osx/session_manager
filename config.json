@@ -39,7 +39,7 @@
     "style": {
         "largeur_popup": "500",
         "hauteur_popup": "250",
-        "police": "",
+        "police": "Calibri",
         "taille_police": "14"
     },
     "fermeture": {

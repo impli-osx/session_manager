@@ -1,10 +1,10 @@
-import json
-import os
-import subprocess
-from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox
-from PyQt6.QtGui import QFontDatabase
-from PyQt6.QtCore import Qt
-from Ui_configuration import Ui_Configuration
+import json # Importe le module json
+import os # Importe le module os
+import subprocess # Importe le module subprocess
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox # Importe les classes QApplication, QMainWindow, QMessageBox et QComboBox
+from PyQt6.QtGui import QFontDatabase # Importe la classe QFontDatabase
+from PyQt6.QtCore import Qt # Importe la classe Qt
+from Ui_configuration import Ui_Configuration # Importe la classe Ui_MainWindow du fichier Ui_mainwindow.py
 
 # Classe principale de l'application
 class MainWindow(QMainWindow):
@@ -76,51 +76,51 @@ class MainWindow(QMainWindow):
             # Les données sont stockées dans un dictionnaire imbriqué
             config = {
                 "titre" :{
-                    "titre_popup_1" : self.ui.titre_popup_1.text(),
-                    "titre_popup_2" : self.ui.titre_popup_2.text(),
-                    "titre_popup_3" : self.ui.titre_popup_3.text(),
-                    "titre_popup_4" : self.ui.titre_popup_4.text(),
+                    "titre_popup_1" : self.ui.titre_popup_1.text(), # Récupère le texte du champ titre_popup_1
+                    "titre_popup_2" : self.ui.titre_popup_2.text(), # Récupère le texte du champ titre_popup_2
+                    "titre_popup_3" : self.ui.titre_popup_3.text(), # Récupère le texte du champ titre_popup_3
+                    "titre_popup_4" : self.ui.titre_popup_4.text(), # Récupère le texte du champ titre_popup_4
                 },
                 "text" :{
-                    "text_popup_1" : self.ui.text_popup_1.toPlainText(),
-                    "text_popup_2" : self.ui.text_popup_2.toPlainText(),
-                    "text_popup_3" : self.ui.text_popup_3.toPlainText(),
-                    "text_popup_4" : self.ui.text_popup_4.toPlainText(),
+                    "text_popup_1" : self.ui.text_popup_1.toPlainText(), # Récupère le texte du champ text_popup_1
+                    "text_popup_2" : self.ui.text_popup_2.toPlainText(), # Récupère le texte du champ text_popup_2
+                    "text_popup_3" : self.ui.text_popup_3.toPlainText(), # Récupère le texte du champ text_popup_3
+                    "text_popup_4" : self.ui.text_popup_4.toPlainText(), # Récupère le texte du champ text_popup_4
                 },
                 "timer" :{
-                    "delai_fermeture" : self.ui.delai_fermeture.text(),
-                    "duree_session" : self.ui.duree_session.text(),
-                    "timer_second_popup" : self.ui.timer_second_popup.text(),
-                    "timer_troisieme_popup" : self.ui.timer_troisieme_popup.text(),
-                    "timer_dernier_popup" : self.ui.timer_dernier_popup.text(),
+                    "delai_fermeture" : self.ui.delai_fermeture.text(), # Récupère le texte du champ delai_fermeture
+                    "duree_session" : self.ui.duree_session.text(), # Récupère le texte du champ duree_session
+                    "timer_second_popup" : self.ui.timer_second_popup.text(), # Récupère le texte du champ timer_second_popup
+                    "timer_troisieme_popup" : self.ui.timer_troisieme_popup.text(), # Récupère le texte du champ timer_troisieme_popup
+                    "timer_dernier_popup" : self.ui.timer_dernier_popup.text(), # Récupère le texte du champ timer_dernier_popup
                 },
                 "fiche" :{
-                    "fiche_log" : self.ui.fiche_log.isChecked(),
-                    "fiche_activation" : self.ui.fiche_activation.isChecked(),
-                    "fiche_nom" : self.ui.fiche_nom.isChecked(),
-                    "fiche_mail" : self.ui.fiche_mail.isChecked(),
-                    "fiche_adresse" : self.ui.fiche_adresse.isChecked(),
-                    "fiche_telephone" : self.ui.fiche_telephone.isChecked(),
-                    "fiche_duree_session" : self.ui.fiche_duree_session.isChecked(),
-                    "fiche_15min" : self.ui.fiche_15min.isChecked(),
-                    "fiche_30min" : self.ui.fiche_30min.isChecked(),
-                    "fiche_1h" : self.ui.fiche_1h.isChecked(),
-                    "fiche_bouton_reglement" : self.ui.fiche_bouton_reglement.isChecked(),
-                    "fiche_reglement" : self.ui.fiche_reglement.isChecked(),
+                    "fiche_log" : self.ui.fiche_log.isChecked(), # Récupère l'état du champ fiche_log
+                    "fiche_activation" : self.ui.fiche_activation.isChecked(), # Récupère l'état du champ fiche_activation
+                    "fiche_nom" : self.ui.fiche_nom.isChecked(), # Récupère l'état du champ fiche_nom
+                    "fiche_mail" : self.ui.fiche_mail.isChecked(), # Récupère l'état du champ fiche_mail
+                    "fiche_adresse" : self.ui.fiche_adresse.isChecked(), # Récupère l'état du champ fiche_adresse
+                    "fiche_telephone" : self.ui.fiche_telephone.isChecked(), # Récupère l'état du champ fiche_telephone
+                    "fiche_duree_session" : self.ui.fiche_duree_session.isChecked(), # Récupère l'état du champ fiche_duree_session
+                    "fiche_15min" : self.ui.fiche_15min.isChecked(), # Récupère l'état du champ fiche_15min
+                    "fiche_30min" : self.ui.fiche_30min.isChecked(), # Récupère l'état du champ fiche_30min
+                    "fiche_1h" : self.ui.fiche_1h.isChecked(), # Récupère l'état du champ fiche_1h
+                    "fiche_bouton_reglement" : self.ui.fiche_bouton_reglement.isChecked(), # Récupère l'état du champ fiche_bouton_reglement
+                    "fiche_reglement" : self.ui.fiche_reglement.isChecked(), # Récupère l'état du champ fiche_reglement
                 },
                 "session" :{
-                    "session_user" : self.ui.session_user.currentText(),
-                    "session_activation" : self.ui.session_activation.isChecked(),
+                    "session_user" : self.ui.session_user.currentText(), # Récupère le texte du champ session_user
+                    "session_activation" : self.ui.session_activation.isChecked(), # Récupère l'état du champ session_activation
                 },
                 "style" :{
-                    "largeur_popup" : self.ui.largeur_popup.text(),
-                    "hauteur_popup" : self.ui.hauteur_popup.text(),
-                    "police" : self.ui.police.currentText(),
-                    "taille_police" : self.ui.taille_police.text(),
+                    "largeur_popup" : self.ui.largeur_popup.text(), # Récupère le texte du champ largeur_popup
+                    "hauteur_popup" : self.ui.hauteur_popup.text(), # Récupère le texte du champ hauteur_popup
+                    "police" : self.ui.police.currentText(), # Récupère le texte du champ police
+                    "taille_police" : self.ui.taille_police.text(), # Récupère le texte du champ taille_police
                 },
                 "fermeture" :{
-                    "fermeture_session" : self.ui.fermeture_session.currentText(),
-                    "fermeture_popup" : self.ui.activation_fermeture.isChecked(),
+                    "fermeture_session" : self.ui.fermeture_session.currentText(), # Récupère le texte du champ fermeture_session
+                    "fermeture_popup" : self.ui.activation_fermeture.isChecked(), # Récupère l'état du champ activation_fermeture
                 }
             }
 
@@ -142,9 +142,9 @@ class MainWindow(QMainWindow):
         except FileNotFoundError:
             data = {}
         # Charge les données dans l'interface utilisateur
-        self.ui.titre_popup_1.setText(data.get("titre", {}).get("titre_popup_1", ""))
-        self.ui.titre_popup_2.setText(data.get("titre", {}).get("titre_popup_2", ""))
-        self.ui.titre_popup_3.setText(data.get("titre", {}).get("titre_popup_3", ""))
+        self.ui.titre_popup_1.setText(data.get("titre", {}).get("titre_popup_1", "")) # Récupère le texte du champ titre_popup_1
+        self.ui.titre_popup_2.setText(data.get("titre", {}).get("titre_popup_2", "")) # Récupère le texte du champ titre_popup_2
+        self.ui.titre_popup_3.setText(data.get("titre", {}).get("titre_popup_3", "")) # Vous avez compris le principe ...
         self.ui.titre_popup_4.setText(data.get("titre", {}).get("titre_popup_4", ""))
         self.ui.text_popup_1.setPlainText(data.get("text", {}).get("text_popup_1", ""))
         self.ui.text_popup_2.setPlainText(data.get("text", {}).get("text_popup_2", ""))
