@@ -27,9 +27,9 @@ class MainWindow(QMainWindow):
         
         # Charge les données à partir du fichier JSON
         try:
-            with open("config.json", "r") as f:
-                data = json.load(f)
-        except FileNotFoundError:
+            with open("config.json", "r") as f: # Ouvre le fichier JSON en lecture
+                data = json.load(f) # Charge les données dans un dictionnaire
+        except FileNotFoundError: # Si le fichier n'est pas trouvé, crée un dictionnaire vide
                 data = {}
 
 
@@ -42,10 +42,10 @@ class MainWindow(QMainWindow):
                 aide = f.read()
             msgBox = QMessageBox()
             msgBox.setTextFormat(Qt.TextFormat.PlainText)  # Utilise un format de texte simple
-            msgBox.setText(aide)
-            msgBox.setWindowTitle(f"Aide {type_aide.capitalize()}")
+            msgBox.setText(aide) # Définit le texte de la fenêtre
+            msgBox.setWindowTitle(f"Aide pour l'onglet {type_aide.capitalize()}") # Définit le titre de la fenêtre
             msgBox.exec()
-        except FileNotFoundError:
+        except FileNotFoundError: # Si le fichier n'est pas trouvé, affiche un message d'erreur
             QMessageBox.warning(self, "Erreur", f"Le fichier d'aide pour {type_aide} n'a pas été trouvé.")
 
 

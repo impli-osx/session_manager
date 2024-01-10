@@ -1,9 +1,9 @@
 {
     "titre": {
-        "titre_popup_1": "",
-        "titre_popup_2": "",
-        "titre_popup_3": "",
-        "titre_popup_4": ""
+        "titre_popup_1": "Popup d\u00e9but de session",
+        "titre_popup_2": "Second popup",
+        "titre_popup_3": "Trois\u00e8me popup",
+        "titre_popup_4": "Popup de fermeture"
     },
     "text": {
         "text_popup_1": "Texte sur\ndeux lignes",
@@ -12,35 +12,35 @@
         "text_popup_4": ""
     },
     "timer": {
-        "delai_fermeture": "",
-        "duree_session": "",
-        "timer_second_popup": "",
-        "timer_troisieme_popup": "",
-        "timer_dernier_popup": ""
+        "delai_fermeture": "20",
+        "duree_session": "60",
+        "timer_second_popup": "45",
+        "timer_troisieme_popup": "3",
+        "timer_dernier_popup": "20"
     },
     "fiche": {
-        "fiche_log": false,
-        "fiche_activation": false,
-        "fiche_nom": false,
-        "fiche_mail": false,
-        "fiche_adresse": false,
-        "fiche_telephone": false,
-        "fiche_duree_session": false,
+        "fiche_log": true,
+        "fiche_activation": true,
+        "fiche_nom": true,
+        "fiche_mail": true,
+        "fiche_adresse": true,
+        "fiche_telephone": true,
+        "fiche_duree_session": true,
         "fiche_15min": false,
         "fiche_30min": false,
-        "fiche_1h": false,
-        "fiche_bouton_reglement": false,
-        "fiche_reglement": false
+        "fiche_1h": true,
+        "fiche_bouton_reglement": true,
+        "fiche_reglement": true
     },
     "session": {
         "session_user": "",
         "session_activation": false
     },
     "style": {
-        "largeur_popup": "",
-        "hauteur_popup": "",
+        "largeur_popup": "500",
+        "hauteur_popup": "250",
         "police": "",
-        "taille_police": ""
+        "taille_police": "14"
     },
     "fermeture": {
         "fermeture_session": "",
