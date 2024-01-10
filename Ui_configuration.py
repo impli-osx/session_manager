@@ -39,7 +39,7 @@ class Ui_Configuration(object):
         self.gpupdate.setGeometry(QtCore.QRect(20, 140, 301, 24))
         self.gpupdate.setObjectName("gpupdate")
         self.retour_gpupdate = QtWidgets.QLabel(parent=self.accueil)
-        self.retour_gpupdate.setGeometry(QtCore.QRect(40, 180, 781, 16))
+        self.retour_gpupdate.setGeometry(QtCore.QRect(40, 180, 771, 161))
         self.retour_gpupdate.setObjectName("retour_gpupdate")
         self.onglet.addTab(self.accueil, "")
         self.formulaire = QtWidgets.QWidget()
