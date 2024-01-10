@@ -3,8 +3,8 @@ import os
 import subprocess
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox
 from PyQt6.QtGui import QFontDatabase
-from Ui_configuration import Ui_Configuration
 from PyQt6.QtCore import Qt
+from Ui_configuration import Ui_Configuration
 
 # Classe principale de l'application
 class MainWindow(QMainWindow):
@@ -37,6 +37,7 @@ class MainWindow(QMainWindow):
                 data = {}
 
 
+
     # Fonction pour afficher l'aide
     def afficher_aide(self, type_aide):
         try:
@@ -65,6 +66,7 @@ class MainWindow(QMainWindow):
         except subprocess.CalledProcessError as e:
             # Si la commande échoue, affiche l'erreur dans le label
             self.ui.retour_gpupdate.setText(f"Erreur : {e.stderr}")
+        
         
         
     # Fonction pour enregistrer les données dans un fichier JSON
@@ -129,6 +131,7 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Erreur", f"Impossible d'enregistrer la configuration : {e}")
         # Ferme la fenêtre
         self.close()
+            
             
             
     # Fonction pour charger les données à partir du fichier JSON
