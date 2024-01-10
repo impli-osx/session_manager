@@ -144,7 +144,7 @@ class MainWindow(QMainWindow):
         # Charge les données dans l'interface utilisateur
         self.ui.titre_popup_1.setText(data.get("titre", {}).get("titre_popup_1", "")) # Récupère le texte du champ titre_popup_1
         self.ui.titre_popup_2.setText(data.get("titre", {}).get("titre_popup_2", "")) # Récupère le texte du champ titre_popup_2
-        self.ui.titre_popup_3.setText(data.get("titre", {}).get("titre_popup_3", "")) # Vous avez compris le principe ...
+        self.ui.titre_popup_3.setText(data.get("titre", {}).get("titre_popup_3", "")) # Vous avez compris le principe...
         self.ui.titre_popup_4.setText(data.get("titre", {}).get("titre_popup_4", ""))
         self.ui.text_popup_1.setPlainText(data.get("text", {}).get("text_popup_1", ""))
         self.ui.text_popup_2.setPlainText(data.get("text", {}).get("text_popup_2", ""))
