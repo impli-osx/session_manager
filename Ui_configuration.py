@@ -289,7 +289,7 @@ class Ui_Configuration(object):
         self.menubar.addAction(self.menuConfiguration.menuAction())
 
         self.retranslateUi(Configuration)
-        self.onglet.setCurrentIndex(5)
+        self.onglet.setCurrentIndex(6)
         self.onglet_popup.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Configuration)
 

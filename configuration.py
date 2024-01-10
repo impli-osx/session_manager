@@ -40,6 +40,7 @@ class MainWindow(QMainWindow):
                     "delai_fermeture" : self.ui.delai_fermeture.text(),
                     "duree_session" : self.ui.duree_session.text(),
                     "timer_second_popup" : self.ui.timer_second_popup.text(),
+                    "timer_troisieme_popup" : self.ui.timer_troisieme_popup.text(),
                     "timer_dernier_popup" : self.ui.timer_dernier_popup.text(),
                 },
                 "fiche" :{
@@ -57,18 +58,18 @@ class MainWindow(QMainWindow):
                     "fiche_reglement" : self.ui.fiche_reglement.isChecked(),
                 },
                 "session" :{
-                    "session_user" : self.ui.session_user.text(),
+                    "session_user" : self.ui.session_user.currentText(),
                     "session_activation" : self.ui.session_activation.isChecked(),
                 },
                 "style" :{
                     "largeur_popup" : self.ui.largeur_popup.text(),
                     "hauteur_popup" : self.ui.hauteur_popup.text(),
-                    "police" : self.ui.police.text(),
+                    "police" : self.ui.police.currentText(),
                     "taille_police" : self.ui.taille_police.text(),
                 },
                 "fermeture" :{
                     "fermeture_session" : self.ui.fermeture_session.text(),
-                    "fermeture_popup" : self.ui.fermeture_popup.text(),
+                    "fermeture_popup" : self.ui.fermeture_popup.currentText(),
                 }
             }
             # Cette fonction est appelée lorsque l'utilisateur clique sur le bouton "Enregistrer"

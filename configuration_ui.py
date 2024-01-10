@@ -302,7 +302,7 @@ class Ui_Configuration(object):
 
         self.retranslateUi(Configuration)
 
-        self.onglet.setCurrentIndex(5)
+        self.onglet.setCurrentIndex(6)
         self.onglet_popup.setCurrentIndex(0)
 
 
