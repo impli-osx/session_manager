@@ -1,0 +1,49 @@
+{
+    "titre": {
+        "titre_popup_1": "",
+        "titre_popup_2": "",
+        "titre_popup_3": "",
+        "titre_popup_4": ""
+    },
+    "text": {
+        "text_popup_1": "Texte sur\ndeux lignes",
+        "text_popup_2": "",
+        "text_popup_3": "",
+        "text_popup_4": ""
+    },
+    "timer": {
+        "delai_fermeture": "",
+        "duree_session": "",
+        "timer_second_popup": "",
+        "timer_troisieme_popup": "",
+        "timer_dernier_popup": ""
+    },
+    "fiche": {
+        "fiche_log": false,
+        "fiche_activation": false,
+        "fiche_nom": false,
+        "fiche_mail": false,
+        "fiche_adresse": false,
+        "fiche_telephone": false,
+        "fiche_duree_session": false,
+        "fiche_15min": false,
+        "fiche_30min": false,
+        "fiche_1h": false,
+        "fiche_bouton_reglement": false,
+        "fiche_reglement": false
+    },
+    "session": {
+        "session_user": "",
+        "session_activation": false
+    },
+    "style": {
+        "largeur_popup": "",
+        "hauteur_popup": "",
+        "police": "",
+        "taille_police": ""
+    },
+    "fermeture": {
+        "fermeture_session": "",
+        "fermeture_popup": false
+    }
+}
