@@ -117,6 +117,9 @@
       <property name="text">
        <string>Résultat du rechargement des stratégies de groupe ...</string>
       </property>
+      <property name="margin">
+       <number>5</number>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="formulaire">
