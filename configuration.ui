@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>5</number>
     </property>
     <widget class="QWidget" name="accueil">
      <attribute name="title">
@@ -836,7 +836,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>140</y>
+        <y>180</y>
         <width>391</width>
         <height>16</height>
        </rect>
@@ -849,7 +849,7 @@
       <property name="geometry">
        <rect>
         <x>410</x>
-        <y>140</y>
+        <y>180</y>
         <width>51</width>
         <height>21</height>
        </rect>
@@ -859,13 +859,49 @@
       <property name="geometry">
        <rect>
         <x>470</x>
-        <y>140</y>
+        <y>180</y>
         <width>49</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
        <string>secondes</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_19">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>140</y>
+        <width>311</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Délai entre la troisième popup et la fermeture de session :</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="timer_troisieme_popup">
+      <property name="geometry">
+       <rect>
+        <x>330</x>
+        <y>140</y>
+        <width>51</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_20">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>140</y>
+        <width>49</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>minutes</string>
       </property>
      </widget>
     </widget>

@@ -1,5 +1,5 @@
 import json
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from interface import Ui_Configuration  # Assurez-vous que c'est le bon chemin d'importation
 
 class MainWindow(QMainWindow):
@@ -31,10 +31,10 @@ class MainWindow(QMainWindow):
                     "titre_popup_4" : self.ui.titre_popup_4.text(),
                 },
                 "text" :{
-                    "text_popup_1" : self.ui.text_popup_1.text(),
-                    "text_popup_2" : self.ui.text_popup_2.text(),
-                    "text_popup_3" : self.ui.text_popup_3.text(),
-                    "text_popup_4" : self.ui.text_popup_4.text(),
+                    "text_popup_1" : self.ui.text_popup_1.toPlainText(),
+                    "text_popup_2" : self.ui.text_popup_2.toPlainText(),
+                    "text_popup_3" : self.ui.text_popup_3.toPlainText(),
+                    "text_popup_4" : self.ui.text_popup_4.toPlainText(),
                 },
                 "timer" :{
                     "delai_fermeture" : self.ui.delai_fermeture.text(),
@@ -44,11 +44,11 @@ class MainWindow(QMainWindow):
                 },
                 "fiche" :{
                     "fiche_log" : self.ui.fiche_log.isChecked(),
-                    "fiche_activation" : self.ui.ficher_activation.isChecked(),
+                    "fiche_activation" : self.ui.fiche_activation.isChecked(),
                     "fiche_nom" : self.ui.fiche_nom.isChecked(),
                     "fiche_mail" : self.ui.fiche_mail.isChecked(),
                     "fiche_adresse" : self.ui.fiche_adresse.isChecked(),
-                    "fiche_telephone" : self.ui.fiche_tel.isChecked(),
+                    "fiche_telephone" : self.ui.fiche_telephone.isChecked(),
                     "fiche_duree_session" : self.ui.fiche_duree_session.isChecked(),
                     "fiche_15min" : self.ui.fiche_15min.isChecked(),
                     "fiche_30min" : self.ui.fiche_30min.isChecked(),
@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
                 },
                 "session" :{
                     "session_user" : self.ui.session_user.text(),
-                    "session_activation" : self.ui.session_activation.text(),
+                    "session_activation" : self.ui.session_activation.isChecked(),
                 },
                 "style" :{
                     "largeur_popup" : self.ui.largeur_popup.text(),
@@ -71,19 +71,20 @@ class MainWindow(QMainWindow):
                     "fermeture_popup" : self.ui.fermeture_popup.text(),
                 }
             }
-        # Cette fonction est appelée lorsque l'utilisateur clique sur le bouton "Enregistrer"
+            # Cette fonction est appelée lorsque l'utilisateur clique sur le bouton "Enregistrer"
 
-        # Récupérez les données de l'interface utilisateur
-        data = {
-            "fermeture_session": self.ui.fermeture_session.text(),
-            "activation_fermeture": self.ui.activation_fermeture.isChecked(),
-            # Ajoutez ici d'autres champs si nécessaire
-        }
+            # Récupérez les données de l'interface utilisateur
+            data = {
+                "fermeture_session": self.ui.fermeture_session.text(),
+                "activation_fermeture": self.ui.activation_fermeture.isChecked(),
+                # Ajoutez ici d'autres champs si nécessaire
+            }
 
-        # Enregistrez les données dans un fichier JSON
-        with open("config.json", "w") as f:
-            json.dump(data, f)
-            
+            # Enregistrez les données dans un fichier JSON
+            with open("config.json", "w") as f:
+                json.dump(data, f)
+        except Exception as e:
+            QMessageBox.critical(self, "Erreur", str(e))
             
 
 if __name__ == "__main__":
