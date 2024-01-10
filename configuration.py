@@ -88,39 +88,39 @@ class MainWindow(QMainWindow):
                     "text_popup_4" : self.ui.text_popup_4.toPlainText(), # Récupère le texte du champ text_popup_4
                 },
                 "timer" :{
-                    "delai_fermeture" : self.ui.delai_fermeture.text(), # Récupère le texte du champ delai_fermeture
-                    "duree_session" : self.ui.duree_session.text(), # Récupère le texte du champ duree_session
-                    "timer_second_popup" : self.ui.timer_second_popup.text(), # Récupère le texte du champ timer_second_popup
-                    "timer_troisieme_popup" : self.ui.timer_troisieme_popup.text(), # Récupère le texte du champ timer_troisieme_popup
-                    "timer_dernier_popup" : self.ui.timer_dernier_popup.text(), # Récupère le texte du champ timer_dernier_popup
+                    "delai_fermeture" : self.ui.delai_fermeture.text(), # Etc etc... Same champ, same principe
+                    "duree_session" : self.ui.duree_session.text(),
+                    "timer_second_popup" : self.ui.timer_second_popup.text(),
+                    "timer_troisieme_popup" : self.ui.timer_troisieme_popup.text(),
+                    "timer_dernier_popup" : self.ui.timer_dernier_popup.text(),
                 },
                 "fiche" :{
-                    "fiche_log" : self.ui.fiche_log.isChecked(), # Récupère l'état du champ fiche_log
-                    "fiche_activation" : self.ui.fiche_activation.isChecked(), # Récupère l'état du champ fiche_activation
-                    "fiche_nom" : self.ui.fiche_nom.isChecked(), # Récupère l'état du champ fiche_nom
-                    "fiche_mail" : self.ui.fiche_mail.isChecked(), # Récupère l'état du champ fiche_mail
-                    "fiche_adresse" : self.ui.fiche_adresse.isChecked(), # Récupère l'état du champ fiche_adresse
-                    "fiche_telephone" : self.ui.fiche_telephone.isChecked(), # Récupère l'état du champ fiche_telephone
-                    "fiche_duree_session" : self.ui.fiche_duree_session.isChecked(), # Récupère l'état du champ fiche_duree_session
-                    "fiche_15min" : self.ui.fiche_15min.isChecked(), # Récupère l'état du champ fiche_15min
-                    "fiche_30min" : self.ui.fiche_30min.isChecked(), # Récupère l'état du champ fiche_30min
-                    "fiche_1h" : self.ui.fiche_1h.isChecked(), # Récupère l'état du champ fiche_1h
-                    "fiche_bouton_reglement" : self.ui.fiche_bouton_reglement.isChecked(), # Récupère l'état du champ fiche_bouton_reglement
-                    "fiche_reglement" : self.ui.fiche_reglement.isChecked(), # Récupère l'état du champ fiche_reglement
+                    "fiche_log" : self.ui.fiche_log.isChecked(),
+                    "fiche_activation" : self.ui.fiche_activation.isChecked(),
+                    "fiche_nom" : self.ui.fiche_nom.isChecked(),
+                    "fiche_mail" : self.ui.fiche_mail.isChecked(),
+                    "fiche_adresse" : self.ui.fiche_adresse.isChecked(),
+                    "fiche_telephone" : self.ui.fiche_telephone.isChecked(),
+                    "fiche_duree_session" : self.ui.fiche_duree_session.isChecked(),
+                    "fiche_15min" : self.ui.fiche_15min.isChecked(),
+                    "fiche_30min" : self.ui.fiche_30min.isChecked(),
+                    "fiche_1h" : self.ui.fiche_1h.isChecked(),
+                    "fiche_bouton_reglement" : self.ui.fiche_bouton_reglement.isChecked(),
+                    "fiche_reglement" : self.ui.fiche_reglement.isChecked(),
                 },
                 "session" :{
-                    "session_user" : self.ui.session_user.currentText(), # Récupère le texte du champ session_user
-                    "session_activation" : self.ui.session_activation.isChecked(), # Récupère l'état du champ session_activation
+                    "session_user" : self.ui.session_user.currentText(),
+                    "session_activation" : self.ui.session_activation.isChecked(),
                 },
                 "style" :{
-                    "largeur_popup" : self.ui.largeur_popup.text(), # Récupère le texte du champ largeur_popup
-                    "hauteur_popup" : self.ui.hauteur_popup.text(), # Récupère le texte du champ hauteur_popup
-                    "police" : self.ui.police.currentText(), # Récupère le texte du champ police
-                    "taille_police" : self.ui.taille_police.text(), # Récupère le texte du champ taille_police
+                    "largeur_popup" : self.ui.largeur_popup.text(),
+                    "hauteur_popup" : self.ui.hauteur_popup.text(),
+                    "police" : self.ui.police.currentText(),
+                    "taille_police" : self.ui.taille_police.text(),
                 },
                 "fermeture" :{
-                    "fermeture_session" : self.ui.fermeture_session.currentText(), # Récupère le texte du champ fermeture_session
-                    "fermeture_popup" : self.ui.activation_fermeture.isChecked(), # Récupère l'état du champ activation_fermeture
+                    "fermeture_session" : self.ui.fermeture_session.currentText(),
+                    "fermeture_popup" : self.ui.activation_fermeture.isChecked(), 
                 }
             }
 
