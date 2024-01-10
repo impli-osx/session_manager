@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from Ui_configuration import Ui_Configuration
@@ -35,10 +36,12 @@ class MainWindow(QMainWindow):
     # Fonction pour afficher l'aide
     def afficher_aide(self, type_aide):
         try:
-            with open(rf"Aide\aide_{type_aide}.txt", "r") as f:
+            chemin_fichier = os.path.join("Aide", f"{type_aide}.txt")
+            print(f"Ouverture du fichier : {chemin_fichier}")  # Affiche le chemin du fichier
+            with open(chemin_fichier, "r") as f:
                 aide = f.read()
             msgBox = QMessageBox()
-            msgBox.setTextFormat(Qt.PlainText)  # Utilise un format de texte simple
+            msgBox.setTextFormat(Qt.TextFormat.PlainText)  # Utilise un format de texte simple
             msgBox.setText(aide)
             msgBox.setWindowTitle(f"Aide {type_aide.capitalize()}")
             msgBox.exec()
