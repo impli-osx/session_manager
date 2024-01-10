@@ -68,8 +68,8 @@ class MainWindow(QMainWindow):
                     "taille_police" : self.ui.taille_police.text(),
                 },
                 "fermeture" :{
-                    "fermeture_session" : self.ui.fermeture_session.text(),
-                    "fermeture_popup" : self.ui.fermeture_popup.currentText(),
+                    "fermeture_session" : self.ui.fermeture_session.currentText(),
+                    "fermeture_popup" : self.ui.activation_fermeture.isChecked(),
                 }
             }
             # Cette fonction est appelée lorsque l'utilisateur clique sur le bouton "Enregistrer"
