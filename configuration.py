@@ -1,6 +1,7 @@
 import json
+import subprocess
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox
-from Ui_configuration import Ui_Configuration  # Assurez-vous que c'est le bon chemin d'importation
+from Ui_configuration import Ui_Configuration
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -8,15 +9,28 @@ class MainWindow(QMainWindow):
         self.ui = Ui_Configuration()
         self.ui.setupUi(self)
         self.charger_conf()
-        self.ui.Enregistrer.clicked.connect(self.enregistrer_conf)   
-        # Load data from the JSON file
+        self.ui.Enregistrer.clicked.connect(self.enregistrer_conf)
+        self.ui.gpupdate.clicked.connect(self.make_gpupdate)   
+        # Charge les données à partir du fichier JSON
         try:
             with open("config.json", "r") as f:
                 data = json.load(f)
         except FileNotFoundError:
                 data = {}
 
-                    
+    # Fonction pour exécuter gpupdate
+    def make_gpupdate(self):
+        try:
+            # Exécute la commande et capture la sortie
+            result = subprocess.run(["gpupdate", "/force"], capture_output=True, text=True, check=True)
+
+            # Met à jour le label avec la sortie de la commande
+            self.ui.retour_gpupdate.setText(result.stdout)
+        except subprocess.CalledProcessError as e:
+            # Si la commande échoue, affiche l'erreur dans le label
+            self.ui.retour_gpupdate.setText(f"Erreur : {e.stderr}")
+        
+    # Fonction pour enregistrer les données dans un fichier JSON
     def enregistrer_conf(self):
         try:
             config = {
