@@ -35,7 +35,7 @@ class MainWindow(QMainWindow):
     # Fonction pour afficher l'aide
     def afficher_aide(self, type_aide):
         try:
-            with open(f"aide_{type_aide}.txt", "r") as f:
+            with open(rf"Aide\aide_{type_aide}.txt", "r") as f:
                 aide = f.read()
             msgBox = QMessageBox()
             msgBox.setTextFormat(Qt.PlainText)  # Utilise un format de texte simple
