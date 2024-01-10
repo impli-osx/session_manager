@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="accueil">
      <attribute name="title">
@@ -294,6 +294,19 @@
         <string>Afficher la checkbox pour accepter le réglement intérieur</string>
        </property>
       </widget>
+     </widget>
+     <widget class="QPushButton" name="aide_fiche">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>10</y>
+        <width>75</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Aide</string>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="titres">
@@ -996,7 +1009,7 @@
      <x>0</x>
      <y>0</y>
      <width>868</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuConfiguration">

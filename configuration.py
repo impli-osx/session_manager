@@ -3,20 +3,26 @@ import subprocess
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from Ui_configuration import Ui_Configuration
 
+# Classe principale de l'application
 class MainWindow(QMainWindow):
+    
+    # Constructeur de la classe
     def __init__(self, parent=None):
-        super().__init__(parent)
-        self.ui = Ui_Configuration()
-        self.ui.setupUi(self)
-        self.charger_conf()
-        self.ui.Enregistrer.clicked.connect(self.enregistrer_conf)
-        self.ui.gpupdate.clicked.connect(self.make_gpupdate)   
+        super().__init__(parent) # Appelle le constructeur de la classe parente
+        self.ui = Ui_Configuration() # Crée une instance de Ui_MainWindow
+        self.ui.setupUi(self) # Charge l'interface utilisateur
+        self.charger_conf() # Charge les données à partir du fichier JSON
+        self.ui.Enregistrer.clicked.connect(self.enregistrer_conf) # Enregistrement de la configuration
+        self.ui.gpupdate.clicked.connect(self.make_gpupdate) # Exécution de gpupdate
+        self.ui.aide_titre.clicked.connect(self.aide_titre) # Affiche l'aide pour le titre
+        
         # Charge les données à partir du fichier JSON
         try:
             with open("config.json", "r") as f:
                 data = json.load(f)
         except FileNotFoundError:
                 data = {}
+
 
     # Fonction pour exécuter gpupdate
     def make_gpupdate(self):
@@ -30,9 +36,12 @@ class MainWindow(QMainWindow):
             # Si la commande échoue, affiche l'erreur dans le label
             self.ui.retour_gpupdate.setText(f"Erreur : {e.stderr}")
         
+        
     # Fonction pour enregistrer les données dans un fichier JSON
     def enregistrer_conf(self):
         try:
+            # Crée un dictionnaire avec les données de l'interface utilisateur
+            # Les données sont stockées dans un dictionnaire imbriqué
             config = {
                 "titre" :{
                     "titre_popup_1" : self.ui.titre_popup_1.text(),
@@ -87,17 +96,19 @@ class MainWindow(QMainWindow):
             with open("config.json", "w") as f:
                 json.dump(config, f,indent=4)
         except Exception as e:
-            QMessageBox.critical(self, "Erreur", str(e))
-            
+            QMessageBox.critical(self, "Erreur", f"Impossible d'enregistrer la configuration : {e}")
+        # Ferme la fenêtre
         self.close()
             
+            
+    # Fonction pour charger les données à partir du fichier JSON
     def charger_conf(self):
         try:
             with open("config.json", "r") as f:
                 data = json.load(f)
         except FileNotFoundError:
             data = {}
-            
+        # Charge les données dans l'interface utilisateur
         self.ui.titre_popup_1.setText(data.get("titre", {}).get("titre_popup_1", ""))
         self.ui.titre_popup_2.setText(data.get("titre", {}).get("titre_popup_2", ""))
         self.ui.titre_popup_3.setText(data.get("titre", {}).get("titre_popup_3", ""))
@@ -133,9 +144,9 @@ class MainWindow(QMainWindow):
         self.ui.activation_fermeture.setChecked(data.get("fermeture", {}).get("activation_fermeture", False))
         
         
-
+# Point d'entrée de l'application
 if __name__ == "__main__":
-    app = QApplication([])
-    window = MainWindow()
-    window.show()
-    app.exec()
+    app = QApplication([]) # Crée une instance de QApplication
+    window = MainWindow() # Crée une instance de MainWindow
+    window.show() # Affiche la fenêtre
+    app.exec() # Lance l'application
