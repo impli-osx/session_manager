@@ -30,7 +30,7 @@
      <attribute name="title">
       <string>Accueil</string>
      </attribute>
-     <widget class="QCheckBox" name="activation">
+     <widget class="QCheckBox" name="session_activation">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -69,7 +69,7 @@
        <string>Résultat de la création du raccourci dans le dossier Démarrage ...</string>
       </property>
      </widget>
-     <widget class="QComboBox" name="comboBox">
+     <widget class="QComboBox" name="session_user">
       <property name="geometry">
        <rect>
         <x>170</x>
@@ -123,7 +123,7 @@
      <attribute name="title">
       <string>Fiche d'entrée</string>
      </attribute>
-     <widget class="QCheckBox" name="activation_fiche">
+     <widget class="QCheckBox" name="fiche_activation">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -136,7 +136,7 @@
        <string>Activer la fiche d'entrée demandant les informations personnelles</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="log_fiche">
+     <widget class="QCheckBox" name="fiche_log">
       <property name="geometry">
        <rect>
         <x>20</x>
