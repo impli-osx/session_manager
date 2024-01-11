@@ -2,11 +2,59 @@ import json # Importe le module json
 import os # Importe le module os
 import subprocess # Importe le module subprocess
 import pickle # Importe le module pickle
+import ctypes
+import ctypes.wintypes
 from PyQt6 import QtWidgets # Importe le module QtWidgets
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox # Importe les classes QApplication, QMainWindow, QMessageBox et QComboBox
 from PyQt6.QtGui import QFontDatabase # Importe la classe QFontDatabase
-from PyQt6.QtCore import Qt # Importe la classe Qt
+from PyQt6.QtCore import Qt, QTimer # Importe les classes Qt et QTimer
 from Ui_configuration import Ui_Configuration # Importe la classe Ui_MainWindow du fichier Ui_mainwindow.py
+
+
+
+# Définit les types nécessaires
+LPWSTR = ctypes.wintypes.LPWSTR
+DWORD = ctypes.wintypes.DWORD
+LPBYTE = ctypes.wintypes.LPBYTE
+
+class USER_INFO_0(ctypes.Structure):
+    _fields_ = [('usri0_name', LPWSTR)]
+
+# Fonction pour récupérer la liste des utilisateurs
+def get_all_users():
+    # Charge la bibliothèque nécessaire
+    netapi32 = ctypes.WinDLL('Netapi32.dll')
+    NetUserEnum = netapi32.NetUserEnum
+    NetApiBufferFree = netapi32.NetApiBufferFree
+
+    # Définit les types de paramètres et de retour de NetUserEnum
+    NetUserEnum.argtypes = [
+        LPWSTR, DWORD, DWORD, ctypes.POINTER(LPBYTE), DWORD, ctypes.POINTER(DWORD),
+        ctypes.POINTER(DWORD), ctypes.POINTER(DWORD)
+    ]
+    NetUserEnum.restype = DWORD
+
+    # Appelle NetUserEnum
+    data = LPBYTE()
+    entries_read = DWORD()
+    total_entries = DWORD()
+    res = NetUserEnum(None, 0, 0, ctypes.byref(data), -1, ctypes.byref(entries_read),
+                      ctypes.byref(total_entries), None)
+
+    # Vérifie si l'appel a réussi
+    if res != 0:
+        raise ctypes.WinError()
+
+    # Convertit les données renvoyées en une liste de noms d'utilisateurs
+    users = ctypes.cast(data, ctypes.POINTER(USER_INFO_0 * entries_read.value)).contents
+    user_names = [user.usri0_name for user in users]
+
+    # Libère la mémoire allouée par NetUserEnum
+    NetApiBufferFree(data)
+
+    return user_names
+
+
 
 # Classe principale de l'application
 class MainWindow(QMainWindow):
@@ -27,7 +75,9 @@ class MainWindow(QMainWindow):
         self.ui.aide_style.clicked.connect(lambda: self.afficher_aide('style')) # Affiche l'aide pour le style
         self.ui.aide_accueil.clicked.connect(lambda: self.afficher_aide('accueil')) # Affiche l'aide pour l'accueil
         self.ui.police.addItems(QFontDatabase.families()) # Ajoute les polices disponibles dans la liste déroulante
-                
+        users = get_all_users() # Récupère la liste des utilisateurs
+        self.ui.session_user.addItems(users) # Ajoute les utilisateurs dans la liste déroulante
+        
         
         
         
@@ -165,7 +215,7 @@ class MainWindow(QMainWindow):
         self.ui.session_activation.setChecked(data.get("session", {}).get("session_activation", False))
         self.ui.largeur_popup.setText(data.get("style", {}).get("largeur_popup", ""))
         self.ui.hauteur_popup.setText(data.get("style", {}).get("hauteur_popup", ""))
-        self.ui.police.setCurrentText(data.get("style", {}).get("police", ""))
+        QTimer.singleShot(100, lambda: self.ui.police.setCurrentText(data.get("style", {}).get("police", "")))
         self.ui.taille_police.setText(data.get("style", {}).get("taille_police", ""))
         self.ui.fermeture_session.setCurrentText(data.get("fermeture", {}).get("fermeture_session", ""))
         self.ui.activation_fermeture.setChecked(data.get("fermeture", {}).get("activation_fermeture", False))
@@ -235,7 +285,10 @@ class Configuration:
         
         
 
-          
+
+
+
+
 # Point d'entrée de l'application
 if __name__ == "__main__":
     app = QApplication([]) # Crée une instance de QApplication
