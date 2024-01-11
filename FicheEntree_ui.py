@@ -23,13 +23,13 @@ class Ui_Ficheentree(object):
     def setupUi(self, Ficheentree):
         if not Ficheentree.objectName():
             Ficheentree.setObjectName(u"Ficheentree")
-        Ficheentree.resize(1482, 799)
+        Ficheentree.resize(1482, 866)
         Ficheentree.setDocumentMode(False)
         self.centralwidget = QWidget(Ficheentree)
         self.centralwidget.setObjectName(u"centralwidget")
         self.formLayoutWidget_2 = QWidget(self.centralwidget)
         self.formLayoutWidget_2.setObjectName(u"formLayoutWidget_2")
-        self.formLayoutWidget_2.setGeometry(QRect(370, 620, 771, 31))
+        self.formLayoutWidget_2.setGeometry(QRect(550, 730, 421, 31))
         self.formLayout_2 = QFormLayout(self.formLayoutWidget_2)
         self.formLayout_2.setObjectName(u"formLayout_2")
         self.formLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -40,7 +40,7 @@ class Ui_Ficheentree(object):
 
         self.formLayoutWidget_3 = QWidget(self.centralwidget)
         self.formLayoutWidget_3.setObjectName(u"formLayoutWidget_3")
-        self.formLayoutWidget_3.setGeometry(QRect(650, 650, 221, 80))
+        self.formLayoutWidget_3.setGeometry(QRect(650, 760, 221, 61))
         self.formLayout_3 = QFormLayout(self.formLayoutWidget_3)
         self.formLayout_3.setObjectName(u"formLayout_3")
         self.formLayout_3.setContentsMargins(0, 0, 0, 0)

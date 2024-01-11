@@ -12,12 +12,12 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_Ficheentree(object):
     def setupUi(self, Ficheentree):
         Ficheentree.setObjectName("Ficheentree")
-        Ficheentree.resize(1482, 799)
+        Ficheentree.resize(1482, 866)
         Ficheentree.setDocumentMode(False)
         self.centralwidget = QtWidgets.QWidget(parent=Ficheentree)
         self.centralwidget.setObjectName("centralwidget")
         self.formLayoutWidget_2 = QtWidgets.QWidget(parent=self.centralwidget)
-        self.formLayoutWidget_2.setGeometry(QtCore.QRect(370, 620, 771, 31))
+        self.formLayoutWidget_2.setGeometry(QtCore.QRect(550, 730, 421, 31))
         self.formLayoutWidget_2.setObjectName("formLayoutWidget_2")
         self.formLayout_2 = QtWidgets.QFormLayout(self.formLayoutWidget_2)
         self.formLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -26,7 +26,7 @@ class Ui_Ficheentree(object):
         self.reglement.setObjectName("reglement")
         self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.reglement)
         self.formLayoutWidget_3 = QtWidgets.QWidget(parent=self.centralwidget)
-        self.formLayoutWidget_3.setGeometry(QtCore.QRect(650, 650, 221, 80))
+        self.formLayoutWidget_3.setGeometry(QtCore.QRect(650, 760, 221, 61))
         self.formLayoutWidget_3.setObjectName("formLayoutWidget_3")
         self.formLayout_3 = QtWidgets.QFormLayout(self.formLayoutWidget_3)
         self.formLayout_3.setContentsMargins(0, 0, 0, 0)

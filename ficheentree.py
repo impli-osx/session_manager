@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QMessageBox, QMainWindow
-from Ui_FicheEntree import Ui_FicheEntree
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QMessageBox, QMainWindow, QSpacerItem, QSizePolicy
+from Ui_FicheEntree import Ui_Ficheentree
 from PyQt6.QtCore import Qt
 
   
@@ -10,8 +10,18 @@ app = QApplication([])
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.ui = Ui_FicheEntree()
+        self.ui = Ui_Ficheentree()
         self.ui.setupUi(self)
+
+
+        # Création d'un layout principal
+        main_layout = QHBoxLayout(self)
+        main_layout.addStretch(1)
+        main_layout.addLayout(self.ui.formLayout_2)
+        main_layout.addLayout(self.ui.formLayout_3)
+        main_layout.addStretch(1)
+        
+
 
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
 
