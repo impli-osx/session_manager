@@ -1,6 +1,8 @@
 import json # Importe le module json
 import os # Importe le module os
 import subprocess # Importe le module subprocess
+import pickle # Importe le module pickle
+from PyQt6 import QtWidgets # Importe le module QtWidgets
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox # Importe les classes QApplication, QMainWindow, QMessageBox et QComboBox
 from PyQt6.QtGui import QFontDatabase # Importe la classe QFontDatabase
 from PyQt6.QtCore import Qt # Importe la classe Qt
@@ -80,6 +82,7 @@ class MainWindow(QMainWindow):
                     "titre_popup_2" : self.ui.titre_popup_2.text(), # Récupère le texte du champ titre_popup_2
                     "titre_popup_3" : self.ui.titre_popup_3.text(), # Récupère le texte du champ titre_popup_3
                     "titre_popup_4" : self.ui.titre_popup_4.text(), # Récupère le texte du champ titre_popup_4
+                    "titre_reglement" : self.ui.titre_reglement.text(), # Récupère le texte du champ titre_reglement
                 },
                 "text" :{
                     "text_popup_1" : self.ui.text_popup_1.toPlainText(), # Récupère le texte du champ text_popup_1
@@ -88,7 +91,7 @@ class MainWindow(QMainWindow):
                     "text_popup_4" : self.ui.text_popup_4.toPlainText(), # Récupère le texte du champ text_popup_4
                 },
                 "timer" :{
-                    "delai_fermeture" : self.ui.delai_fermeture.text(), # Etc etc... Same champ, same principe
+                    "delai_fermeture" : self.ui.delai_fermeture.text(), # Etc etc... other champ, same principe
                     "duree_session" : self.ui.duree_session.text(),
                     "timer_second_popup" : self.ui.timer_second_popup.text(),
                     "timer_troisieme_popup" : self.ui.timer_troisieme_popup.text(),
@@ -97,16 +100,11 @@ class MainWindow(QMainWindow):
                 "fiche" :{
                     "fiche_log" : self.ui.fiche_log.isChecked(),
                     "fiche_activation" : self.ui.fiche_activation.isChecked(),
-                    "fiche_nom" : self.ui.fiche_nom.isChecked(),
-                    "fiche_mail" : self.ui.fiche_mail.isChecked(),
-                    "fiche_adresse" : self.ui.fiche_adresse.isChecked(),
-                    "fiche_telephone" : self.ui.fiche_telephone.isChecked(),
+                    "fiche_reglement" : self.ui.fiche_reglement.isChecked(),
                     "fiche_duree_session" : self.ui.fiche_duree_session.isChecked(),
                     "fiche_15min" : self.ui.fiche_15min.isChecked(),
                     "fiche_30min" : self.ui.fiche_30min.isChecked(),
                     "fiche_1h" : self.ui.fiche_1h.isChecked(),
-                    "fiche_bouton_reglement" : self.ui.fiche_bouton_reglement.isChecked(),
-                    "fiche_reglement" : self.ui.fiche_reglement.isChecked(),
                 },
                 "session" :{
                     "session_user" : self.ui.session_user.currentText(),
@@ -144,8 +142,9 @@ class MainWindow(QMainWindow):
         # Charge les données dans l'interface utilisateur
         self.ui.titre_popup_1.setText(data.get("titre", {}).get("titre_popup_1", "")) # Récupère le texte du champ titre_popup_1
         self.ui.titre_popup_2.setText(data.get("titre", {}).get("titre_popup_2", "")) # Récupère le texte du champ titre_popup_2
-        self.ui.titre_popup_3.setText(data.get("titre", {}).get("titre_popup_3", "")) # Vous avez compris le principe...
+        self.ui.titre_popup_3.setText(data.get("titre", {}).get("titre_popup_3", "")) # Vous avez compris le concept...
         self.ui.titre_popup_4.setText(data.get("titre", {}).get("titre_popup_4", ""))
+        self.ui.titre_reglement.setText(data.get("titre", {}).get("titre_reglement", ""))
         self.ui.text_popup_1.setPlainText(data.get("text", {}).get("text_popup_1", ""))
         self.ui.text_popup_2.setPlainText(data.get("text", {}).get("text_popup_2", ""))
         self.ui.text_popup_3.setPlainText(data.get("text", {}).get("text_popup_3", ""))
@@ -157,15 +156,10 @@ class MainWindow(QMainWindow):
         self.ui.timer_dernier_popup.setText(data.get("timer", {}).get("timer_dernier_popup", ""))
         self.ui.fiche_log.setChecked(data.get("fiche", {}).get("fiche_log", False))
         self.ui.fiche_activation.setChecked(data.get("fiche", {}).get("fiche_activation", False))
-        self.ui.fiche_nom.setChecked(data.get("fiche", {}).get("fiche_nom", False))
-        self.ui.fiche_mail.setChecked(data.get("fiche", {}).get("fiche_mail", False))
-        self.ui.fiche_adresse.setChecked(data.get("fiche", {}).get("fiche_adresse", False))
-        self.ui.fiche_telephone.setChecked(data.get("fiche", {}).get("fiche_telephone", False))
         self.ui.fiche_duree_session.setChecked(data.get("fiche", {}).get("fiche_duree_session", False))
         self.ui.fiche_15min.setChecked(data.get("fiche", {}).get("fiche_15min", False))
         self.ui.fiche_30min.setChecked(data.get("fiche", {}).get("fiche_30min", False))
         self.ui.fiche_1h.setChecked(data.get("fiche", {}).get("fiche_1h", False))
-        self.ui.fiche_bouton_reglement.setChecked(data.get("fiche", {}).get("fiche_bouton_reglement", False))
         self.ui.fiche_reglement.setChecked(data.get("fiche", {}).get("fiche_reglement", False))
         self.ui.session_user.setCurrentText(data.get("session", {}).get("session_user", ""))
         self.ui.session_activation.setChecked(data.get("session", {}).get("session_activation", False))
@@ -177,6 +171,71 @@ class MainWindow(QMainWindow):
         self.ui.activation_fermeture.setChecked(data.get("fermeture", {}).get("activation_fermeture", False))
         
         
+        
+
+class AddFieldDialog(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setWindowTitle("Ajouter un champ")
+
+        self.layout = QtWidgets.QVBoxLayout(self)
+
+        # Crée les widgets pour les options
+        self.fieldType = QtWidgets.QComboBox()
+        self.fieldType.addItems(["QLineEdit", "QCheckBox"])
+        self.fieldLabel = QtWidgets.QLineEdit()
+        self.fieldName = QtWidgets.QLineEdit()
+
+        self.layout.addWidget(QtWidgets.QLabel("Type de champ :"))
+        self.layout.addWidget(self.fieldType)
+        self.layout.addWidget(QtWidgets.QLabel("Label du champ :"))
+        self.layout.addWidget(self.fieldLabel)
+        self.layout.addWidget(QtWidgets.QLabel("Nom du champ :"))
+        self.layout.addWidget(self.fieldName)
+
+        # Crée les boutons OK et Annuler
+        self.buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel, self)
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+
+        self.layout.addWidget(self.buttons)
+
+    def getValues(self):
+        return self.fieldType.currentText(), self.fieldLabel.text(), self.fieldName.text()
+
+class Configuration:
+    def __init__(self, ui_fiche_entree):
+        self.ui_fiche_entree = ui_fiche_entree
+
+    def add_field(self):
+        dialog = AddFieldDialog()
+        result = dialog.exec()
+
+        if result == QtWidgets.QDialog.Accepted:
+            fieldType, fieldLabel, fieldName = dialog.getValues()
+
+            if fieldType == "QLineEdit":
+                new_field = QtWidgets.QLineEdit()
+            elif fieldType == "QCheckBox":
+                new_field = QtWidgets.QCheckBox()
+
+            new_field.setObjectName(fieldName)
+            new_field.setText(fieldLabel)
+
+            self.ui_fiche_entree.layout().addWidget(new_field)
+
+    def remove_field(self, fieldName):
+        for i in reversed(range(self.ui_fiche_entree.layout().count())):
+            widget = self.ui_fiche_entree.layout().itemAt(i).widget()
+
+            if widget.objectName() == fieldName:
+                self.ui_fiche_entree.layout().removeWidget(widget)
+                widget.deleteLater()
+        
+        
+
+          
 # Point d'entrée de l'application
 if __name__ == "__main__":
     app = QApplication([]) # Crée une instance de QApplication

@@ -3,7 +3,8 @@
         "titre_popup_1": "Popup d\u00e9but de session",
         "titre_popup_2": "Second popup",
         "titre_popup_3": "Trois\u00e8me popup",
-        "titre_popup_4": "Popup de fermeture"
+        "titre_popup_4": "Popup de fermeture",
+        "titre_reglement": "R\u00e8glement int\u00e9rieur de l'espace cyber"
     },
     "text": {
         "text_popup_1": "Texte sur\ndeux lignes",
@@ -21,16 +22,11 @@
     "fiche": {
         "fiche_log": true,
         "fiche_activation": true,
-        "fiche_nom": true,
-        "fiche_mail": true,
-        "fiche_adresse": true,
-        "fiche_telephone": true,
+        "fiche_reglement": true,
         "fiche_duree_session": true,
-        "fiche_15min": false,
-        "fiche_30min": false,
-        "fiche_1h": true,
-        "fiche_bouton_reglement": true,
-        "fiche_reglement": true
+        "fiche_15min": true,
+        "fiche_30min": true,
+        "fiche_1h": true
     },
     "session": {
         "session_user": "",
