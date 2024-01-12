@@ -1,58 +1,17 @@
-import json # Importe le module json
-import os # Importe le module os
-import subprocess # Importe le module subprocess
-import pickle # Importe le module pickle
+import json
+import os
+import subprocess
+import pickle
 import ctypes
 import ctypes.wintypes
+import psutil
+from psutil import users as psutil_users
 from PyQt6 import QtWidgets # Importe le module QtWidgets
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox # Importe les classes QApplication, QMainWindow, QMessageBox et QComboBox
 from PyQt6.QtGui import QFontDatabase # Importe la classe QFontDatabase
 from PyQt6.QtCore import Qt, QTimer # Importe les classes Qt et QTimer
 from Ui_configuration import Ui_Configuration # Importe la classe Ui_MainWindow du fichier Ui_mainwindow.py
 
-
-
-# Définit les types nécessaires
-LPWSTR = ctypes.wintypes.LPWSTR
-DWORD = ctypes.wintypes.DWORD
-LPBYTE = ctypes.wintypes.LPBYTE
-
-class USER_INFO_0(ctypes.Structure):
-    _fields_ = [('usri0_name', LPWSTR)]
-
-# Fonction pour récupérer la liste des utilisateurs
-def get_all_users():
-    # Charge la bibliothèque nécessaire
-    netapi32 = ctypes.WinDLL('Netapi32.dll')
-    NetUserEnum = netapi32.NetUserEnum
-    NetApiBufferFree = netapi32.NetApiBufferFree
-
-    # Définit les types de paramètres et de retour de NetUserEnum
-    NetUserEnum.argtypes = [
-        LPWSTR, DWORD, DWORD, ctypes.POINTER(LPBYTE), DWORD, ctypes.POINTER(DWORD),
-        ctypes.POINTER(DWORD), ctypes.POINTER(DWORD)
-    ]
-    NetUserEnum.restype = DWORD
-
-    # Appelle NetUserEnum
-    data = LPBYTE()
-    entries_read = DWORD()
-    total_entries = DWORD()
-    res = NetUserEnum(None, 0, 0, ctypes.byref(data), -1, ctypes.byref(entries_read),
-                      ctypes.byref(total_entries), None)
-
-    # Vérifie si l'appel a réussi
-    if res != 0:
-        raise ctypes.WinError()
-
-    # Convertit les données renvoyées en une liste de noms d'utilisateurs
-    users = ctypes.cast(data, ctypes.POINTER(USER_INFO_0 * entries_read.value)).contents
-    user_names = [user.usri0_name for user in users]
-
-    # Libère la mémoire allouée par NetUserEnum
-    NetApiBufferFree(data)
-
-    return user_names
 
 
 
@@ -75,18 +34,16 @@ class MainWindow(QMainWindow):
         self.ui.aide_style.clicked.connect(lambda: self.afficher_aide('style')) # Affiche l'aide pour le style
         self.ui.aide_accueil.clicked.connect(lambda: self.afficher_aide('accueil')) # Affiche l'aide pour l'accueil
         self.ui.police.addItems(QFontDatabase.families()) # Ajoute les polices disponibles dans la liste déroulante
-        users = get_all_users() # Récupère la liste des utilisateurs
-        self.ui.session_user.addItems(users) # Ajoute les utilisateurs dans la liste déroulante
-        
-        
-        
-        
+        users = psutil_users() # Récupère la liste des utilisateurs
+        user_names = [user.name for user in users] # Récupère les noms des utilisateurs
+        self.ui.session_user.addItems(user_names) # Ajoute les noms des utilisateurs dans la liste déroulante
+
         # Charge les données à partir du fichier JSON
         try:
             with open("config.json", "r") as f: # Ouvre le fichier JSON en lecture
                 data = json.load(f) # Charge les données dans un dictionnaire
         except FileNotFoundError: # Si le fichier n'est pas trouvé, crée un dictionnaire vide
-                data = {}
+            data = {}
 
 
 
