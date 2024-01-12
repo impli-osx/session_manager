@@ -108,7 +108,7 @@
      <widget class="QLabel" name="retour_gpupdate">
       <property name="geometry">
        <rect>
-        <x>40</x>
+        <x>30</x>
         <y>220</y>
         <width>771</width>
         <height>121</height>
@@ -156,19 +156,19 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>110</y>
+        <y>250</y>
         <width>821</width>
-        <height>231</height>
+        <height>71</height>
        </rect>
       </property>
       <property name="title">
-       <string>Gestion des champs de la fiche</string>
+       <string>Gestion des champs de la fiche d'entrée</string>
       </property>
       <widget class="QPushButton" name="ajouter_champ">
        <property name="geometry">
         <rect>
-         <x>120</x>
-         <y>180</y>
+         <x>110</x>
+         <y>30</y>
          <width>141</width>
          <height>24</height>
         </rect>
@@ -180,8 +180,8 @@
       <widget class="QPushButton" name="supprimer_champ">
        <property name="geometry">
         <rect>
-         <x>310</x>
-         <y>180</y>
+         <x>300</x>
+         <y>30</y>
          <width>141</width>
          <height>24</height>
         </rect>
@@ -190,82 +190,17 @@
         <string>Supprimer un champ</string>
        </property>
       </widget>
-      <widget class="QCheckBox" name="fiche_reglement">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>40</y>
-         <width>371</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Afficher le bouton vers le règlement intérieur</string>
-       </property>
-      </widget>
       <widget class="QPushButton" name="fiche_afficher">
        <property name="geometry">
         <rect>
-         <x>500</x>
-         <y>180</y>
-         <width>191</width>
+         <x>490</x>
+         <y>30</y>
+         <width>231</width>
          <height>24</height>
         </rect>
        </property>
        <property name="text">
-        <string>Afficher la fenêtre du règlement</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="fiche_duree_session">
-       <property name="geometry">
-        <rect>
-         <x>430</x>
-         <y>40</y>
-         <width>341</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Durée des sessions possibles</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="fiche_15min">
-       <property name="geometry">
-        <rect>
-         <x>460</x>
-         <y>70</y>
-         <width>221</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>15 minutes</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="fiche_30min">
-       <property name="geometry">
-        <rect>
-         <x>460</x>
-         <y>100</y>
-         <width>181</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>30 minutes</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="fiche_1h">
-       <property name="geometry">
-        <rect>
-         <x>460</x>
-         <y>130</y>
-         <width>75</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>1 heure</string>
+        <string>Afficher la fenêtre de la fiche d'entrée</string>
        </property>
       </widget>
      </widget>
@@ -280,6 +215,58 @@
       </property>
       <property name="text">
        <string>Aide</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="fiche_1h">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>190</y>
+        <width>75</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1 heure</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="fiche_duree_session">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>100</y>
+        <width>341</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Durée des sessions possibles</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="fiche_15min">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>130</y>
+        <width>221</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>15 minutes</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="fiche_30min">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>160</y>
+        <width>181</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>30 minutes</string>
       </property>
      </widget>
     </widget>

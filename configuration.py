@@ -166,7 +166,6 @@ class MainWindow(QMainWindow):
                 "fiche" :{
                     "fiche_log" : self.ui.fiche_log.isChecked(),
                     "fiche_activation" : self.ui.fiche_activation.isChecked(),
-                    "fiche_reglement" : self.ui.fiche_reglement.isChecked(),
                     "fiche_duree_session" : self.ui.fiche_duree_session.isChecked(),
                     "fiche_15min" : self.ui.fiche_15min.isChecked(),
                     "fiche_30min" : self.ui.fiche_30min.isChecked(),
@@ -226,7 +225,6 @@ class MainWindow(QMainWindow):
         self.ui.fiche_15min.setChecked(data.get("fiche", {}).get("fiche_15min", False))
         self.ui.fiche_30min.setChecked(data.get("fiche", {}).get("fiche_30min", False))
         self.ui.fiche_1h.setChecked(data.get("fiche", {}).get("fiche_1h", False))
-        self.ui.fiche_reglement.setChecked(data.get("fiche", {}).get("fiche_reglement", False))
         self.ui.session_user.setCurrentText(data.get("session", {}).get("session_user", ""))
         self.ui.session_activation.setChecked(data.get("session", {}).get("session_activation", False))
         self.ui.largeur_popup.setText(data.get("style", {}).get("largeur_popup", ""))
