@@ -10,7 +10,7 @@ import threading
 import markdown
 from psutil import users as psutil_users
 from PyQt6 import QtWidgets, QtCore # Importe le module QtWidgets, QtCore
-from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox # Importe les classes QApplication, QMainWindow, QMessageBox et QComboBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit, QPushButton # Importe les classes QApplication, QMainWindow, QMessageBox et QComboBox
 from PyQt6.QtGui import QFontDatabase # Importe la classe QFontDatabase
 from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal # Importe les classes Qt, QTimer
 from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
@@ -73,12 +73,16 @@ class MainWindow(QMainWindow):
     # Fonction pour créer le raccourci
     def create_shortcut(self):
         try:
+            # Défini current_folder comme le répertoire courant
             current_folder = os.path.dirname(os.path.abspath(__file__))
             file_path = os.path.join(current_folder, "session_manager.exe")
+            # Vérifie que le fichier session_manager.exe existe dans le répertoire courant
             if not os.path.exists(file_path):
                 return f"Erreur : l'éxecutable session_manager.exe est introuvable dans le répertoire courant.\nIl doit se trouver dans le répertoire : {current_folder}."
+            # Récupère le nom de l'utilisateur sélectionné dans la liste déroulante
             user = self.ui.session_user.currentText()
             shortcut_path = f"C:\\Users\\{user}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\session_manager.lnk"
+            # Crée le raccourci
             with winshell.shortcut(shortcut_path) as shortcut:
                 shortcut.path = file_path
                 shortcut.working_directory = current_folder
@@ -95,9 +99,11 @@ class MainWindow(QMainWindow):
     def session_activation_changed(self, state):
         user = self.ui.session_user.currentText()
         shortcut_path = f"C:\\Users\\{user}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\session_manager.lnk"
+        # Si la case est cochée, crée le raccourci
         if self.ui.session_activation.isChecked():
             message = self.create_shortcut()
             self.ui.retour_activation.setText(message)
+        # Sinon, supprime le raccourci
         else:
             if os.path.exists(shortcut_path):
                 try:
@@ -132,9 +138,13 @@ class MainWindow(QMainWindow):
         
     # Fonction pour modifier le label retour_gpupdate et éxecuter la fonction run_gpupdate dans un thread
     def make_gpupdate(self):
+        # Affiche le message "gpupdate /force en cours..." dans le label retour_gpupdate
         self.ui.retour_gpupdate.setText("gpupdate /force en cours...")
+        # Crée une instance de la classe Worker
         worker = Worker()
+        # Connecte le signal output de l'instance worker à la fonction set_text
         worker.output.connect(self.ui.retour_gpupdate.setText)
+        # Exécute la fonction run_gpupdate dans un thread
         threading.Thread(target=worker.run_gpupdate).start()    
         
         
@@ -239,37 +249,34 @@ class MainWindow(QMainWindow):
         
         
         
-
-class AddFieldDialog(QtWidgets.QDialog):
+# Classe pour ajouter un champ dans la fiche d'entrée
+class AddFieldDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.layout = QVBoxLayout(self)
 
-        self.setWindowTitle("Ajouter un champ")
+        self.label_name = QLineEdit(self)
+        self.label_name.setPlaceholderText("Nom du QLabel")
+        self.layout.addWidget(self.label_name)
 
-        self.layout = QtWidgets.QVBoxLayout(self)
+        self.edit_name = QLineEdit(self)
+        self.edit_name.setPlaceholderText("Nom du QLineEdit (préfix 'edit_')")
+        self.layout.addWidget(self.edit_name)
 
-        # Crée les widgets pour les options
-        self.fieldType = QtWidgets.QComboBox()
-        self.fieldType.addItems(["QLineEdit", "QCheckBox"])
-        self.fieldLabel = QtWidgets.QLineEdit()
-        self.fieldName = QtWidgets.QLineEdit()
+        self.add_label_button = QPushButton("Ajouter QLabel seul", self)
+        self.add_label_button.clicked.connect(self.add_label)
+        self.layout.addWidget(self.add_label_button)
 
-        self.layout.addWidget(QtWidgets.QLabel("Type de champ :"))
-        self.layout.addWidget(self.fieldType)
-        self.layout.addWidget(QtWidgets.QLabel("Label du champ :"))
-        self.layout.addWidget(self.fieldLabel)
-        self.layout.addWidget(QtWidgets.QLabel("Nom du champ :"))
-        self.layout.addWidget(self.fieldName)
+        self.add_label_edit_button = QPushButton("Ajouter QLabel et QLineEdit", self)
+        self.add_label_edit_button.clicked.connect(self.add_label_edit)
+        self.layout.addWidget(self.add_label_edit_button)
 
-        # Crée les boutons OK et Annuler
-        self.buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel, self)
-        self.buttons.accepted.connect(self.accept)
-        self.buttons.rejected.connect(self.reject)
+    #def add_label(self):
+        # Ajoutez votre code ici pour ajouter un QLabel seul
 
-        self.layout.addWidget(self.buttons)
+    #def add_label_edit(self):
+        # Ajoutez votre code ici pour ajouter un QLabel et un QLineEdit
 
-    def getValues(self):
-        return self.fieldType.currentText(), self.fieldLabel.text(), self.fieldName.text()
 
 class Configuration:
     def __init__(self, ui_fiche_entree):
