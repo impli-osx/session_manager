@@ -29,7 +29,7 @@
         "fiche_1h": true
     },
     "session": {
-        "session_user": "mrimp",
+        "session_user": "impli",
         "session_activation": false
     },
     "style": {
@@ -40,6 +40,6 @@
     },
     "fermeture": {
         "fermeture_session": "",
-        "fermeture_popup": true
+        "fermeture_popup": false
     }
 }

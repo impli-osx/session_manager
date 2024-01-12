@@ -5,16 +5,35 @@ import pickle
 import ctypes
 import ctypes.wintypes
 import psutil
+import winshell
+import threading
 from psutil import users as psutil_users
-from PyQt6 import QtWidgets # Importe le module QtWidgets
+from PyQt6 import QtWidgets, QtCore # Importe le module QtWidgets, QtCore
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox # Importe les classes QApplication, QMainWindow, QMessageBox et QComboBox
 from PyQt6.QtGui import QFontDatabase # Importe la classe QFontDatabase
-from PyQt6.QtCore import Qt, QTimer # Importe les classes Qt et QTimer
+from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal # Importe les classes Qt, QTimer
 from Ui_configuration import Ui_Configuration # Importe la classe Ui_MainWindow du fichier Ui_mainwindow.py
 
 
 
+# Classe pour exécuter la commande gpupdate dans un thread
+class Worker(QObject):
+    output = pyqtSignal(str)
+           
+    def run_gpupdate(self):
+        try:
+            # Exécute la commande et capture la sortie
+            result = subprocess.run(["gpupdate", "/force"], capture_output=True, text=True, check=True)
+            lines = result.stdout.split('\n')
+            non_empty_lines = [line for line in lines if line.strip() != '']
+            cleaned_output = '\n'.join(non_empty_lines)
+            self.output.emit(cleaned_output)
 
+        except subprocess.CalledProcessError as e:
+            # Si la commande échoue, affiche l'erreur dans le label
+            self.output.emit(f"Erreur : {e.stderr}")
+            
+            
 # Classe principale de l'application
 class MainWindow(QMainWindow):
     
@@ -24,6 +43,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_Configuration() # Crée une instance de Ui_MainWindow
         self.ui.setupUi(self) # Charge l'interface utilisateur
         self.charger_conf() # Charge les données à partir du fichier JSON
+        self.ui.annuler.clicked.connect(self.close) # Ferme la fenêtre (annule les modifications
         self.ui.Enregistrer.clicked.connect(self.enregistrer_conf) # Enregistrement de la configuration
         self.ui.gpupdate.clicked.connect(self.make_gpupdate) # Exécution de gpupdate
         self.ui.aide_titres.clicked.connect(lambda: self.afficher_aide('titres')) # Affiche l'aide pour le titre
@@ -37,6 +57,7 @@ class MainWindow(QMainWindow):
         users = psutil_users() # Récupère la liste des utilisateurs
         user_names = [user.name for user in users] # Récupère les noms des utilisateurs
         self.ui.session_user.addItems(user_names) # Ajoute les noms des utilisateurs dans la liste déroulante
+        self.ui.session_activation.stateChanged.connect(self.session_activation_changed)
 
         # Charge les données à partir du fichier JSON
         try:
@@ -47,11 +68,51 @@ class MainWindow(QMainWindow):
 
 
 
-    # Fonction pour afficher l'aide
+    # Fonction pour créer le raccourci
+    def create_shortcut(self):
+        try:
+            current_folder = os.path.dirname(os.path.abspath(__file__))
+            file_path = os.path.join(current_folder, "session_manager.exe")
+            if not os.path.exists(file_path):
+                return f"Erreur : le fichier {file_path} n'existe pas."
+            user = self.ui.session_user.currentText()
+            shortcut_path = f"C:\\Users\\{user}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\session_manager.lnk"
+            with winshell.shortcut(shortcut_path) as shortcut:
+                shortcut.path = file_path
+                shortcut.working_directory = current_folder
+            return "Le raccourci a été créé correctement."
+        except FileNotFoundError:
+            return "Erreur : le fichier session_manager.exe n'a pas été trouvé."
+        except Exception as e:
+            return f"Erreur inattendue : {e}"
+
+
+
+
+    # Fonction pour gérer l'activation du raccourci
+    def session_activation_changed(self, state):
+        user = self.ui.session_user.currentText()
+        shortcut_path = f"C:\\Users\\{user}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\session_manager.lnk"
+        if self.ui.session_activation.isChecked():
+            message = self.create_shortcut()
+            self.ui.retour_activation.setText(message)
+        else:
+            if os.path.exists(shortcut_path):
+                try:
+                    os.remove(shortcut_path)
+                    self.ui.retour_activation.setText("Le raccourci a été supprimé correctement.")
+                except FileNotFoundError:
+                    self.ui.retour_activation.setText("Erreur : Le raccourci n'existe pas.")
+                except Exception as e:
+                    self.ui.retour_activation.setText(f"Erreur inattendue : {e}")
+    
+
+
+
+    # Fonction pour afficher l'aide 
     def afficher_aide(self, type_aide):
         try:
             chemin_fichier = os.path.join("Aide", f"{type_aide}.txt")
-            print(f"Ouverture du fichier : {chemin_fichier}")  # Affiche le chemin du fichier
             with open(chemin_fichier, "r",encoding="utf-8") as f:
                 aide = f.read()
             msgBox = QMessageBox()
@@ -63,18 +124,16 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Erreur", f"Le fichier d'aide pour {type_aide} n'a pas été trouvé.")
 
 
-
-    # Fonction pour exécuter gpupdate
+            
+        
+        
+    # Fonction pour modifier le label retour_gpupdate et éxecuter la fonction run_gpupdate dans un thread
     def make_gpupdate(self):
-        try:
-            # Exécute la commande et capture la sortie
-            result = subprocess.run(["gpupdate", "/force"], capture_output=True, text=True, check=True)
-
-            # Met à jour le label avec la sortie de la commande
-            self.ui.retour_gpupdate.setText(result.stdout)
-        except subprocess.CalledProcessError as e:
-            # Si la commande échoue, affiche l'erreur dans le label
-            self.ui.retour_gpupdate.setText(f"Erreur : {e.stderr}")
+        self.ui.retour_gpupdate.setText("gpupdate /force en cours...")
+        worker = Worker()
+        worker.output.connect(self.ui.retour_gpupdate.setText)
+        threading.Thread(target=worker.run_gpupdate).start()    
+        
         
         
         

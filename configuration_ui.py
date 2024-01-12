@@ -41,7 +41,7 @@ class Ui_Configuration(object):
         self.aide_accueil.setGeometry(QRect(760, 10, 75, 24))
         self.retour_activation = QLabel(self.accueil)
         self.retour_activation.setObjectName(u"retour_activation")
-        self.retour_activation.setGeometry(QRect(40, 100, 791, 21))
+        self.retour_activation.setGeometry(QRect(40, 100, 791, 71))
         self.session_user = QComboBox(self.accueil)
         self.session_user.setObjectName(u"session_user")
         self.session_user.setGeometry(QRect(170, 20, 141, 22))
@@ -50,10 +50,10 @@ class Ui_Configuration(object):
         self.user_session.setGeometry(QRect(20, 20, 151, 16))
         self.gpupdate = QPushButton(self.accueil)
         self.gpupdate.setObjectName(u"gpupdate")
-        self.gpupdate.setGeometry(QRect(20, 140, 301, 24))
+        self.gpupdate.setGeometry(QRect(20, 180, 301, 24))
         self.retour_gpupdate = QLabel(self.accueil)
         self.retour_gpupdate.setObjectName(u"retour_gpupdate")
-        self.retour_gpupdate.setGeometry(QRect(40, 180, 771, 161))
+        self.retour_gpupdate.setGeometry(QRect(40, 220, 771, 121))
         self.retour_gpupdate.setMargin(5)
         self.onglet.addTab(self.accueil, "")
         self.formulaire = QWidget()
@@ -306,7 +306,7 @@ class Ui_Configuration(object):
 
         self.retranslateUi(Configuration)
 
-        self.onglet.setCurrentIndex(1)
+        self.onglet.setCurrentIndex(0)
         self.onglet_popup.setCurrentIndex(0)
 
 
