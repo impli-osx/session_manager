@@ -7,11 +7,13 @@ import ctypes.wintypes
 import psutil
 import winshell
 import threading
+import markdown
 from psutil import users as psutil_users
 from PyQt6 import QtWidgets, QtCore # Importe le module QtWidgets, QtCore
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox # Importe les classes QApplication, QMainWindow, QMessageBox et QComboBox
 from PyQt6.QtGui import QFontDatabase # Importe la classe QFontDatabase
 from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal # Importe les classes Qt, QTimer
+from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
 from Ui_configuration import Ui_Configuration # Importe la classe Ui_MainWindow du fichier Ui_mainwindow.py
 
 
@@ -74,7 +76,7 @@ class MainWindow(QMainWindow):
             current_folder = os.path.dirname(os.path.abspath(__file__))
             file_path = os.path.join(current_folder, "session_manager.exe")
             if not os.path.exists(file_path):
-                return f"Erreur : le fichier {file_path} n'existe pas."
+                return f"Erreur : l'éxecutable session_manager.exe est introuvable dans le répertoire courant.\nIl doit se trouver dans le répertoire : {current_folder}."
             user = self.ui.session_user.currentText()
             shortcut_path = f"C:\\Users\\{user}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\session_manager.lnk"
             with winshell.shortcut(shortcut_path) as shortcut:
@@ -112,15 +114,16 @@ class MainWindow(QMainWindow):
     # Fonction pour afficher l'aide 
     def afficher_aide(self, type_aide):
         try:
-            chemin_fichier = os.path.join("Aide", f"{type_aide}.txt")
+            chemin_fichier = os.path.join("Aide", f"{type_aide}.md")
             with open(chemin_fichier, "r",encoding="utf-8") as f:
                 aide = f.read()
+            aide_html = markdown.markdown(aide)  # Convertit le Markdown en HTML
             msgBox = QMessageBox()
-            msgBox.setTextFormat(Qt.TextFormat.PlainText)  # Utilise un format de texte simple
-            msgBox.setText(aide) # Définit le texte de la fenêtre
-            msgBox.setWindowTitle(f"Aide pour l'onglet {type_aide.capitalize()}") # Définit le titre de la fenêtre
+            msgBox.setTextFormat(Qt.TextFormat.RichText)  # Utilise un format de texte riche pour prendre en compte le HTML
+            msgBox.setText(aide_html)  # Définit le texte de la fenêtre
+            msgBox.setWindowTitle(f"Aide pour l'onglet {type_aide.capitalize()}")  # Définit le titre de la fenêtre
             msgBox.exec()
-        except FileNotFoundError: # Si le fichier n'est pas trouvé, affiche un message d'erreur
+        except FileNotFoundError:  # Si le fichier n'est pas trouvé, affiche un message d'erreur
             QMessageBox.warning(self, "Erreur", f"Le fichier d'aide pour {type_aide} n'a pas été trouvé.")
 
 
