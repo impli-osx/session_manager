@@ -10,12 +10,47 @@ import threading
 import markdown
 from psutil import users as psutil_users
 from PyQt6 import QtWidgets, QtCore # Importe le module QtWidgets, QtCore
-from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit, QPushButton # Importe les classes QApplication, QMainWindow, QMessageBox et QComboBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit, QPushButton, QLabel # Importe les classes QApplication, QMainWindow, QMessageBox et QComboBox
 from PyQt6.QtGui import QFontDatabase # Importe la classe QFontDatabase
 from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal # Importe les classes Qt, QTimer
 from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
 from Ui_configuration import Ui_Configuration # Importe la classe Ui_MainWindow du fichier Ui_mainwindow.py
 
+
+
+# Classe pour la gestion de la fiche d'entrée
+class AjouterChampDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.layout = QVBoxLayout(self)
+
+        self.label_name_line_edit = QLineEdit(self)
+        self.layout.addWidget(QLabel("Nom du QLabel :"))
+        self.layout.addWidget(self.label_name_line_edit)
+
+        self.enregistrer_button = QPushButton("Enregistrer", self)
+        self.enregistrer_button.clicked.connect(self.enregistrer)
+        self.layout.addWidget(self.enregistrer_button)
+
+    def enregistrer(self):
+        label_name = self.label_name_line_edit.text()
+
+        # Créez un nouveau QLabel et ajoutez-le à un QVBoxLayout
+        label = QLabel(label_name)
+        layout = QVBoxLayout()
+        layout.addWidget(label)
+
+        # Enregistrez les données dans un fichier JSON
+        data = {"label_name": label_name}
+        with open("data.json", "w") as f:
+            json.dump(data, f)
+
+        self.close()
+
+    def add_champ(self):
+        self.dialog_ajouter_champ = AjouterChampDialog(self)
+        self.dialog_ajouter_champ.show()
 
 
 # Classe pour exécuter la commande gpupdate dans un thread
@@ -60,6 +95,9 @@ class MainWindow(QMainWindow):
         user_names = [user.name for user in users] # Récupère les noms des utilisateurs
         self.ui.session_user.addItems(user_names) # Ajoute les noms des utilisateurs dans la liste déroulante
         self.ui.session_activation.stateChanged.connect(self.session_activation_changed)
+        
+        self.ajouterchamp = AjouterChampDialog()
+        self.ui.ajouter_champ.clicked.connect(self.ajouterchamp.add_champ)
 
         # Charge les données à partir du fichier JSON
         try:
@@ -247,69 +285,10 @@ class MainWindow(QMainWindow):
         self.ui.fermeture_session.setCurrentText(data.get("fermeture", {}).get("fermeture_session", ""))
         self.ui.activation_fermeture.setChecked(data.get("fermeture", {}).get("activation_fermeture", False))
         
-        
-        
-# Classe pour ajouter un champ dans la fiche d'entrée
-class AddFieldDialog(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.layout = QVBoxLayout(self)
-
-        self.label_name = QLineEdit(self)
-        self.label_name.setPlaceholderText("Nom du QLabel")
-        self.layout.addWidget(self.label_name)
-
-        self.edit_name = QLineEdit(self)
-        self.edit_name.setPlaceholderText("Nom du QLineEdit (préfix 'edit_')")
-        self.layout.addWidget(self.edit_name)
-
-        self.add_label_button = QPushButton("Ajouter QLabel seul", self)
-        self.add_label_button.clicked.connect(self.add_label)
-        self.layout.addWidget(self.add_label_button)
-
-        self.add_label_edit_button = QPushButton("Ajouter QLabel et QLineEdit", self)
-        self.add_label_edit_button.clicked.connect(self.add_label_edit)
-        self.layout.addWidget(self.add_label_edit_button)
-
-    #def add_label(self):
-        # Ajoutez votre code ici pour ajouter un QLabel seul
-
-    #def add_label_edit(self):
-        # Ajoutez votre code ici pour ajouter un QLabel et un QLineEdit
-
-
-class Configuration:
-    def __init__(self, ui_fiche_entree):
-        self.ui_fiche_entree = ui_fiche_entree
-
-    def add_field(self):
-        dialog = AddFieldDialog()
-        result = dialog.exec()
-
-        if result == QtWidgets.QDialog.Accepted:
-            fieldType, fieldLabel, fieldName = dialog.getValues()
-
-            if fieldType == "QLineEdit":
-                new_field = QtWidgets.QLineEdit()
-            elif fieldType == "QCheckBox":
-                new_field = QtWidgets.QCheckBox()
-
-            new_field.setObjectName(fieldName)
-            new_field.setText(fieldLabel)
-
-            self.ui_fiche_entree.layout().addWidget(new_field)
-
-    def remove_field(self, fieldName):
-        for i in reversed(range(self.ui_fiche_entree.layout().count())):
-            widget = self.ui_fiche_entree.layout().itemAt(i).widget()
-
-            if widget.objectName() == fieldName:
-                self.ui_fiche_entree.layout().removeWidget(widget)
-                widget.deleteLater()
-        
-        
-
-
+    # Fonction pour ajouter un champ à la fiche d'entrée
+    def ajouter_champ(self):
+        self.dialog_ajouter = QDialog()
+        self.dialog_ajouter.show()
 
 
 

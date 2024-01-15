@@ -22,7 +22,6 @@
     "fiche": {
         "fiche_log": true,
         "fiche_activation": true,
-        "fiche_reglement": true,
         "fiche_duree_session": true,
         "fiche_15min": true,
         "fiche_30min": true,
