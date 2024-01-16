@@ -11,10 +11,11 @@ import markdown
 from psutil import users as psutil_users
 from PyQt6 import QtWidgets, QtCore # Importe le module QtWidgets, QtCore
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit, QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame # Importe les classes
-from PyQt6.QtGui import QFontDatabase # Importe la classe QFontDatabase
-from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal # Importe les classes Qt, QTimer
+from PyQt6.QtGui import QFontDatabase, QMovie  # Importe la classe QFontDatabase
+from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize # Importe les classes Qt, QTimer
 from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
 from Ui_configuration import Ui_Configuration # Importe la classe Ui_MainWindow du fichier Ui_mainwindow.py
+from ficheentree import FicheWindow as FicheEntreeWindow # Importe la classe Ui_FicheEntree du fichier Ui_FicheEntree.py
 
 
 
@@ -95,19 +96,20 @@ class AjouterChampDialog(QDialog):
         self.layout.addWidget(self.enregistrer_button)
 
     def enregistrer_champs(self):
+        os.makedirs("json_fiche", exist_ok=True)
         # Parcourez la liste et récupérez les informations de chaque champ
         for label_name_line_edit, label_content_line_edit, add_line_edit_checkbox in self.fields:
             label_name = label_name_line_edit.text()
             label_content = label_content_line_edit.text()
             add_line_edit = add_line_edit_checkbox.isChecked()
             
-            if os.path.exists(f"{label_name}.json"):
+            if os.path.exists(f"json_fiche/{label_name}.json"):
                 QMessageBox.critical(self, "Erreur", "Un champ avec ce nom existe déjà.")
                 return
 
             # Enregistrez les données dans un fichier JSON
             data = {"label_name": label_name, "label_content": label_content, "add_line_edit": add_line_edit}
-            with open(f"{label_name}.json", "w") as f:
+            with open(f"json_fiche/{label_name}.json", "w") as f:
                 json.dump(data, f)
 
         self.close()
@@ -117,7 +119,70 @@ class AjouterChampDialog(QDialog):
         self.dialog_ajouter_champ.show()
 
 
+
+# Classe pour suppimer un champ de la fiche d'entrée
+class SupprimerChampDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setWindowTitle("Supprimer des champs")
+        self.setFixedSize(300, 450)  # Définir une taille précise pour la fenêtre
+
+        self.layout = QVBoxLayout(self)
+
+        # Crée un QScrollArea
+        self.scroll_area = QScrollArea(self)
+        self.scroll_area.setWidgetResizable(True)
+        self.layout.addWidget(self.scroll_area)
+
+        # Crée un QWidget pour contenir les checkboxes
+        self.scroll_widget = QWidget()
+        self.scroll_area.setWidget(self.scroll_widget)
+        self.scroll_layout = QVBoxLayout(self.scroll_widget)
+
+        # Liste pour stocker les QCheckBox
+        self.checkboxes = []
+
+        # Bouton pour confirmer la suppression
+        self.confirm_button = QPushButton("Confirmer", self)
+        self.confirm_button.clicked.connect(self.supprimer_champs)
+        
+        self.showEvent = self.update_liste
+
+        self.update_liste()
+
+    def update_liste(self, event=None):
+        # Supprime les anciennes checkboxes
+        for checkbox in self.checkboxes:
+            self.scroll_layout.removeWidget(checkbox)
+            checkbox.deleteLater()
+        self.checkboxes.clear()
+
+        # Liste tous les fichiers JSON dans le dossier
+        for filename in os.listdir("json_fiche"):
+            if filename.endswith(".json"):
+                # Crée une QCheckBox pour chaque fichier
+                checkbox = QCheckBox(filename, self.scroll_widget)
+                self.scroll_layout.addWidget(checkbox)
+                self.checkboxes.append(checkbox)
+
+        # Ajoute le bouton de confirmation à la fin
+        self.layout.addWidget(self.confirm_button)
+
+    def supprimer_champs(self):
+        # Parcourez la liste des checkboxes
+        for checkbox in self.checkboxes:
+            if checkbox.isChecked():
+                # Supprime le fichier correspondant
+                os.remove(f"json_fiche/{checkbox.text()}")
+
+        # Ferme la fenêtre
+        self.close()
+        self.update_liste()
+
+
 # Classe pour exécuter la commande gpupdate dans un thread
+
 class Worker(QObject):
     output = pyqtSignal(str)
            
@@ -160,8 +225,16 @@ class MainWindow(QMainWindow):
         self.ui.session_user.addItems(user_names) # Ajoute les noms des utilisateurs dans la liste déroulante
         self.ui.session_activation.stateChanged.connect(self.session_activation_changed)
         
+        # Crée l'instance de classe pour l'ajout de champs de la fiche d'entrée
         self.ajouterchamp = AjouterChampDialog()
         self.ui.ajouter_champ.clicked.connect(self.ajouterchamp.add_champ)
+        
+        # Crée l'instance de classe pour la suppression de champs de la fiche d'entrée
+        self.supprimerchamp = SupprimerChampDialog()
+        self.ui.supprimer_champ.clicked.connect(self.supprimerchamp.show)
+        
+        # Connecte le signal clicked du bouton fiche_afficher à la méthode afficher_fiche_entree
+        self.ui.fiche_afficher.clicked.connect(self.afficher_fiche_entree)
 
         # Charge les données à partir du fichier JSON
         try:
@@ -170,6 +243,11 @@ class MainWindow(QMainWindow):
         except FileNotFoundError: # Si le fichier n'est pas trouvé, crée un dictionnaire vide
             data = {}
 
+
+    def afficher_fiche_entree(self):
+        # Crée et affiche une instance de FicheEntreeWindow
+        self.fiche_entree_window = FicheEntreeWindow()
+        self.fiche_entree_window.show()
 
 
     # Fonction pour créer le raccourci
@@ -240,17 +318,37 @@ class MainWindow(QMainWindow):
         
     # Fonction pour modifier le label retour_gpupdate et éxecuter la fonction run_gpupdate dans un thread
     def make_gpupdate(self):
-        # Affiche le message "gpupdate /force en cours..." dans le label retour_gpupdate
-        self.ui.retour_gpupdate.setText("gpupdate /force en cours...")
-        # Crée une instance de la classe Worker
-        worker = Worker()
-        # Connecte le signal output de l'instance worker à la fonction set_text
-        worker.output.connect(self.ui.retour_gpupdate.setText)
-        # Exécute la fonction run_gpupdate dans un thread
-        threading.Thread(target=worker.run_gpupdate).start()    
+        if hasattr(self, 'gpupdate_thread') and self.gpupdate_thread.isRunning():
+            self.gpupdate_thread.quit()
+            self.gpupdate_thread.wait()
+        # Crée un Worker et un QThread
+        self.gpupdate_thread = QThread()
+        self.worker = Worker()
+        self.worker.moveToThread(self.gpupdate_thread)
+
+        # Connecte les signaux
+        self.worker.output.connect(self.update_output)
+        self.gpupdate_thread.started.connect(self.worker.run_gpupdate)
+        self.gpupdate_thread.finished.connect(self.gpupdate_thread.deleteLater)
+
+        # Crée et affiche un QLabel avec un QMovie
+        self.movie = QMovie("loading.gif")  # Remplacez "loading.gif" par le chemin de votre fichier GIF
+        self.movie.setScaledSize(QSize(140, 80)) 
+        self.ui.retour_gpupdate.setMovie(self.movie)
+        self.movie.start()
+        #self.label.show()
+
+        # Arrête le QMovie et cache le QLabel lorsque le thread est terminé
+        self.gpupdate_thread.finished.connect(self.movie.stop)
+        #self.thread.finished.connect(self.label.hide)
+
+        # Démarre le thread
+        self.gpupdate_thread.start()  
         
         
-        
+    def update_output(self, text):
+        # Met à jour le QLabel avec le résultat de la commande gpupdate /force
+        self.ui.retour_gpupdate.setText(text)
         
     # Fonction pour enregistrer les données dans un fichier JSON
     def enregistrer_conf(self):

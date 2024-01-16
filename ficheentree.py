@@ -1,4 +1,6 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QMessageBox, QMainWindow, QSpacerItem, QSizePolicy
+import json
+import os
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QMessageBox, QMainWindow, QSpacerItem, QSizePolicy, QLabel, QLineEdit
 from Ui_FicheEntree import Ui_Ficheentree
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
@@ -8,7 +10,7 @@ from PyQt6.QtGui import QFont
 app = QApplication([])
 
 
-class MainWindow(QMainWindow):
+class FicheWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.ui = Ui_Ficheentree()
@@ -46,6 +48,32 @@ class MainWindow(QMainWindow):
         self.ui.label_reglement.setFont(label_reglement)
         
         
+         # Ajoute les champs à partir des fichiers JSON
+        self.ajouter_champs()
+
+    def ajouter_champs(self):
+    # Parcourez tous les fichiers JSON dans le dossier
+        for filename in os.listdir("json_fiche"):
+            if filename.endswith(".json"):
+                # Ouvre le fichier JSON et lit les champs
+                with open(f"json_fiche/{filename}", "r") as file:
+                    champ = json.load(file)
+
+                # Crée un QLabel pour le champ
+                label = QLabel(champ.get("label_name", ""))
+
+                # Ajoute le QLabel au formLayout_2
+                self.ui.form_gauche.addRow(label)
+
+                # Vérifie si un QLineEdit doit être ajouté
+                if champ.get("add_line_edit", False):
+                    # Crée un QLineEdit pour le champ
+                    line_edit = QLineEdit()
+
+                    # Ajoute le QLineEdit au formLayout_3
+                    self.ui.form_centre.addRow(line_edit)
+            
+        
     def toggleConnectButton(self):
         # Active le bouton 'connecter' si la checkbox est cochée, le désactive sinon
         self.ui.connecter.setEnabled(self.ui.reglement.isChecked())
@@ -55,7 +83,12 @@ class MainWindow(QMainWindow):
         if self.ui.reglement.checkState() != Qt.CheckState.Checked:
             event.ignore()
 
-window = MainWindow()
-window.showFullScreen()
 
-app.exec()
+def main():
+    app = QApplication([])
+    window = FicheWindow()
+    window.showFullScreen()
+    app.exec()
+
+if __name__ == "__main__":
+    main()
