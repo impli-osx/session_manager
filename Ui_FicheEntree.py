@@ -17,7 +17,7 @@ class Ui_Ficheentree(object):
         self.centralwidget = QtWidgets.QWidget(parent=Ficheentree)
         self.centralwidget.setObjectName("centralwidget")
         self.formLayoutWidget_2 = QtWidgets.QWidget(parent=self.centralwidget)
-        self.formLayoutWidget_2.setGeometry(QtCore.QRect(550, 730, 425, 31))
+        self.formLayoutWidget_2.setGeometry(QtCore.QRect(550, 730, 445, 31))
         self.formLayoutWidget_2.setObjectName("formLayoutWidget_2")
         self.formLayout_2 = QtWidgets.QFormLayout(self.formLayoutWidget_2)
         self.formLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -73,7 +73,7 @@ class Ui_Ficheentree(object):
     def retranslateUi(self, Ficheentree):
         _translate = QtCore.QCoreApplication.translate
         Ficheentree.setWindowTitle(_translate("Ficheentree", "MainWindow"))
-        self.reglement.setText(_translate("Ficheentree", "J\'ai lu j\'accepte les conditions du règlement intérieur de l\'espace numérique"))
+        self.reglement.setText(_translate("Ficheentree", "J\'ai lu et j\'accepte les conditions du règlement intérieur de l\'espace numérique"))
         self.connecter.setText(_translate("Ficheentree", "Ouvrir la session"))
         self.label_informations.setText(_translate("Ficheentree", "Vos informations"))
         self.label_reglement.setText(_translate("Ficheentree", "Règlement intérieur de l\'espace numérique"))

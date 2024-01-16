@@ -22,7 +22,7 @@
      <rect>
       <x>550</x>
       <y>730</y>
-      <width>425</width>
+      <width>445</width>
       <height>31</height>
      </rect>
     </property>
@@ -33,7 +33,7 @@
      <item row="0" column="0" colspan="2">
       <widget class="QCheckBox" name="reglement">
        <property name="text">
-        <string>J'ai lu j'accepte les conditions du règlement intérieur de l'espace numérique</string>
+        <string>J'ai lu et j'accepte les conditions du règlement intérieur de l'espace numérique</string>
        </property>
       </widget>
      </item>

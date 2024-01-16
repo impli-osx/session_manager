@@ -49,6 +49,8 @@ class FicheWindow(QMainWindow):
          # Ajoute les champs à partir des fichiers JSON
         self.ajouter_champs()
 
+
+
     def ajouter_champs(self):
         # Vérifiez si le fichier fiche.json existe
         if not os.path.exists('fiche.json'):
@@ -59,31 +61,44 @@ class FicheWindow(QMainWindow):
         with open('fiche.json', 'r') as f:
             champs = json.load(f)
 
-        # Parcourez tous les champs
-        for champ in champs.values():
+        # Triez les champs par le numéro d'ordre (qui est la clé du dictionnaire)
+        champs_sorted = sorted(champs.items(), key=lambda item: int(item[0]))
+
+            # Parcourez tous les champs
+        for i, (order, champ) in enumerate(champs_sorted):
             # Crée un QLabel pour le champ
             label = QLabel(champ.get("label_content", ""))
 
-            # Ajoute le QLabel au formLayout_2
-            self.ui.form_gauche.addRow(label)
+            # Crée un QVBoxLayout pour le QLabel et le QLineEdit
+            layout = QVBoxLayout()
 
-            # Vérifie si un QLineEdit doit être ajouté
+            # Ajoute le QLabel au QVBoxLayout
+            layout.addWidget(label)
+
+            # Crée un QLineEdit pour le champ si nécessaire et l'ajoute au QVBoxLayout
             if champ.get("add_line_edit", False):
-                # Crée un QLineEdit pour le champ
                 line_edit = QLineEdit()
+                layout.addWidget(line_edit)
 
-                # Ajoute le QLineEdit au formLayout_3
-                self.ui.form_centre.addRow(line_edit)
-            
+            # Ajoute le QVBoxLayout au layout approprié
+            if i % 2 == 0:
+                self.ui.form_gauche.addRow(layout)
+            else:
+                self.ui.form_centre.addRow(layout)
+        
+        
         
     def toggleConnectButton(self):
         # Active le bouton 'connecter' si la checkbox est cochée, le désactive sinon
         self.ui.connecter.setEnabled(self.ui.reglement.isChecked())
 
+
+
     def closeEvent(self, event):
         # Si la checkbox n'est pas cochée, ignore l'événement de fermeture
         if self.ui.reglement.checkState() != Qt.CheckState.Checked:
             event.ignore()
+
 
 
 def main():

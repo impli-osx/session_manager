@@ -10,7 +10,7 @@ import threading
 import markdown
 from psutil import users as psutil_users
 from PyQt6 import QtWidgets, QtCore # Importe le module QtWidgets, QtCore
-from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit, QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame, QSpinBox # Importe les classes
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit, QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame, QTableWidget, QTableWidgetItem # Importe les classes
 from PyQt6.QtGui import QFontDatabase, QMovie  # Importe la classe QFontDatabase
 from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize # Importe les classes Qt, QTimer
 from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
@@ -25,9 +25,16 @@ class AjouterChampDialog(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle("Ajouter des champs")
-        self.setFixedSize(500, 600)
+        self.setFixedSize(350, 600)
 
-        self.layout = QVBoxLayout(self)
+        self.mainLayout = QVBoxLayout(self)  # Créez un layout pour le widget principal
+
+        self.scrollArea = QScrollArea(self)  # Créez une QScrollArea
+        self.scrollArea.setWidgetResizable(True)  # Permet au widget de se redimensionner
+        self.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)  # Désactive le défilement horizontal
+
+        self.scrollAreaContent = QWidget()  # Créez un widget pour le contenu de la zone de défilement
+        self.layout = QVBoxLayout(self.scrollAreaContent)  # Ajoutez un layout à ce widget
 
         self.layout.addWidget(QLabel("Nombre de champs à ajouter :"))
         self.number_of_fields_line_edit = QLineEdit(self)
@@ -39,9 +46,19 @@ class AjouterChampDialog(QDialog):
 
         self.fields = []  # Liste pour stocker les widgets
 
-        self.scrollArea = QScrollArea()  # Créez une zone de défilement
-        self.scrollArea.setWidgetResizable(True)
-        self.layout.addWidget(self.scrollArea)
+        self.table = QTableWidget(0, 2)  # Créez un QTableWidget avec 0 lignes et 2 colonnes
+        self.table.setHorizontalHeaderLabels(["Contenu du label", "Ajouter un champ de saisie"])
+
+        # Ajustez la largeur des colonnes
+        self.table.setColumnWidth(0, 100)
+        self.table.setColumnWidth(1, 200)
+
+        self.layout.addWidget(self.table)
+
+        self.scrollArea.setWidget(self.scrollAreaContent)  # Définissez le widget de la zone de défilement
+
+        self.mainLayout.addWidget(self.scrollArea)  # Ajoutez la QScrollArea au layout principal
+
 
 
 
@@ -56,33 +73,13 @@ class AjouterChampDialog(QDialog):
             QMessageBox.critical(self, "Erreur", "Veuillez entrer un nombre valide.")
             return
 
-        number_of_fields = int(self.number_of_fields_line_edit.text())
-
-        scrollContent = QWidget()  # Créez un widget pour le contenu de la zone de défilement
-        scrollLayout = QVBoxLayout(scrollContent)  # Ajoutez un layout à ce widget
-
         for i in range(number_of_fields):
-            layout = QVBoxLayout()
-
-            layout.addWidget(QLabel(f"Contenu du QLabel {i+1}:"))
+            self.table.insertRow(self.table.rowCount())  # Ajoutez une nouvelle ligne à la fin du tableau
             label_content_line_edit = QLineEdit(self)
-            layout.addWidget(label_content_line_edit)
-
+            self.table.setCellWidget(i, 0, label_content_line_edit)
             add_line_edit_checkbox = QCheckBox("Ajouter un champ de saisie", self)
-            layout.addWidget(add_line_edit_checkbox)
-
-            # Ajoutez une ligne horizontale
-            line = QFrame()
-            line.setFrameShape(QFrame.Shape.HLine)
-            layout.addWidget(line)
-
-            # Ajoutez le layout à votre layout principal
-            scrollLayout.addLayout(layout)
-
-            # Ajoutez les widgets à la liste
+            self.table.setCellWidget(i, 1, add_line_edit_checkbox)
             self.fields.append((label_content_line_edit, add_line_edit_checkbox))
-
-        self.scrollArea.setWidget(scrollContent)  # Définissez le widget de la zone de défilement
 
         # Vérifiez si le bouton "Enregistrer les champs" existe déjà
         if hasattr(self, 'enregistrer_button'):
@@ -105,9 +102,15 @@ class AjouterChampDialog(QDialog):
 
         # Parcourez la liste et récupérez les informations de chaque champ
         for i, (label_content_line_edit, add_line_edit_checkbox) in enumerate(self.fields):
-            display_order = max(fields.keys(), default=0) + 1
             label_content = label_content_line_edit.text()
             add_line_edit = add_line_edit_checkbox.isChecked()
+
+            # Vérifiez si le champ est vide
+            if not label_content.strip():
+                QMessageBox.critical(self, "Erreur", "Veuillez remplir tous les champs avant d'enregistrer.")
+                return
+
+            display_order = str(max([int(k) for k in fields.keys()], default=0) + 1)
 
             # Enregistrez les données dans un dictionnaire
             fields[display_order] = {"label_content": label_content, "add_line_edit": add_line_edit}
@@ -129,45 +132,33 @@ class AjouterChampDialog(QDialog):
 
 
 
-# Classe pour suppimer un champ de la fiche d'entrée
 class SupprimerChampDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle("Supprimer des champs")
-        self.setFixedSize(300, 450)  # Définir une taille précise pour la fenêtre
+        self.setMinimumSize(250, 500)  # Définir une taille minimale pour la fenêtre
 
         self.layout = QVBoxLayout(self)
 
-        # Crée un QScrollArea
-        self.scroll_area = QScrollArea(self)
-        self.scroll_area.setWidgetResizable(True)
-        self.layout.addWidget(self.scroll_area)
-
-        # Crée un QWidget pour contenir les checkboxes
-        self.scroll_widget = QWidget()
-        self.scroll_area.setWidget(self.scroll_widget)
-        self.scroll_layout = QVBoxLayout(self.scroll_widget)
-
-        # Liste pour stocker les QCheckBox
-        self.checkboxes = []
+        # Crée un QTableWidget pour afficher les éléments
+        self.table = QTableWidget(0, 2)
+        self.table.setHorizontalHeaderLabels(["Label", "Supprimer"])
+        self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)  # Désactivez le défilement horizontal
+        self.layout.addWidget(self.table)
 
         # Bouton pour confirmer la suppression
         self.confirm_button = QPushButton("Confirmer", self)
         self.confirm_button.clicked.connect(self.supprimer_champs)
-        
+        self.layout.addWidget(self.confirm_button)
+
         self.showEvent = self.update_liste
 
         self.update_liste()
 
-
-
     def update_liste(self, event=None):
-        # Supprime les anciennes checkboxes
-        for checkbox in self.checkboxes:
-            self.scroll_layout.removeWidget(checkbox)
-            checkbox.deleteLater()
-        self.checkboxes.clear()
+        # Supprime les anciennes lignes
+        self.table.setRowCount(0)
 
         # Vérifiez si le fichier fiche.json existe
         if not os.path.exists('fiche.json'):
@@ -178,35 +169,145 @@ class SupprimerChampDialog(QDialog):
         with open('fiche.json', 'r') as f:
             fields = json.load(f)
 
-        # Créez une QCheckBox pour chaque entrée
+        # Créez une ligne pour chaque entrée
         for field in fields.values():
             # Prenez les deux premiers mots du contenu du label
             label_content = field['label_content']
             words = label_content.split()
-            checkbox_text = ' '.join(words[:2])
+            label_text = ' '.join(words[:2])
 
-            checkbox = QCheckBox(checkbox_text, self.scroll_widget)
-            self.scroll_layout.addWidget(checkbox)
-            self.checkboxes.append(checkbox)
+            # Créez un QTableWidgetItem pour le label
+            label_item = QTableWidgetItem(label_text)
+            label_item.setFlags(label_item.flags() & ~Qt.ItemFlag.ItemIsEditable)  # Rend l'item non éditable
 
-        # Ajoute le bouton de confirmation à la fin
-        self.layout.addWidget(self.confirm_button)
+            # Créez un QCheckBox pour la case à cocher
+            checkbox = QCheckBox()
 
+            # Ajoutez une nouvelle ligne à la table
+            row = self.table.rowCount()
+            self.table.insertRow(row)
+            self.table.setItem(row, 0, label_item)
+            self.table.setCellWidget(row, 1, checkbox)
 
     def supprimer_champs(self):
-        # Parcourez la liste des checkboxes
-        for checkbox in self.checkboxes:
+        # Créez une liste pour stocker les labels à supprimer
+        labels_to_remove = []
+
+        # Parcourez les lignes de la table
+        for row in range(self.table.rowCount()):
+            # Obtenez la case à cocher pour cette ligne
+            checkbox = self.table.cellWidget(row, 1)
+
+            # Si la case à cocher est cochée, ajoutez le label à la liste des labels à supprimer
             if checkbox.isChecked():
-                # Supprime le fichier correspondant
-                os.remove(f"json_fiche/{checkbox.text()}")
+                label_item = self.table.item(row, 0)
+                labels_to_remove.append(label_item.text())
+
+        # Maintenant, vous pouvez utiliser labels_to_remove pour supprimer les champs correspondants
+        with open('fiche.json', 'r') as f:
+            fields = json.load(f)
+
+        keys_to_remove = []
+
+        # Parcourez le dictionnaire pour trouver les clés correspondant aux labels à supprimer
+        for key, value in fields.items():
+            if value['label_content'] in labels_to_remove:
+                keys_to_remove.append(key)
+
+        # Supprimez les entrées correspondant aux clés à supprimer
+        for key in keys_to_remove:
+            del fields[key]
+
+        with open('fiche.json', 'w') as f:
+            json.dump(fields, f)
 
         # Ferme la fenêtre
         self.close()
         self.update_liste()
 
 
-# Classe pour exécuter la commande gpupdate dans un thread
 
+class ModifierOrdreDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # Chargez les données de fiche.json
+        with open('fiche.json', 'r') as f:
+            self.champs = json.load(f)
+            
+        self.setWindowTitle("Modifier l'ordre des champs")
+        
+        # Triez les champs par le numéro d'ordre (qui est la clé du dictionnaire)
+        self.champs_sorted = sorted(self.champs.items(), key=lambda item: int(item[0]))
+
+        # Créez un QTableWidget pour afficher les éléments
+        self.table = QTableWidget(len(self.champs_sorted), 2)
+        self.table.setHorizontalHeaderLabels(["Label", "Numéro d'ordre"])
+
+        # Parcourez tous les champs
+        for i, (order, champ) in enumerate(self.champs_sorted):
+            # Ajoutez le label de l'élément à la première colonne
+            self.table.setItem(i, 0, QTableWidgetItem(champ.get("label_content", "")))
+
+            # Ajoutez un QLineEdit pour modifier le numéro d'ordre à la deuxième colonne
+            line_edit = QLineEdit(order)
+            self.table.setCellWidget(i, 1, line_edit)
+
+        # Créez un bouton pour enregistrer les modifications
+        self.enregistrer_button = QPushButton('Enregistrer')
+        self.enregistrer_button.clicked.connect(self.enregistrer)
+
+        # Augmentez la taille de la fenêtre
+        self.table.setFixedSize(240, 400)
+
+        # Créez un QScrollArea et ajoutez le QTableWidget à celui-ci
+        scroll_area = QScrollArea()
+        scroll_area.setWidget(self.table)
+
+        # Ajoutez le QScrollArea et le bouton à la fenêtre
+        layout = QVBoxLayout(self)
+        layout.addWidget(scroll_area)
+        layout.addWidget(self.enregistrer_button)
+
+        self.table.setCellWidget(i, 1, line_edit)
+
+        # Créez un bouton pour enregistrer les modifications
+        self.enregistrer_button = QPushButton('Enregistrer')
+        self.enregistrer_button.clicked.connect(self.enregistrer)
+
+        # Ajoutez le QTableWidget et le bouton à la fenêtre
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.table)
+        layout.addWidget(self.enregistrer_button)
+
+    def enregistrer(self):
+        # Collectez tous les nouveaux numéros d'ordre
+        new_orders = [self.table.cellWidget(i, 1).text() for i in range(self.table.rowCount())]
+
+        # Vérifiez si la liste contient des doublons
+        if len(new_orders) != len(set(new_orders)):
+            QMessageBox.critical(self, "Erreur", "Le numéro d'ordre est déjà utilisé.")
+            return
+
+        # Créez un nouveau dictionnaire pour les champs avec les nouveaux numéros d'ordre
+        new_champs = {}
+        for i, (order, champ) in enumerate(self.champs_sorted):
+            new_champs[new_orders[i]] = champ
+
+        # Enregistrez les modifications dans fiche.json
+        with open('fiche.json', 'w') as f:
+            json.dump(new_champs, f)
+
+        # Mettez à jour self.champs et self.champs_sorted
+        self.champs = new_champs
+        self.champs_sorted = sorted(self.champs.items(), key=lambda item: int(item[0]))
+
+        # Fermez la fenêtre
+        self.accept()
+
+
+
+# Classe pour exécuter la commande gpupdate dans un thread
 class Worker(QObject):
     output = pyqtSignal(str)
            
@@ -256,6 +357,10 @@ class MainWindow(QMainWindow):
         # Crée l'instance de classe pour la suppression de champs de la fiche d'entrée
         self.supprimerchamp = SupprimerChampDialog()
         self.ui.supprimer_champ.clicked.connect(self.supprimerchamp.show)
+        
+        # Crée l'instance de classe pour la modification de l'ordre des champs de la fiche d'entrée
+        self.ui.modifierordre = ModifierOrdreDialog()
+        self.ui.modifier_ordre.clicked.connect(self.ui.modifierordre.show)
         
         # Connecte le signal clicked du bouton fiche_afficher à la méthode afficher_fiche_entree
         self.ui.fiche_afficher.clicked.connect(self.afficher_fiche_entree)
