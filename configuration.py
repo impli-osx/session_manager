@@ -10,7 +10,7 @@ import threading
 import markdown
 from psutil import users as psutil_users
 from PyQt6 import QtWidgets, QtCore # Importe le module QtWidgets, QtCore
-from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit, QPushButton, QLabel # Importe les classes QApplication, QMainWindow, QMessageBox et QComboBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit, QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame # Importe les classes
 from PyQt6.QtGui import QFontDatabase # Importe la classe QFontDatabase
 from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal # Importe les classes Qt, QTimer
 from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
@@ -23,28 +23,92 @@ class AjouterChampDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        self.setWindowTitle("Ajouter des champs")
+        self.setFixedSize(500, 600)
+
         self.layout = QVBoxLayout(self)
 
-        self.label_name_line_edit = QLineEdit(self)
-        self.layout.addWidget(QLabel("Nom du QLabel :"))
-        self.layout.addWidget(self.label_name_line_edit)
+        self.layout.addWidget(QLabel("Nombre de champs à ajouter :"))
+        self.number_of_fields_line_edit = QLineEdit(self)
+        self.layout.addWidget(self.number_of_fields_line_edit)
 
         self.enregistrer_button = QPushButton("Enregistrer", self)
         self.enregistrer_button.clicked.connect(self.enregistrer)
         self.layout.addWidget(self.enregistrer_button)
 
+        self.fields = []  # Liste pour stocker les widgets
+
+        self.scrollArea = QScrollArea()  # Créez une zone de défilement
+        self.scrollArea.setWidgetResizable(True)
+        self.layout.addWidget(self.scrollArea)
+
     def enregistrer(self):
-        label_name = self.label_name_line_edit.text()
+        if not self.number_of_fields_line_edit.text():
+            QMessageBox.critical(self, "Erreur", "Veuillez entrer le nombre de champs à ajouter.")
+            return
 
-        # Créez un nouveau QLabel et ajoutez-le à un QVBoxLayout
-        label = QLabel(label_name)
-        layout = QVBoxLayout()
-        layout.addWidget(label)
+        try:
+            number_of_fields = int(self.number_of_fields_line_edit.text())
+        except ValueError:
+            QMessageBox.critical(self, "Erreur", "Veuillez entrer un nombre valide.")
+            return
+     
+        number_of_fields = int(self.number_of_fields_line_edit.text())
 
-        # Enregistrez les données dans un fichier JSON
-        data = {"label_name": label_name}
-        with open("data.json", "w") as f:
-            json.dump(data, f)
+        scrollContent = QWidget()  # Créez un widget pour le contenu de la zone de défilement
+        scrollLayout = QVBoxLayout(scrollContent)  # Ajoutez un layout à ce widget
+
+        for i in range(number_of_fields):
+            layout = QVBoxLayout()
+
+            layout.addWidget(QLabel(f"Nom du QLabel {i+1}:"))
+            label_name_line_edit = QLineEdit(self)
+            layout.addWidget(label_name_line_edit)
+
+            layout.addWidget(QLabel(f"Contenu du QLabel {i+1}:"))
+            label_content_line_edit = QLineEdit(self)
+            layout.addWidget(label_content_line_edit)
+
+            add_line_edit_checkbox = QCheckBox("Ajouter un champ de saisie", self)
+            layout.addWidget(add_line_edit_checkbox)
+            
+            # Ajoutez une ligne horizontale
+            line = QFrame()
+            line.setFrameShape(QFrame.Shape.HLine)
+            line.setFrameShadow(QFrame.Shadow.Sunken)
+            layout.addWidget(line)
+
+            scrollLayout.addLayout(layout)  # Ajoutez le layout à la zone de défilement
+
+            # Ajoutez les widgets à la liste
+            self.fields.append((label_name_line_edit, label_content_line_edit, add_line_edit_checkbox))
+
+        self.scrollArea.setWidget(scrollContent)  # Définissez le widget de la zone de défilement
+
+        # Vérifiez si le bouton "Enregistrer les champs" existe déjà
+        if hasattr(self, 'enregistrer_button'):
+            self.layout.removeWidget(self.enregistrer_button)
+            self.enregistrer_button.deleteLater()
+
+        self.enregistrer_button = QPushButton("Enregistrer les champs", self)
+        self.enregistrer_button.clicked.connect(self.enregistrer_champs)
+        self.layout.addWidget(self.enregistrer_button)
+
+    def enregistrer_champs(self):
+        # Parcourez la liste et récupérez les informations de chaque champ
+        for label_name_line_edit, label_content_line_edit, add_line_edit_checkbox in self.fields:
+            label_name = label_name_line_edit.text()
+            label_content = label_content_line_edit.text()
+            add_line_edit = add_line_edit_checkbox.isChecked()
+            
+            if os.path.exists(f"{label_name}.json"):
+                QMessageBox.critical(self, "Erreur", "Un champ avec ce nom existe déjà.")
+                return
+
+            # Enregistrez les données dans un fichier JSON
+            data = {"label_name": label_name, "label_content": label_content, "add_line_edit": add_line_edit}
+            with open(f"{label_name}.json", "w") as f:
+                json.dump(data, f)
 
         self.close()
 
