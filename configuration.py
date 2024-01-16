@@ -25,7 +25,7 @@ class AjouterChampDialog(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle("Ajouter des champs")
-        self.setFixedSize(350, 600)
+        self.setFixedSize(500, 600)
 
         self.mainLayout = QVBoxLayout(self)  # Créez un layout pour le widget principal
 
@@ -50,7 +50,7 @@ class AjouterChampDialog(QDialog):
         self.table.setHorizontalHeaderLabels(["Contenu du label", "Ajouter un champ de saisie"])
 
         # Ajustez la largeur des colonnes
-        self.table.setColumnWidth(0, 100)
+        self.table.setColumnWidth(0, 300)
         self.table.setColumnWidth(1, 200)
 
         self.layout.addWidget(self.table)
