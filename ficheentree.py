@@ -24,8 +24,6 @@ class FicheWindow(QMainWindow):
         main_layout.addLayout(self.ui.formLayout_3)
         main_layout.addStretch(1)
         
-
-
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
 
         # Désactive le bouton 'connecter' au démarrage
@@ -52,26 +50,30 @@ class FicheWindow(QMainWindow):
         self.ajouter_champs()
 
     def ajouter_champs(self):
-    # Parcourez tous les fichiers JSON dans le dossier
-        for filename in os.listdir("json_fiche"):
-            if filename.endswith(".json"):
-                # Ouvre le fichier JSON et lit les champs
-                with open(f"json_fiche/{filename}", "r") as file:
-                    champ = json.load(file)
+        # Vérifiez si le fichier fiche.json existe
+        if not os.path.exists('fiche.json'):
+            QMessageBox.critical(self, "Erreur", "Le fichier fiche.json n'existe pas.")
+            return
 
-                # Crée un QLabel pour le champ
-                label = QLabel(champ.get("label_name", ""))
+        # Chargez les données de fiche.json
+        with open('fiche.json', 'r') as f:
+            champs = json.load(f)
 
-                # Ajoute le QLabel au formLayout_2
-                self.ui.form_gauche.addRow(label)
+        # Parcourez tous les champs
+        for champ in champs.values():
+            # Crée un QLabel pour le champ
+            label = QLabel(champ.get("label_content", ""))
 
-                # Vérifie si un QLineEdit doit être ajouté
-                if champ.get("add_line_edit", False):
-                    # Crée un QLineEdit pour le champ
-                    line_edit = QLineEdit()
+            # Ajoute le QLabel au formLayout_2
+            self.ui.form_gauche.addRow(label)
 
-                    # Ajoute le QLineEdit au formLayout_3
-                    self.ui.form_centre.addRow(line_edit)
+            # Vérifie si un QLineEdit doit être ajouté
+            if champ.get("add_line_edit", False):
+                # Crée un QLineEdit pour le champ
+                line_edit = QLineEdit()
+
+                # Ajoute le QLineEdit au formLayout_3
+                self.ui.form_centre.addRow(line_edit)
             
         
     def toggleConnectButton(self):

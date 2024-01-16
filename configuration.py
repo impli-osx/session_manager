@@ -10,7 +10,7 @@ import threading
 import markdown
 from psutil import users as psutil_users
 from PyQt6 import QtWidgets, QtCore # Importe le module QtWidgets, QtCore
-from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit, QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame # Importe les classes
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit, QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame, QSpinBox # Importe les classes
 from PyQt6.QtGui import QFontDatabase, QMovie  # Importe la classe QFontDatabase
 from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize # Importe les classes Qt, QTimer
 from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
@@ -43,6 +43,8 @@ class AjouterChampDialog(QDialog):
         self.scrollArea.setWidgetResizable(True)
         self.layout.addWidget(self.scrollArea)
 
+
+
     def enregistrer(self):
         if not self.number_of_fields_line_edit.text():
             QMessageBox.critical(self, "Erreur", "Veuillez entrer le nombre de champs à ajouter.")
@@ -53,7 +55,7 @@ class AjouterChampDialog(QDialog):
         except ValueError:
             QMessageBox.critical(self, "Erreur", "Veuillez entrer un nombre valide.")
             return
-     
+
         number_of_fields = int(self.number_of_fields_line_edit.text())
 
         scrollContent = QWidget()  # Créez un widget pour le contenu de la zone de défilement
@@ -62,27 +64,23 @@ class AjouterChampDialog(QDialog):
         for i in range(number_of_fields):
             layout = QVBoxLayout()
 
-            layout.addWidget(QLabel(f"Nom du QLabel {i+1}:"))
-            label_name_line_edit = QLineEdit(self)
-            layout.addWidget(label_name_line_edit)
-
             layout.addWidget(QLabel(f"Contenu du QLabel {i+1}:"))
             label_content_line_edit = QLineEdit(self)
             layout.addWidget(label_content_line_edit)
 
             add_line_edit_checkbox = QCheckBox("Ajouter un champ de saisie", self)
             layout.addWidget(add_line_edit_checkbox)
-            
+
             # Ajoutez une ligne horizontale
             line = QFrame()
             line.setFrameShape(QFrame.Shape.HLine)
-            line.setFrameShadow(QFrame.Shadow.Sunken)
             layout.addWidget(line)
 
-            scrollLayout.addLayout(layout)  # Ajoutez le layout à la zone de défilement
+            # Ajoutez le layout à votre layout principal
+            scrollLayout.addLayout(layout)
 
             # Ajoutez les widgets à la liste
-            self.fields.append((label_name_line_edit, label_content_line_edit, add_line_edit_checkbox))
+            self.fields.append((label_content_line_edit, add_line_edit_checkbox))
 
         self.scrollArea.setWidget(scrollContent)  # Définissez le widget de la zone de défilement
 
@@ -95,24 +93,35 @@ class AjouterChampDialog(QDialog):
         self.enregistrer_button.clicked.connect(self.enregistrer_champs)
         self.layout.addWidget(self.enregistrer_button)
 
+
+
     def enregistrer_champs(self):
-        os.makedirs("json_fiche", exist_ok=True)
+        fields = {}
+
+        # Vérifiez si le fichier fiche.json existe déjà
+        if os.path.exists('fiche.json'):
+            with open('fiche.json', 'r') as f:
+                fields = json.load(f)
+
         # Parcourez la liste et récupérez les informations de chaque champ
-        for label_name_line_edit, label_content_line_edit, add_line_edit_checkbox in self.fields:
-            label_name = label_name_line_edit.text()
+        for i, (label_content_line_edit, add_line_edit_checkbox) in enumerate(self.fields):
+            display_order = max(fields.keys(), default=0) + 1
             label_content = label_content_line_edit.text()
             add_line_edit = add_line_edit_checkbox.isChecked()
-            
-            if os.path.exists(f"json_fiche/{label_name}.json"):
-                QMessageBox.critical(self, "Erreur", "Un champ avec ce nom existe déjà.")
-                return
 
-            # Enregistrez les données dans un fichier JSON
-            data = {"label_name": label_name, "label_content": label_content, "add_line_edit": add_line_edit}
-            with open(f"json_fiche/{label_name}.json", "w") as f:
-                json.dump(data, f)
+            # Enregistrez les données dans un dictionnaire
+            fields[display_order] = {"label_content": label_content, "add_line_edit": add_line_edit}
+
+        # Triez les champs par ordre d'affichage
+        fields = dict(sorted(fields.items()))
+
+        # Enregistrez les champs dans votre fichier JSON
+        with open('fiche.json', 'w') as f:
+            json.dump(fields, f)
 
         self.close()
+
+
 
     def add_champ(self):
         self.dialog_ajouter_champ = AjouterChampDialog(self)
@@ -151,6 +160,8 @@ class SupprimerChampDialog(QDialog):
 
         self.update_liste()
 
+
+
     def update_liste(self, event=None):
         # Supprime les anciennes checkboxes
         for checkbox in self.checkboxes:
@@ -158,16 +169,29 @@ class SupprimerChampDialog(QDialog):
             checkbox.deleteLater()
         self.checkboxes.clear()
 
-        # Liste tous les fichiers JSON dans le dossier
-        for filename in os.listdir("json_fiche"):
-            if filename.endswith(".json"):
-                # Crée une QCheckBox pour chaque fichier
-                checkbox = QCheckBox(filename, self.scroll_widget)
-                self.scroll_layout.addWidget(checkbox)
-                self.checkboxes.append(checkbox)
+        # Vérifiez si le fichier fiche.json existe
+        if not os.path.exists('fiche.json'):
+            QMessageBox.critical(self, "Erreur", "Le fichier fiche.json n'existe pas.")
+            return
+
+        # Chargez les données de fiche.json
+        with open('fiche.json', 'r') as f:
+            fields = json.load(f)
+
+        # Créez une QCheckBox pour chaque entrée
+        for field in fields.values():
+            # Prenez les deux premiers mots du contenu du label
+            label_content = field['label_content']
+            words = label_content.split()
+            checkbox_text = ' '.join(words[:2])
+
+            checkbox = QCheckBox(checkbox_text, self.scroll_widget)
+            self.scroll_layout.addWidget(checkbox)
+            self.checkboxes.append(checkbox)
 
         # Ajoute le bouton de confirmation à la fin
         self.layout.addWidget(self.confirm_button)
+
 
     def supprimer_champs(self):
         # Parcourez la liste des checkboxes
@@ -244,10 +268,12 @@ class MainWindow(QMainWindow):
             data = {}
 
 
+
     def afficher_fiche_entree(self):
         # Crée et affiche une instance de FicheEntreeWindow
         self.fiche_entree_window = FicheEntreeWindow()
         self.fiche_entree_window.show()
+
 
 
     # Fonction pour créer le raccourci
@@ -346,9 +372,12 @@ class MainWindow(QMainWindow):
         self.gpupdate_thread.start()  
         
         
+        
     def update_output(self, text):
         # Met à jour le QLabel avec le résultat de la commande gpupdate /force
         self.ui.retour_gpupdate.setText(text)
+        
+        
         
     # Fonction pour enregistrer les données dans un fichier JSON
     def enregistrer_conf(self):
@@ -446,6 +475,8 @@ class MainWindow(QMainWindow):
         self.ui.taille_police.setText(data.get("style", {}).get("taille_police", ""))
         self.ui.fermeture_session.setCurrentText(data.get("fermeture", {}).get("fermeture_session", ""))
         self.ui.activation_fermeture.setChecked(data.get("fermeture", {}).get("activation_fermeture", False))
+        
+        
         
     # Fonction pour ajouter un champ à la fiche d'entrée
     def ajouter_champ(self):

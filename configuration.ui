@@ -59,7 +59,7 @@
      <widget class="QLabel" name="retour_activation">
       <property name="geometry">
        <rect>
-        <x>40</x>
+        <x>30</x>
         <y>100</y>
         <width>791</width>
         <height>71</height>
@@ -110,7 +110,7 @@
        <rect>
         <x>30</x>
         <y>220</y>
-        <width>771</width>
+        <width>791</width>
         <height>121</height>
        </rect>
       </property>
@@ -167,33 +167,33 @@
       <widget class="QPushButton" name="ajouter_champ">
        <property name="geometry">
         <rect>
-         <x>110</x>
+         <x>10</x>
          <y>30</y>
          <width>141</width>
          <height>24</height>
         </rect>
        </property>
        <property name="text">
-        <string>Ajouter un champ</string>
+        <string>Ajouter des champs</string>
        </property>
       </widget>
       <widget class="QPushButton" name="supprimer_champ">
        <property name="geometry">
         <rect>
-         <x>300</x>
+         <x>420</x>
          <y>30</y>
          <width>141</width>
          <height>24</height>
         </rect>
        </property>
        <property name="text">
-        <string>Supprimer un champ</string>
+        <string>Supprimer des champs</string>
        </property>
       </widget>
       <widget class="QPushButton" name="fiche_afficher">
        <property name="geometry">
         <rect>
-         <x>490</x>
+         <x>580</x>
          <y>30</y>
          <width>231</width>
          <height>24</height>
@@ -201,6 +201,19 @@
        </property>
        <property name="text">
         <string>Afficher la fenêtre de la fiche d'entrée</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="modifier_ordre">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>30</y>
+         <width>231</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Modifier l'ordre d'affichage des champs</string>
        </property>
       </widget>
      </widget>
