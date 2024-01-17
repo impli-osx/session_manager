@@ -50,7 +50,7 @@ class AjouterChampDialog(QDialog):
         self.table.setHorizontalHeaderLabels(["Contenu du label", "Ajouter un champ de saisie"])
 
         # Ajustez la largeur des colonnes
-        self.table.setColumnWidth(0, 340)
+        self.table.setColumnWidth(0, 100)
         self.table.setColumnWidth(1, 200)
 
         self.layout.addWidget(self.table)
