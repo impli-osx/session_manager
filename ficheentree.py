@@ -1,10 +1,11 @@
 import json
 import os
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QMessageBox, QMainWindow, QSpacerItem, QSizePolicy, QLabel, QLineEdit
+import fitz
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QMessageBox, QMainWindow, QSpacerItem, QSizePolicy, QLabel, QLineEdit, QScrollArea
 from Ui_FicheEntree import Ui_Ficheentree
+from PyQt6.QtGui import QFont, QPixmap, QImage
 from PyQt6.QtCore import Qt, QUrl, QMetaObject, pyqtSlot
-from PyQt6.QtGui import QFont
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 
   
@@ -44,7 +45,8 @@ class FicheWindow(QMainWindow):
         reglement = self.ui.reglement.font()
         reglement.setBold(True)
         self.ui.reglement.setFont(reglement)
-        QMetaObject.invokeMethod(self, "load_pdf", Qt.ConnectionType.QueuedConnection)
+        
+        self.load_pdf()
      
         self.ajouter_champs()
      
@@ -101,7 +103,7 @@ class FicheWindow(QMainWindow):
         else:
             for line_edit in self.line_edits:
                 if line_edit.text().strip() == "":
-                    QMessageBox.critical(self, "Erreur", "Tous les champs doivent être remplis.")
+                    QMessageBox.critical(self, "Erreur", "Vous devez remplir tous les champs d'informations pour ouvrir la session.")
                     event.ignore()
                     return
 
@@ -120,12 +122,39 @@ class FicheWindow(QMainWindow):
         if not os.path.exists(pdf_path):
             print(f"Le fichier {pdf_path} n'existe pas.")
             return
-        # Créez une instance de QWebEngineView
-        pdf_viewer = QWebEngineView()
-        # Chargez le PDF
-        pdf_viewer.load(QUrl.fromLocalFile(pdf_path))
-        # Ajoutez le QWebEngineView à votre layout
-        self.ui.form_reglement.addWidget(pdf_viewer)
+
+        # Ouvrez le fichier PDF avec PyMuPDF
+        doc = fitz.open(pdf_path)
+
+        # Créez un QVBoxLayout pour contenir les images
+        vbox = QVBoxLayout()
+
+        # Parcourez toutes les pages du document
+        for i in range(len(doc)):
+            # Convertissez la page en image
+            page = doc.load_page(i)
+            pix = page.get_pixmap()
+            img = QImage(pix.samples, pix.width, pix.height, pix.stride, QImage.Format.Format_RGB888)
+            pixmap = QPixmap.fromImage(img)
+
+            # Créez un QLabel pour afficher l'image
+            label = QLabel()
+            label.setPixmap(pixmap.scaled(self.width(), pixmap.height(), Qt.AspectRatioMode.KeepAspectRatio))
+
+            # Ajoutez le QLabel à votre layout
+            vbox.addWidget(label)
+
+        # Créez un QWidget pour contenir le QVBoxLayout
+        widget = QWidget()
+        widget.setLayout(vbox)
+
+        # Créez un QScrollArea et définissez son layout
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(widget)
+
+        # Ajoutez le QScrollArea à votre layout
+        self.ui.form_reglement.addWidget(scroll)
 
 
 
@@ -133,7 +162,6 @@ class FicheWindow(QMainWindow):
 def main():
     app = QApplication(sys.argv)
     window = FicheWindow()
-    window.load_pdf()
     window.showFullScreen()
     app.exec()
 
