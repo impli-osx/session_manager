@@ -39,7 +39,7 @@ time.sleep(int(config['timer']['duree_session']))
 
 # Ouvrir les fenêtres popup à des intervalles déterminés
 # Liste des clés de timer
-timer_keys = ['duree_session', 'timer_second_popup', 'timer_troisieme_popup', 'timer_dernier_popup']
+timer_keys = ['timer_popup_1', 'timer_popup_2', 'timer_popup_3']
 
 # Ouvrir les fenêtres popup à des intervalles déterminés
 for key in timer_keys:
