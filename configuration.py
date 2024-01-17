@@ -542,21 +542,21 @@ class MainWindow(QMainWindow):
                     "titre_popup_1" : self.ui.titre_popup_1.text(), # Récupère le texte du champ titre_popup_1
                     "titre_popup_2" : self.ui.titre_popup_2.text(), # Récupère le texte du champ titre_popup_2
                     "titre_popup_3" : self.ui.titre_popup_3.text(), # Récupère le texte du champ titre_popup_3
-                    "titre_popup_4" : self.ui.titre_popup_4.text(), # Récupère le texte du champ titre_popup_4
+                    "titre_popup_4" : self.ui.titre_fermeture.text(), # Récupère le texte du champ titre_popup_4
                     "titre_reglement" : self.ui.titre_reglement.text(), # Récupère le texte du champ titre_reglement
                 },
                 "text" :{
                     "text_popup_1" : self.ui.text_popup_1.toPlainText(), # Récupère le texte du champ text_popup_1
                     "text_popup_2" : self.ui.text_popup_2.toPlainText(), # Récupère le texte du champ text_popup_2
                     "text_popup_3" : self.ui.text_popup_3.toPlainText(), # Récupère le texte du champ text_popup_3
-                    "text_popup_4" : self.ui.text_popup_4.toPlainText(), # Récupère le texte du champ text_popup_4
+                    "text_popup_4" : self.ui.text_fermeture.toPlainText(), # Récupère le texte du champ text_popup_4
                 },
                 "timer" :{
                     "delai_fermeture" : self.ui.delai_fermeture.text(), # Etc etc... other champ, same principe
                     "duree_session" : self.ui.duree_session.text(),
-                    "timer_second_popup" : self.ui.timer_second_popup.text(),
-                    "timer_troisieme_popup" : self.ui.timer_troisieme_popup.text(),
-                    "timer_dernier_popup" : self.ui.timer_dernier_popup.text(),
+                    "timer_second_popup" : self.ui.timer_popup_1.text(),
+                    "timer_troisieme_popup" : self.ui.timer_popup_2.text(),
+                    "timer_dernier_popup" : self.ui.timer_popup_3.text(),
                 },
                 "fiche" :{
                     "fiche_log" : self.ui.fiche_log.isChecked(),
@@ -603,17 +603,17 @@ class MainWindow(QMainWindow):
         self.ui.titre_popup_1.setText(data.get("titre", {}).get("titre_popup_1", "")) # Récupère le texte du champ titre_popup_1
         self.ui.titre_popup_2.setText(data.get("titre", {}).get("titre_popup_2", "")) # Récupère le texte du champ titre_popup_2
         self.ui.titre_popup_3.setText(data.get("titre", {}).get("titre_popup_3", "")) # Vous avez compris le concept...
-        self.ui.titre_popup_4.setText(data.get("titre", {}).get("titre_popup_4", ""))
+        self.ui.titre_fermeture.setText(data.get("titre", {}).get("titre_fermeture", ""))
         self.ui.titre_reglement.setText(data.get("titre", {}).get("titre_reglement", ""))
         self.ui.text_popup_1.setPlainText(data.get("text", {}).get("text_popup_1", ""))
         self.ui.text_popup_2.setPlainText(data.get("text", {}).get("text_popup_2", ""))
         self.ui.text_popup_3.setPlainText(data.get("text", {}).get("text_popup_3", ""))
-        self.ui.text_popup_4.setPlainText(data.get("text", {}).get("text_popup_4", ""))
+        self.ui.text_fermeture.setPlainText(data.get("text", {}).get("text_fermeture", ""))
         self.ui.delai_fermeture.setText(data.get("timer", {}).get("delai_fermeture", ""))
         self.ui.duree_session.setText(data.get("timer", {}).get("duree_session", ""))
-        self.ui.timer_second_popup.setText(data.get("timer", {}).get("timer_second_popup", ""))
-        self.ui.timer_troisieme_popup.setText(data.get("timer", {}).get("timer_troisieme_popup", ""))
-        self.ui.timer_dernier_popup.setText(data.get("timer", {}).get("timer_dernier_popup", ""))
+        self.ui.timer_popup_1.setText(data.get("timer", {}).get("timer_popup_1", ""))
+        self.ui.timer_popup_2.setText(data.get("timer", {}).get("timer_popup_2", ""))
+        self.ui.timer_popup_3.setText(data.get("timer", {}).get("timer_popup_3", ""))
         self.ui.fiche_log.setChecked(data.get("fiche", {}).get("fiche_log", False))
         self.ui.fiche_activation.setChecked(data.get("fiche", {}).get("fiche_activation", False))
         self.ui.fiche_duree_session.setChecked(data.get("fiche", {}).get("fiche_duree_session", False))
