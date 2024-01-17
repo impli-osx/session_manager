@@ -44,6 +44,9 @@ class FicheWindow(QMainWindow):
         label_reglement.setBold(True)
         label_reglement.setPointSize(15)
         self.ui.label_reglement.setFont(label_reglement)
+        reglement = self.ui.reglement.font()
+        reglement.setBold(True)
+        self.ui.reglement.setFont(reglement)
         
         
          # Ajoute les champs à partir des fichiers JSON

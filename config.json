@@ -38,7 +38,7 @@
         "taille_police": "14"
     },
     "fermeture": {
-        "fermeture_session": "",
+        "fermeture_session": "D\u00e9connecter",
         "fermeture_popup": false
     }
 }

@@ -25,7 +25,7 @@ class AjouterChampDialog(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle("Ajouter des champs")
-        self.setFixedSize(350, 600)
+        self.resize(600, 600)
 
         self.mainLayout = QVBoxLayout(self)  # Créez un layout pour le widget principal
 
@@ -50,7 +50,7 @@ class AjouterChampDialog(QDialog):
         self.table.setHorizontalHeaderLabels(["Contenu du label", "Ajouter un champ de saisie"])
 
         # Ajustez la largeur des colonnes
-        self.table.setColumnWidth(0, 100)
+        self.table.setColumnWidth(0, 340)
         self.table.setColumnWidth(1, 200)
 
         self.layout.addWidget(self.table)
@@ -280,6 +280,32 @@ class ModifierOrdreDialog(QDialog):
         layout.addWidget(self.table)
         layout.addWidget(self.enregistrer_button)
 
+        self.showEvent = self.update_liste
+
+
+
+    def update_liste(self, event):
+        # Chargez les données de fiche.json
+        with open('fiche.json', 'r') as f:
+            self.champs = json.load(f)
+
+        # Triez les champs par le numéro d'ordre (qui est la clé du dictionnaire)
+        self.champs_sorted = sorted(self.champs.items(), key=lambda item: int(item[0]))
+
+        # Mettez à jour le nombre de lignes de la table
+        self.table.setRowCount(len(self.champs_sorted))
+
+        # Parcourez tous les champs
+        for i, (order, champ) in enumerate(self.champs_sorted):
+            # Ajoutez le label de l'élément à la première colonne
+            self.table.setItem(i, 0, QTableWidgetItem(champ.get("label_content", "")))
+
+            # Ajoutez un QLineEdit pour modifier le numéro d'ordre à la deuxième colonne
+            line_edit = QLineEdit(order)
+            self.table.setCellWidget(i, 1, line_edit)
+
+
+
     def enregistrer(self):
         # Collectez tous les nouveaux numéros d'ordre
         new_orders = [self.table.cellWidget(i, 1).text() for i in range(self.table.rowCount())]
@@ -365,12 +391,34 @@ class MainWindow(QMainWindow):
         # Connecte le signal clicked du bouton fiche_afficher à la méthode afficher_fiche_entree
         self.ui.fiche_afficher.clicked.connect(self.afficher_fiche_entree)
 
+        # Ajouter les choix à la QComboBox fermeture_session
+        self.ui.fermeture_session.addItem("Déconnecter")
+        self.ui.fermeture_session.addItem("Verrouiller")
+
+        # Connectez le signal currentTextChanged à une nouvelle méthode
+        self.ui.fermeture_session.currentTextChanged.connect(self.on_combobox_changed)
+
+        # Crée et affiche un QLabel avec un QMovie
+        self.movie = QMovie("loading.gif")  # Remplacez "loading.gif" par le chemin de votre fichier GIF
+        self.movie.setScaledSize(QSize(140, 80)) 
+        self.gpupdate_thread = QThread()
+        self.ui.retour_gpupdate.setMovie(self.movie)
+
+        # Arrête le QMovie et cache le QLabel lorsque le thread est terminé
+        self.gpupdate_thread.finished.connect(self.movie.stop)
+
         # Charge les données à partir du fichier JSON
         try:
             with open("config.json", "r") as f: # Ouvre le fichier JSON en lecture
                 data = json.load(f) # Charge les données dans un dictionnaire
         except FileNotFoundError: # Si le fichier n'est pas trouvé, crée un dictionnaire vide
             data = {}
+
+
+    # On affiche un message d'informations si l'utilisateur sélectionne "Verrouiller"
+    def on_combobox_changed(self, text):
+        if text == "Verrouiller":
+            QMessageBox.information(self, "Information", "Le verrouillage ne permettra pas de lancer le Session Manager automatiquement à la prochaine connexion de la session.\n\nVous devrez déconnecter la session manuellement pour que Session Manager fonctionne automatiquement.")
 
 
 
@@ -463,16 +511,14 @@ class MainWindow(QMainWindow):
         self.gpupdate_thread.finished.connect(self.gpupdate_thread.deleteLater)
 
         # Crée et affiche un QLabel avec un QMovie
-        self.movie = QMovie("loading.gif")  # Remplacez "loading.gif" par le chemin de votre fichier GIF
-        self.movie.setScaledSize(QSize(140, 80)) 
-        self.ui.retour_gpupdate.setMovie(self.movie)
-        self.movie.start()
-        #self.label.show()
+        #self.movie = QMovie("loading.gif")  # Remplacez "loading.gif" par le chemin de votre fichier GIF
+        #self.movie.setScaledSize(QSize(140, 80)) 
+        #self.ui.retour_gpupdate.setMovie(self.movie)
 
         # Arrête le QMovie et cache le QLabel lorsque le thread est terminé
-        self.gpupdate_thread.finished.connect(self.movie.stop)
-        #self.thread.finished.connect(self.label.hide)
-
+        #self.gpupdate_thread.finished.connect(self.movie.stop)
+        
+        self.movie.start()
         # Démarre le thread
         self.gpupdate_thread.start()  
         

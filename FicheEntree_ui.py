@@ -29,7 +29,7 @@ class Ui_Ficheentree(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.formLayoutWidget_2 = QWidget(self.centralwidget)
         self.formLayoutWidget_2.setObjectName(u"formLayoutWidget_2")
-        self.formLayoutWidget_2.setGeometry(QRect(550, 730, 445, 31))
+        self.formLayoutWidget_2.setGeometry(QRect(510, 730, 501, 31))
         self.formLayout_2 = QFormLayout(self.formLayoutWidget_2)
         self.formLayout_2.setObjectName(u"formLayout_2")
         self.formLayout_2.setContentsMargins(0, 0, 0, 0)
