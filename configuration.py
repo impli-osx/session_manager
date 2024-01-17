@@ -137,7 +137,7 @@ class SupprimerChampDialog(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle("Supprimer des champs")
-        self.setMinimumSize(250, 500)  # Définir une taille minimale pour la fenêtre
+        self.setMinimumSize(300, 500)  # Définir une taille minimale pour la fenêtre
 
         self.layout = QVBoxLayout(self)
 
@@ -145,6 +145,8 @@ class SupprimerChampDialog(QDialog):
         self.table = QTableWidget(0, 2)
         self.table.setHorizontalHeaderLabels(["Label", "Supprimer"])
         self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)  # Désactivez le défilement horizontal
+        self.table.setColumnWidth(0, 180)
+        self.table.setColumnWidth(1, 100)
         self.layout.addWidget(self.table)
 
         # Bouton pour confirmer la suppression
@@ -174,7 +176,7 @@ class SupprimerChampDialog(QDialog):
             # Prenez les deux premiers mots du contenu du label
             label_content = field['label_content']
             words = label_content.split()
-            label_text = ' '.join(words[:2])
+            label_text = ' '.join(words[:4])
 
             # Créez un QTableWidgetItem pour le label
             label_item = QTableWidgetItem(label_text)

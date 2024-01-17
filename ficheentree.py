@@ -1,13 +1,13 @@
 import json
 import os
+import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QMessageBox, QMainWindow, QSpacerItem, QSizePolicy, QLabel, QLineEdit
 from Ui_FicheEntree import Ui_Ficheentree
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QUrl, QMetaObject, pyqtSlot
 from PyQt6.QtGui import QFont
+from PyQt6.QtWebEngineWidgets import QWebEngineView
 
   
-            
-app = QApplication([])
 
 
 class FicheWindow(QMainWindow):
@@ -16,6 +16,7 @@ class FicheWindow(QMainWindow):
         self.ui = Ui_Ficheentree()
         self.ui.setupUi(self)
 
+        self.line_edits = []
 
         # Création d'un layout principal
         main_layout = QHBoxLayout(self)
@@ -23,18 +24,14 @@ class FicheWindow(QMainWindow):
         main_layout.addLayout(self.ui.formLayout_2)
         main_layout.addLayout(self.ui.formLayout_3)
         main_layout.addStretch(1)
-        
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
 
         # Désactive le bouton 'connecter' au démarrage
         self.ui.connecter.setEnabled(False)
-
         # Connecte le signal 'clicked' de la checkbox à la méthode 'toggleConnectButton'
         self.ui.reglement.clicked.connect(self.toggleConnectButton)
-        
         # Connecte le signal 'clicked' du bouton à la méthode 'close'
         self.ui.connecter.clicked.connect(self.close)
-        
         # Définit la police des labels titres en gras
         label_info = self.ui.label_informations.font()
         label_info.setBold(True)
@@ -47,13 +44,10 @@ class FicheWindow(QMainWindow):
         reglement = self.ui.reglement.font()
         reglement.setBold(True)
         self.ui.reglement.setFont(reglement)
-        
-        
-         # Ajoute les champs à partir des fichiers JSON
+        QMetaObject.invokeMethod(self, "load_pdf", Qt.ConnectionType.QueuedConnection)
+     
         self.ajouter_champs()
-
-
-
+     
     def ajouter_champs(self):
         # Vérifiez si le fichier fiche.json existe
         if not os.path.exists('fiche.json'):
@@ -83,6 +77,8 @@ class FicheWindow(QMainWindow):
                 line_edit = QLineEdit()
                 layout.addWidget(line_edit)
 
+                self.line_edits.append(line_edit)
+
             # Ajoute le QVBoxLayout au layout approprié
             if i % 2 == 0:
                 self.ui.form_gauche.addRow(layout)
@@ -98,17 +94,51 @@ class FicheWindow(QMainWindow):
 
 
     def closeEvent(self, event):
-        # Si la checkbox n'est pas cochée, ignore l'événement de fermeture
+        # Si la checkbox n'est pas cochée ou si un QLineEdit est vide, ignore l'événement de fermeture
         if self.ui.reglement.checkState() != Qt.CheckState.Checked:
+            QMessageBox.critical(self, "Erreur", "Vous devez accepter le règlement.")
             event.ignore()
+        else:
+            for line_edit in self.line_edits:
+                if line_edit.text().strip() == "":
+                    QMessageBox.critical(self, "Erreur", "Tous les champs doivent être remplis.")
+                    event.ignore()
+                    return
+
+        # Si la checkbox est cochée et que tous les QLineEdit sont remplis, laissez la fenêtre se fermer
+        event.accept()
+ 
+     
+     
+    
+    @pyqtSlot()   
+    def load_pdf(self):
+        # Obtenez le chemin du répertoire courant
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        # Construisez le chemin du fichier PDF
+        pdf_path = os.path.join(current_dir, "reglement.pdf")
+        if not os.path.exists(pdf_path):
+            print(f"Le fichier {pdf_path} n'existe pas.")
+            return
+        # Créez une instance de QWebEngineView
+        pdf_viewer = QWebEngineView()
+        # Chargez le PDF
+        pdf_viewer.load(QUrl.fromLocalFile(pdf_path))
+        # Ajoutez le QWebEngineView à votre layout
+        self.ui.form_reglement.addWidget(pdf_viewer)
+
 
 
 
 def main():
-    app = QApplication([])
+    app = QApplication(sys.argv)
     window = FicheWindow()
+    window.load_pdf()
     window.showFullScreen()
     app.exec()
 
 if __name__ == "__main__":
     main()
+    
+    
+    
