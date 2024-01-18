@@ -14,7 +14,7 @@
     },
     "timer": {
         "delai_fermeture": "10",
-        "duree_session": "2",
+        "duree_session": "3",
         "timer_popup_1": "1",
         "timer_popup_2": "1",
         "timer_popup_3": "4"

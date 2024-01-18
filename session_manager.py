@@ -17,6 +17,7 @@ class FicheEntreeWindow(FicheEntreeWindow):
     def closeEvent(self, event):
         timer_duree_session()
         timer_popup_1()
+        timer_popup_2()
         super().closeEvent(event)
 
 
@@ -64,10 +65,20 @@ def timer_popup_1():
     print("Le timer popup 1 est actif.")
 
 
+def timer_popup_2():
+    timer_2 = (int(config['timer']['duree_session']) - int(config['timer']['timer_popup_2']))
+    global timer2
+    timer2 = QTimer(app)
+    timer2.timeout.connect(lambda: creation_popup(config['titre']['titre_popup_2'], config['text']['text_popup_2'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture'])))
+    timer2.start(timer_2 * 60 * 1000)
+    print("Le timer popup 2 est actif.")
+
+
 
 def end_session():
     timer.stop()
     timer1.stop()
+    timer2.stop()
     # Fermer la session en fonction de la valeur de session_fermeture
     if config['fermeture']['fermeture_session'] == 'Déconnecter':
         # Déconnecter l'utilisateur
