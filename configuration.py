@@ -50,7 +50,7 @@ class AjouterChampDialog(QDialog):
         self.table.setHorizontalHeaderLabels(["Contenu du label", "Ajouter un champ de saisie"])
 
         # Ajustez la largeur des colonnes
-        self.table.setColumnWidth(0, 100)
+        self.table.setColumnWidth(0, 350)
         self.table.setColumnWidth(1, 200)
 
         self.layout.addWidget(self.table)
@@ -511,14 +511,6 @@ class MainWindow(QMainWindow):
         self.worker.output.connect(self.update_output)
         self.gpupdate_thread.started.connect(self.worker.run_gpupdate)
         self.gpupdate_thread.finished.connect(self.gpupdate_thread.deleteLater)
-
-        # Crée et affiche un QLabel avec un QMovie
-        #self.movie = QMovie("loading.gif")  # Remplacez "loading.gif" par le chemin de votre fichier GIF
-        #self.movie.setScaledSize(QSize(140, 80)) 
-        #self.ui.retour_gpupdate.setMovie(self.movie)
-
-        # Arrête le QMovie et cache le QLabel lorsque le thread est terminé
-        #self.gpupdate_thread.finished.connect(self.movie.stop)
         
         self.movie.start()
         # Démarre le thread
@@ -530,10 +522,61 @@ class MainWindow(QMainWindow):
         # Met à jour le QLabel avec le résultat de la commande gpupdate /force
         self.ui.retour_gpupdate.setText(text)
         
+       
+    # Fonction pour vérifier que les champs sont des entiers positifs
+    def verifier_entier_positif(self, nom_champ, valeur):
+        try:
+            valeur_int = int(valeur)
+            if valeur_int <= 0:
+                raise ValueError
+        except ValueError:
+            if nom_champ == "timer_popup_1":
+                nom_champ = "Le délai entre l'affichage de la première fenêtre et l'ouverture de la session"
+            elif nom_champ == "timer_popup_2":
+                nom_champ = "Le délai entre l'affichage de la deuxième fenêtre et la fermeture de la session"
+            elif nom_champ == "timer_popup_3":
+                nom_champ = "Le délai entre l'affichage de la fenêtre de fermeture et la fermeture de la session"
+            elif nom_champ == "duree_session":
+                nom_champ = "La durée de la session"
+            elif nom_champ == "delai_fermeture":
+                nom_champ = "Le délai de fermeture automatique des fenêtres"
+            elif nom_champ == "largeur_popup":
+                nom_champ = "La largeur des fenêtres"
+            elif nom_champ == "hauteur_popup":
+                nom_champ = "La hauteur des fenêtres"
+            elif nom_champ == "taille_police":
+                nom_champ = "La taille de la police"
+            QMessageBox.warning(self, "Erreur", f"{nom_champ} doit être un entier strictement positif.")
+            return False
+
+        return True
+       
         
         
     # Fonction pour enregistrer les données dans un fichier JSON
     def enregistrer_conf(self):
+        timer_popup_1 = int(self.ui.timer_popup_1.text())
+        timer_popup_2 = int(self.ui.timer_popup_2.text())
+        duree_session = int(self.ui.duree_session.text())
+        # Enregistre les données dans une liste de tuples
+        champs_a_verifier = [
+            ("timer_popup_1", timer_popup_1),
+            ("timer_popup_2", timer_popup_2),
+            ("timer_popup_3", self.ui.timer_popup_3.text()),
+            ("duree_session", duree_session),
+            ("delai_fermeture", self.ui.delai_fermeture.text()),
+            ("largeur_popup", self.ui.largeur_popup.text()),
+            ("hauteur_popup", self.ui.hauteur_popup.text()),
+            ("taille_police", self.ui.taille_police.text())
+        ]
+        # Vérifie que les champs sont des entiers positifs
+        for nom_champ, valeur in champs_a_verifier:
+            if not self.verifier_entier_positif(nom_champ, valeur):
+                return
+        # Vérifie que la somme des timers est inférieure à la durée de la session
+        if timer_popup_1 + timer_popup_2 > duree_session:
+            QMessageBox.warning(self, "Erreur", "La somme de du délai entre l'affichage de la première fenêtre et le délai entre l'affichage de la dernière fenêtre avant la fermeture de la session ne peut pas être supérieure à la durée de la session.")
+            return
         try:
             # Crée un dictionnaire avec les données de l'interface utilisateur
             # Les données sont stockées dans un dictionnaire imbriqué
@@ -542,7 +585,7 @@ class MainWindow(QMainWindow):
                     "titre_popup_1" : self.ui.titre_popup_1.text(), # Récupère le texte du champ titre_popup_1
                     "titre_popup_2" : self.ui.titre_popup_2.text(), # Récupère le texte du champ titre_popup_2
                     "titre_popup_3" : self.ui.titre_popup_3.text(), # Récupère le texte du champ titre_popup_3
-                    "titre_popup_4" : self.ui.titre_fermeture.text(), # Récupère le texte du champ titre_popup_4
+                    "titre_fermeture" : self.ui.titre_fermeture.text(), # Récupère le texte du champ titre_popup_4
                     "titre_reglement" : self.ui.titre_reglement.text(), # Récupère le texte du champ titre_reglement
                 },
                 "text" :{
@@ -554,9 +597,9 @@ class MainWindow(QMainWindow):
                 "timer" :{
                     "delai_fermeture" : self.ui.delai_fermeture.text(), # Etc etc... other champ, same principe
                     "duree_session" : self.ui.duree_session.text(),
-                    "timer_second_popup" : self.ui.timer_popup_1.text(),
-                    "timer_troisieme_popup" : self.ui.timer_popup_2.text(),
-                    "timer_dernier_popup" : self.ui.timer_popup_3.text(),
+                    "timer_popup_1" : self.ui.timer_popup_1.text(),
+                    "timer_popup_2" : self.ui.timer_popup_2.text(),
+                    "timer_popup_3" : self.ui.timer_popup_3.text(),
                 },
                 "fiche" :{
                     "fiche_log" : self.ui.fiche_log.isChecked(),
