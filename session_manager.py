@@ -2,10 +2,15 @@ import json
 import threading
 import time
 import sys
+from functools import partial
 from PyQt6.QtWidgets import QApplication, QMessageBox, QMainWindow, QDialog, QLabel, QPushButton, QVBoxLayout
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import QTimer, QCoreApplication, QTime
 from ficheentree import FicheWindow as FicheEntreeWindow
+from PyQt6.QtCore import QTimer
+from PyQt6.QtWidgets import QApplication
+import json
+import sys
 
 
 # Charger le fichier de configuration
@@ -14,10 +19,14 @@ with open('config.json') as f:
     
     
 class FicheEntreeWindow(FicheEntreeWindow):
-    def closeEvent(self, event):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         timer_duree_session()
         timer_popup_1()
         timer_popup_2()
+        
+        
+    def closeEvent(self, event):
         super().closeEvent(event)
 
 
@@ -58,18 +67,27 @@ def timer_duree_session():
 
 def timer_popup_1():
     timer_1 = int(config['timer']['timer_popup_1'])
-    global timer1 
+    global timer1
     timer1 = QTimer(app)
-    timer1.timeout.connect(lambda: creation_popup(config['titre']['titre_popup_1'], config['text']['text_popup_1'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture'])))
+    timer1.stop()  # Arrêter le timer avant de le configurer
+    try:
+        timer1.timeout.disconnect()  # Déconnecter tous les slots connectés au signal timeout
+    except TypeError:
+        pass  # Ignorer l'erreur si aucun slot n'est connecté
+    timer1.timeout.connect(partial(creation_popup, config['titre']['titre_popup_1'], config['text']['text_popup_1'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture'])))
     timer1.start(timer_1 * 60 * 1000)
     print("Le timer popup 1 est actif.")
-
 
 def timer_popup_2():
     timer_2 = (int(config['timer']['duree_session']) - int(config['timer']['timer_popup_2']))
     global timer2
     timer2 = QTimer(app)
-    timer2.timeout.connect(lambda: creation_popup(config['titre']['titre_popup_2'], config['text']['text_popup_2'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture'])))
+    timer2.stop()  # Arrêter le timer avant de le configurer
+    try:
+        timer2.timeout.disconnect()  # Déconnecter tous les slots connectés au signal timeout
+    except TypeError:
+        pass  # Ignorer l'erreur si aucun slot n'est connecté
+    timer2.timeout.connect(partial(creation_popup, config['titre']['titre_popup_2'], config['text']['text_popup_2'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture'])))
     timer2.start(timer_2 * 60 * 1000)
     print("Le timer popup 2 est actif.")
 
