@@ -14,10 +14,10 @@
     },
     "timer": {
         "delai_fermeture": "10",
-        "duree_session": "3",
-        "timer_popup_1": "1",
-        "timer_popup_2": "1",
-        "timer_popup_3": "4"
+        "duree_session": "2",
+        "timer_popup_1": "30",
+        "timer_popup_2": "20",
+        "timer_popup_3": "5"
     },
     "fiche": {
         "fiche_log": true,
