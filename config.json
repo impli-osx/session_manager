@@ -16,8 +16,8 @@
         "delai_fermeture": "10",
         "duree_session": "2",
         "timer_popup_1": "30",
-        "timer_popup_2": "20",
-        "timer_popup_3": "5"
+        "timer_popup_2": "30",
+        "timer_popup_3": "10"
     },
     "fiche": {
         "fiche_log": true,

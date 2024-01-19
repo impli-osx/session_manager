@@ -99,12 +99,13 @@ def timer_popup_2():
     timer2.stop()  # Arrêter le timer avant de le configurer
     creation_popup_2 = partial(creation_popup, config['titre']['titre_popup_2'], config['text']['text_popup_2'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture']))
     timer2.timeout.connect(creation_popup_2)
+    timer2.timeout.connect(timer_fermeture)
     timer2.timeout.connect(timer2.stop)
     timer2.start(timer_2 * 1000) # Convertir les secondes en millisecondes
     print("Le timer popup 2 est actif.")
     
 def timer_fermeture():
-    timer_fermeture = timer_2 - int(config['timer']['delai_fermeture'])
+    timer_fermeture = (timer_2 / 2) - int(config['timer']['timer_popup_3'])
     print(f"Timer fermeture : {timer_fermeture}")
     global timerfin
     timerfin = QTimer(app)
