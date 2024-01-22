@@ -10,7 +10,9 @@ from PyQt6.QtWebEngineWidgets import QWebEngineView
 
   
 
-
+#
+# TODO : rendre  la fenêtre responsive (gl)
+#
 class FicheWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -33,19 +35,7 @@ class FicheWindow(QMainWindow):
         self.ui.reglement.clicked.connect(self.toggleConnectButton)
         # Connecte le signal 'clicked' du bouton à la méthode 'close'
         self.ui.connecter.clicked.connect(self.close)
-        # Définit la police des labels titres en gras
-        label_info = self.ui.label_informations.font()
-        label_info.setBold(True)
-        label_info.setPointSize(15)
-        self.ui.label_informations.setFont(label_info)
-        label_reglement = self.ui.label_reglement.font()
-        label_reglement.setBold(True)
-        label_reglement.setPointSize(15)
-        self.ui.label_reglement.setFont(label_reglement)
-        reglement = self.ui.reglement.font()
-        reglement.setBold(True)
-        self.ui.reglement.setFont(reglement)
-        
+        # Charge le PDF
         self.load_pdf()
      
         self.ajouter_champs()
@@ -148,13 +138,20 @@ class FicheWindow(QMainWindow):
         widget = QWidget()
         widget.setLayout(vbox)
 
+        # Définissez la politique de taille du QWidget à Expanding
+        widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
         # Créez un QScrollArea et définissez son layout
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setWidget(widget)
 
+        # Définissez la politique de taille du QScrollArea à Expanding
+        scroll.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
         # Ajoutez le QScrollArea à votre layout
         self.ui.form_reglement.addWidget(scroll)
+
 
 
 

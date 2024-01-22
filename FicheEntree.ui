@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1482</width>
-    <height>866</height>
+    <width>1535</width>
+    <height>913</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -20,9 +26,9 @@
    <widget class="QWidget" name="formLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>510</x>
+      <x>460</x>
       <y>730</y>
-      <width>501</width>
+      <width>615</width>
       <height>31</height>
      </rect>
     </property>
@@ -32,6 +38,12 @@
      </property>
      <item row="0" column="0" colspan="2">
       <widget class="QCheckBox" name="reglement">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="text">
         <string>J'ai lu et j'accepte les conditions du règlement intérieur de l'espace numérique</string>
        </property>
@@ -51,6 +63,12 @@
     <layout class="QFormLayout" name="formLayout_3">
      <item row="0" column="1">
       <widget class="QPushButton" name="connecter">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="text">
         <string>Ouvrir la session</string>
        </property>
@@ -83,14 +101,26 @@
    <widget class="QLabel" name="label_informations">
     <property name="geometry">
      <rect>
-      <x>200</x>
+      <x>140</x>
       <y>30</y>
       <width>281</width>
       <height>51</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>13</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="text">
      <string>Vos informations</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="textInteractionFlags">
+     <set>Qt::NoTextInteraction</set>
     </property>
    </widget>
    <widget class="QWidget" name="formLayoutWidget_7">
@@ -107,14 +137,23 @@
    <widget class="QLabel" name="label_reglement">
     <property name="geometry">
      <rect>
-      <x>910</x>
+      <x>860</x>
       <y>40</y>
       <width>521</width>
       <height>41</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="text">
      <string>Règlement intérieur de l'espace numérique</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
   </widget>
@@ -123,7 +162,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1482</width>
+     <width>1535</width>
      <height>22</height>
     </rect>
    </property>

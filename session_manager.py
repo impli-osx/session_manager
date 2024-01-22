@@ -3,14 +3,15 @@ import threading
 import time
 import sys
 from functools import partial
-from PyQt6.QtWidgets import QApplication, QMessageBox, QMainWindow, QDialog, QLabel, QPushButton, QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QMessageBox, QMainWindow, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy
 from PyQt6.QtGui import QFont
-from PyQt6.QtCore import QTimer, QCoreApplication, QTime
+from PyQt6.QtCore import QTimer, QCoreApplication, QTime, Qt
 from ficheentree import FicheWindow as FicheEntreeWindow
 from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QApplication
 import json
 import sys
+from PyQt6.QtCore import Qt
 
 
 # Charger le fichier de configuration
@@ -25,31 +26,51 @@ class FicheEntreeWindow(FicheEntreeWindow):
     def closeEvent(self, event):
         super().closeEvent(event)
         timer_duree_session()
+        timer_popup_2()
+        timer_fermeture()
 
 
 
-def creation_popup(titre, texte, largeur, hauteur, police, taille_police, delai, fullscreen=False):
+def creation_popup(titre, texte, largeur, hauteur, police, taille_police, delai, fullscreen=False,use_timer=True):
     print(f"Appel fonction popup : {titre}, {texte}, {largeur}, {hauteur}, {police}, {taille_police}, {delai}")
     global fenetre
     fenetre = QDialog()
     fenetre.resize(largeur, hauteur)
     fenetre.setWindowTitle(titre)
     layout = QVBoxLayout(fenetre)
+    
+    if fullscreen:
+        # Ajouter un QSpacerItem en haut pour centrer le texte
+        layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+    
     label = QLabel(texte)
     font = QFont(police, taille_police)
     label.setFont(font)
+
+    if fullscreen:
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
     layout.addWidget(label)
-    bouton = QPushButton("J'ai compris")
-    bouton.clicked.connect(fenetre.close)
-    layout.addWidget(bouton)
+
+    if fullscreen:
+        # Ajouter un QSpacerItem en bas pour centrer le texte
+        layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+    
+    if use_timer:
+        bouton = QPushButton("J'ai compris")
+        bouton.clicked.connect(fenetre.close)
+        layout.addWidget(bouton)
+        
     fenetre.setLayout(layout)
     fenetre.show()
-    QTimer.singleShot(delai * 1000, fenetre.close)
+    if use_timer:
+        QTimer.singleShot(delai * 1000, fenetre.close)
     if fullscreen:
         fenetre.showFullScreen()
     else:
         fenetre.show()
     print("Popup créée.")
+
 
 
 def timer_duree_session():
@@ -69,7 +90,6 @@ def timer_duree_session():
 
 
     
-    
 def timer_popup_1():
     timer_1 = int(config['timer']['timer_popup_1'])
     global timer1
@@ -78,7 +98,7 @@ def timer_popup_1():
     timer1.stop()  # Arrêter le timer avant de le configurer
     creation_popup_1 = partial(creation_popup, config['titre']['titre_popup_1'], config['text']['text_popup_1'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture']))
     timer1.timeout.connect(creation_popup_1)
-    timer1.timeout.connect(timer_popup_2)
+    #timer1.timeout.connect(timer_popup_2)
     timer1.timeout.connect(timer1.stop)
     #timer1.start(timer_1 * 60 * 1000) # Convertir les minutes en millisecondes
     timer1.start(timer_1 * 1000) # DEBUG
@@ -87,33 +107,29 @@ def timer_popup_1():
 
 
 def timer_popup_2():
-    duree_session = int(config['timer']['duree_session']) * 60
-    timer_popup_2 = int(config['timer']['timer_popup_2'])
-    timer_popup_1 = int(config['timer']['timer_popup_1'])
-    # Calculer le délai pour que timer_popup_2 se termine 20 secondes avant la fin de duree_session
     global timer_2
-    timer_2 = duree_session - timer_popup_1 - timer_popup_2
+    timer_2 = (int(config['timer']['duree_session']) * 60) - int(config['timer']['timer_popup_2'])
     print(f"Timer popup 2 : {timer_2}")
     global timer2
     timer2 = QTimer(app)
     timer2.stop()  # Arrêter le timer avant de le configurer
     creation_popup_2 = partial(creation_popup, config['titre']['titre_popup_2'], config['text']['text_popup_2'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture']))
     timer2.timeout.connect(creation_popup_2)
-    timer2.timeout.connect(timer_fermeture)
+    #timer2.timeout.connect(timer_fermeture)
     timer2.timeout.connect(timer2.stop)
     timer2.start(timer_2 * 1000) # Convertir les secondes en millisecondes
     print("Le timer popup 2 est actif.")
     
 def timer_fermeture():
-    timer_fermeture = (timer_2 / 2) - int(config['timer']['timer_popup_3'])
-    print(f"Timer fermeture : {timer_fermeture}")
+    timerfermeture = (int(config['timer']['duree_session']) * 60) - int(config['timer']['timer_popup_3'])
+    print(f"Timer fermeture : {timerfermeture}")
     global timerfin
     timerfin = QTimer(app)
     timerfin.stop()  # Arrêter le timer avant de le configurer
-    creation_fin = partial(creation_popup, config['titre']['titre_popup_3'], config['text']['text_popup_3'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture']))
+    creation_fin = partial(creation_popup, config['titre']['titre_popup_3'], config['text']['text_popup_3'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture']), fullscreen=True, use_timer=False)
     timerfin.timeout.connect(creation_fin)
     timerfin.timeout.connect(timerfin.stop)
-    timerfin.start(timer_fermeture * 1000)
+    timerfin.start(timerfermeture * 1000)
     
     
 def end_session():
