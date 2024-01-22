@@ -1,17 +1,13 @@
 import json
-import threading
-import time
 import sys
 from functools import partial
-from PyQt6.QtWidgets import QApplication, QMessageBox, QMainWindow, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy
+from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy
 from PyQt6.QtGui import QFont
-from PyQt6.QtCore import QTimer, QCoreApplication, QTime, Qt
+from PyQt6.QtCore import QTimer, Qt
 from ficheentree import FicheWindow as FicheEntreeWindow
-from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QApplication
 import json
 import sys
-from PyQt6.QtCore import Qt
 
 
 # Charger le fichier de configuration
@@ -31,7 +27,7 @@ class FicheEntreeWindow(FicheEntreeWindow):
 
 
 
-def creation_popup(titre, texte, largeur, hauteur, police, taille_police, delai, fullscreen=False,use_timer=True):
+def creation_popup(titre, texte, largeur, hauteur, police, taille_police, delai, fullscreen=False, use_timer=True):
     print(f"Appel fonction popup : {titre}, {texte}, {largeur}, {hauteur}, {police}, {taille_police}, {delai}")
     global fenetre
     fenetre = QDialog()
