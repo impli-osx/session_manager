@@ -61,34 +61,35 @@ class FicheEntreeWindow(FicheEntreeWindow):
             adjusted_width = (max_length + 2)
             sheet.column_dimensions[column[0].column_letter].width = adjusted_width
 
+
+
     def save_to_excel(self, data):
-        data_df = pd.DataFrame(data, index=[0])
         current_year = str(datetime.now().year)
         with open('fiche.json', 'r') as f:
             champs = json.load(f)
         ordered_keys = [champ.get("label_content", "").replace(" ", "") for order, champ in sorted(champs.items(), key=lambda item: int(item[0]))]
         ordered_keys.append("ChoixDuréeSession")
-        data_df = data_df.reindex(columns=ordered_keys)
-        data_df = data_df.fillna("")
-        
+
         if not os.path.isfile('data.xlsx'):
+            data_df = pd.DataFrame(data, columns=ordered_keys)
             data_df.to_excel('data.xlsx', sheet_name=current_year, index=False)
         else:
             book = load_workbook('data.xlsx')
             if current_year in book.sheetnames:
-                start_row = book[current_year].max_row + 1
-                for index, row in data_df.iterrows():
-                    for col_num, value in enumerate(row.values, start=1):
-                        book[current_year].cell(row=start_row + index, column=col_num, value=value)
+                data_df = pd.read_excel('data.xlsx', sheet_name=current_year, engine='openpyxl')
+                new_data_df = pd.DataFrame(data, columns=ordered_keys)
+                new_data_df = new_data_df.reindex(columns=data_df.columns)  # Reorder the columns to match the existing data
+                data_df = pd.concat([data_df, new_data_df])
             else:
-                data_df.to_excel('data.xlsx', sheet_name=current_year, index=False)
-            book.save('data.xlsx')
-        
+                data_df = pd.DataFrame(data, columns=ordered_keys)
+
+            with pd.ExcelWriter('data.xlsx', engine='openpyxl', mode='a') as writer:
+                data_df.to_excel(writer, index=False, sheet_name=current_year)
+
         book = load_workbook("data.xlsx")
         sheet = book[current_year]
         self.adjust_column_widths(sheet)
         book.save("data.xlsx")
-    
     
     
     # On déclenche les timers à la fermeture de la fenêtre FicheEntreeWindow
@@ -164,7 +165,7 @@ def timer_duree_session():
 
     
 def timer_popup_1():
-    timer_1 = int(config['timer']['timer_popup_1'])
+    timer_1 = int(config['timer']['timer_popup_1']) * 60
     global timer1
     print(f"Timer popup 1 : {timer_1}")
     timer1 = QTimer(app)
@@ -181,7 +182,7 @@ def timer_popup_1():
 
 def timer_popup_2():
     global timer_2
-    timer_2 = (int(config['timer']['duree_session']) * 60) - int(config['timer']['timer_popup_2'])
+    timer_2 = (int(config['timer']['duree_session']) * 60) - (int(config['timer']['timer_popup_2']) * 60)
     print(f"Timer popup 2 : {timer_2}")
     global timer2
     timer2 = QTimer(app)

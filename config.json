@@ -17,7 +17,7 @@
         "duree_session": "60",
         "timer_popup_1": "45",
         "timer_popup_2": "15",
-        "timer_popup_3": "10"
+        "timer_popup_3": "120"
     },
     "fiche": {
         "fiche_log": true,

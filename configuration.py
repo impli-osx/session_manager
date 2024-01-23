@@ -345,6 +345,9 @@ class MainWindow(QMainWindow):
         self.ui.fiche_30min.stateChanged.connect(self.check_duration_options)
         self.ui.fiche_1h.stateChanged.connect(self.check_duration_options)
         self.ui.fiche_duree_session.stateChanged.connect(self.fiche_duree_session_changed)
+        self.ui.fiche_15min.stateChanged.connect(self.update_fiche_duree_session)
+        self.ui.fiche_30min.stateChanged.connect(self.update_fiche_duree_session)
+        self.ui.fiche_1h.stateChanged.connect(self.update_fiche_duree_session)
         # Charge les données à partir du fichier JSON
         try:
             with open("config.json", "r") as f: # Ouvre le fichier JSON en lecture
@@ -373,13 +376,23 @@ class MainWindow(QMainWindow):
 
 
 
-    # Fonction pour corréler l'état de la case à cocher "Durée de la session" avec les cases à cocher "15 min", "30 min" et "1h"
+    # Fonction pour décocher et désactiver la checkbox "Durée de la session" si aucune des cases à cocher "15 min", "30 min" et "1h" n'est cochée
     def check_duration_options(self):
         if not self.ui.fiche_15min.isChecked() and not self.ui.fiche_30min.isChecked() and not self.ui.fiche_1h.isChecked():
             self.ui.fiche_duree_session.setChecked(False)
             self.ui.fiche_duree_session.setEnabled(False)
         else:
             self.ui.fiche_duree_session.setEnabled(True)
+
+
+    # Fonction pour cocher automatiquement la checkbox "Durée de la session" si une des cases à cocher "15 min", "30 min" et "1h" est cochée
+    def update_fiche_duree_session(self):
+        if self.ui.fiche_15min.isChecked() or self.ui.fiche_30min.isChecked() or self.ui.fiche_1h.isChecked():
+            self.ui.fiche_duree_session.setChecked(True)
+            self.ui.fiche_duree_session.setEnabled(True)
+        else:
+            self.ui.fiche_duree_session.setChecked(False)
+            self.ui.fiche_duree_session.setEnabled(False)
 
 
 
