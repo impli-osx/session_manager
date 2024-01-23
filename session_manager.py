@@ -1,13 +1,10 @@
 import json
-import threading
-import time
 import sys
 from functools import partial
-from PyQt6.QtWidgets import QApplication, QMessageBox, QMainWindow, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy, QLineEdit
+from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy
 from PyQt6.QtGui import QFont
-from PyQt6.QtCore import QTimer, QCoreApplication, QTime, Qt
+from PyQt6.QtCore import QTimer, Qt
 from ficheentree import FicheWindow as FicheEntreeWindow
-from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QApplication
 import json
 import sys
@@ -64,36 +61,29 @@ class FicheEntreeWindow(FicheEntreeWindow):
 
 
 
-def creation_popup(titre, texte, largeur, hauteur, police, taille_police, delai, fullscreen=False,use_timer=True):
+def creation_popup(titre, texte, largeur, hauteur, police, taille_police, delai, fullscreen=False, use_timer=True):
     print(f"Appel fonction popup : {titre}, {texte}, {largeur}, {hauteur}, {police}, {taille_police}, {delai}")
     global fenetre
     fenetre = QDialog()
     fenetre.resize(largeur, hauteur)
     fenetre.setWindowTitle(titre)
     layout = QVBoxLayout(fenetre)
-    
     if fullscreen:
         # Ajouter un QSpacerItem en haut pour centrer le texte
         layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
-    
     label = QLabel(texte)
     font = QFont(police, taille_police)
     label.setFont(font)
-
     if fullscreen:
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
     layout.addWidget(label)
-
     if fullscreen:
         # Ajouter un QSpacerItem en bas pour centrer le texte
         layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
-    
     if use_timer:
         bouton = QPushButton("J'ai compris")
         bouton.clicked.connect(fenetre.close)
-        layout.addWidget(bouton)
-        
+        layout.addWidget(bouton) 
     fenetre.setLayout(layout)
     fenetre.show()
     if use_timer:
@@ -153,6 +143,8 @@ def timer_popup_2():
     timer2.start(timer_2 * 1000) # Convertir les secondes en millisecondes
     print("Le timer popup 2 est actif.")
     
+    
+    
 def timer_fermeture():
     timerfermeture = (int(config['timer']['duree_session']) * 60) - int(config['timer']['timer_popup_3'])
     print(f"Timer fermeture : {timerfermeture}")
@@ -163,6 +155,7 @@ def timer_fermeture():
     timerfin.timeout.connect(creation_fin)
     timerfin.timeout.connect(timerfin.stop)
     timerfin.start(timerfermeture * 1000)
+    
     
     
 def end_session():
