@@ -23,40 +23,28 @@ from ficheentree import FicheWindow as FicheEntreeWindow # Importe la classe Ui_
 class AjouterChampDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-
         self.setWindowTitle("Ajouter des champs")
         self.resize(600, 600)
-
         self.mainLayout = QVBoxLayout(self)  # Créez un layout pour le widget principal
-
         self.scrollArea = QScrollArea(self)  # Créez une QScrollArea
         self.scrollArea.setWidgetResizable(True)  # Permet au widget de se redimensionner
         self.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)  # Désactive le défilement horizontal
-
         self.scrollAreaContent = QWidget()  # Créez un widget pour le contenu de la zone de défilement
         self.layout = QVBoxLayout(self.scrollAreaContent)  # Ajoutez un layout à ce widget
-
         self.layout.addWidget(QLabel("Nombre de champs à ajouter :"))
         self.number_of_fields_line_edit = QLineEdit(self)
         self.layout.addWidget(self.number_of_fields_line_edit)
-
         self.enregistrer_button = QPushButton("Enregistrer", self)
         self.enregistrer_button.clicked.connect(self.enregistrer)
         self.layout.addWidget(self.enregistrer_button)
-
         self.fields = []  # Liste pour stocker les widgets
-
         self.table = QTableWidget(0, 2)  # Créez un QTableWidget avec 0 lignes et 2 colonnes
         self.table.setHorizontalHeaderLabels(["Contenu du label", "Ajouter un champ de saisie"])
-
         # Ajustez la largeur des colonnes
         self.table.setColumnWidth(0, 350)
         self.table.setColumnWidth(1, 200)
-
         self.layout.addWidget(self.table)
-
         self.scrollArea.setWidget(self.scrollAreaContent)  # Définissez le widget de la zone de défilement
-
         self.mainLayout.addWidget(self.scrollArea)  # Ajoutez la QScrollArea au layout principal
 
 
@@ -66,13 +54,11 @@ class AjouterChampDialog(QDialog):
         if not self.number_of_fields_line_edit.text():
             QMessageBox.critical(self, "Erreur", "Veuillez entrer le nombre de champs à ajouter.")
             return
-
         try:
             number_of_fields = int(self.number_of_fields_line_edit.text())
         except ValueError:
             QMessageBox.critical(self, "Erreur", "Veuillez entrer un nombre valide.")
             return
-
         for i in range(number_of_fields):
             self.table.insertRow(self.table.rowCount())  # Ajoutez une nouvelle ligne à la fin du tableau
             label_content_line_edit = QLineEdit(self)
@@ -80,12 +66,10 @@ class AjouterChampDialog(QDialog):
             add_line_edit_checkbox = QCheckBox("Ajouter un champ de saisie", self)
             self.table.setCellWidget(i, 1, add_line_edit_checkbox)
             self.fields.append((label_content_line_edit, add_line_edit_checkbox))
-
         # Vérifiez si le bouton "Enregistrer les champs" existe déjà
         if hasattr(self, 'enregistrer_button'):
             self.layout.removeWidget(self.enregistrer_button)
             self.enregistrer_button.deleteLater()
-
         self.enregistrer_button = QPushButton("Enregistrer les champs", self)
         self.enregistrer_button.clicked.connect(self.enregistrer_champs)
         self.layout.addWidget(self.enregistrer_button)
@@ -94,34 +78,26 @@ class AjouterChampDialog(QDialog):
 
     def enregistrer_champs(self):
         fields = {}
-
         # Vérifiez si le fichier fiche.json existe déjà
         if os.path.exists('fiche.json'):
             with open('fiche.json', 'r') as f:
                 fields = json.load(f)
-
         # Parcourez la liste et récupérez les informations de chaque champ
         for i, (label_content_line_edit, add_line_edit_checkbox) in enumerate(self.fields):
             label_content = label_content_line_edit.text()
             add_line_edit = add_line_edit_checkbox.isChecked()
-
             # Vérifiez si le champ est vide
             if not label_content.strip():
                 QMessageBox.critical(self, "Erreur", "Veuillez remplir tous les champs avant d'enregistrer.")
                 return
-
             display_order = str(max([int(k) for k in fields.keys()], default=0) + 1)
-
             # Enregistrez les données dans un dictionnaire
             fields[display_order] = {"label_content": label_content, "add_line_edit": add_line_edit}
-
         # Triez les champs par ordre d'affichage
         fields = dict(sorted(fields.items()))
-
         # Enregistrez les champs dans votre fichier JSON
         with open('fiche.json', 'w') as f:
             json.dump(fields, f)
-
         self.close()
 
 
@@ -133,14 +109,12 @@ class AjouterChampDialog(QDialog):
 
 
 class SupprimerChampDialog(QDialog):
+    
     def __init__(self, parent=None):
         super().__init__(parent)
-
         self.setWindowTitle("Supprimer des champs")
         self.setMinimumSize(300, 500)  # Définir une taille minimale pour la fenêtre
-
         self.layout = QVBoxLayout(self)
-
         # Crée un QTableWidget pour afficher les éléments
         self.table = QTableWidget(0, 2)
         self.table.setHorizontalHeaderLabels(["Label", "Supprimer"])
@@ -148,81 +122,68 @@ class SupprimerChampDialog(QDialog):
         self.table.setColumnWidth(0, 180)
         self.table.setColumnWidth(1, 100)
         self.layout.addWidget(self.table)
-
         # Bouton pour confirmer la suppression
         self.confirm_button = QPushButton("Confirmer", self)
         self.confirm_button.clicked.connect(self.supprimer_champs)
         self.layout.addWidget(self.confirm_button)
-
         self.showEvent = self.update_liste
-
         self.update_liste()
+
+
 
     def update_liste(self, event=None):
         # Supprime les anciennes lignes
         self.table.setRowCount(0)
-
         # Vérifiez si le fichier fiche.json existe
         if not os.path.exists('fiche.json'):
             QMessageBox.critical(self, "Erreur", "Le fichier fiche.json n'existe pas.")
             return
-
         # Chargez les données de fiche.json
         with open('fiche.json', 'r') as f:
             fields = json.load(f)
-
         # Créez une ligne pour chaque entrée
         for field in fields.values():
             # Prenez les deux premiers mots du contenu du label
             label_content = field['label_content']
             words = label_content.split()
             label_text = ' '.join(words[:4])
-
             # Créez un QTableWidgetItem pour le label
             label_item = QTableWidgetItem(label_text)
             label_item.setFlags(label_item.flags() & ~Qt.ItemFlag.ItemIsEditable)  # Rend l'item non éditable
-
             # Créez un QCheckBox pour la case à cocher
             checkbox = QCheckBox()
-
             # Ajoutez une nouvelle ligne à la table
             row = self.table.rowCount()
             self.table.insertRow(row)
             self.table.setItem(row, 0, label_item)
             self.table.setCellWidget(row, 1, checkbox)
 
+
+
     def supprimer_champs(self):
         # Créez une liste pour stocker les labels à supprimer
         labels_to_remove = []
-
         # Parcourez les lignes de la table
         for row in range(self.table.rowCount()):
             # Obtenez la case à cocher pour cette ligne
             checkbox = self.table.cellWidget(row, 1)
-
             # Si la case à cocher est cochée, ajoutez le label à la liste des labels à supprimer
             if checkbox.isChecked():
                 label_item = self.table.item(row, 0)
                 labels_to_remove.append(label_item.text())
-
         # Maintenant, vous pouvez utiliser labels_to_remove pour supprimer les champs correspondants
         with open('fiche.json', 'r') as f:
             fields = json.load(f)
-
         keys_to_remove = []
-
         # Parcourez le dictionnaire pour trouver les clés correspondant aux labels à supprimer
         for key, value in fields.items():
             if value['label_content'] in labels_to_remove:
                 keys_to_remove.append(key)
-
         # Supprimez les entrées correspondant aux clés à supprimer
         for key in keys_to_remove:
             del fields[key]
-
         with open('fiche.json', 'w') as f:
             json.dump(fields, f)
-
         # Ferme la fenêtre
         self.close()
         self.update_liste()
@@ -230,58 +191,45 @@ class SupprimerChampDialog(QDialog):
 
 
 class ModifierOrdreDialog(QDialog):
+    
     def __init__(self, parent=None):
         super().__init__(parent)
-
         # Chargez les données de fiche.json
         with open('fiche.json', 'r') as f:
             self.champs = json.load(f)
-            
         self.setWindowTitle("Modifier l'ordre des champs")
-        
         # Triez les champs par le numéro d'ordre (qui est la clé du dictionnaire)
         self.champs_sorted = sorted(self.champs.items(), key=lambda item: int(item[0]))
-
         # Créez un QTableWidget pour afficher les éléments
         self.table = QTableWidget(len(self.champs_sorted), 2)
         self.table.setHorizontalHeaderLabels(["Label", "Numéro d'ordre"])
-
         # Parcourez tous les champs
         for i, (order, champ) in enumerate(self.champs_sorted):
             # Ajoutez le label de l'élément à la première colonne
             self.table.setItem(i, 0, QTableWidgetItem(champ.get("label_content", "")))
-
             # Ajoutez un QLineEdit pour modifier le numéro d'ordre à la deuxième colonne
             line_edit = QLineEdit(order)
             self.table.setCellWidget(i, 1, line_edit)
-
         # Créez un bouton pour enregistrer les modifications
         self.enregistrer_button = QPushButton('Enregistrer')
         self.enregistrer_button.clicked.connect(self.enregistrer)
-
         # Augmentez la taille de la fenêtre
         self.table.setFixedSize(240, 400)
-
         # Créez un QScrollArea et ajoutez le QTableWidget à celui-ci
         scroll_area = QScrollArea()
         scroll_area.setWidget(self.table)
-
         # Ajoutez le QScrollArea et le bouton à la fenêtre
         layout = QVBoxLayout(self)
         layout.addWidget(scroll_area)
         layout.addWidget(self.enregistrer_button)
-
         self.table.setCellWidget(i, 1, line_edit)
-
         # Créez un bouton pour enregistrer les modifications
         self.enregistrer_button = QPushButton('Enregistrer')
         self.enregistrer_button.clicked.connect(self.enregistrer)
-
         # Ajoutez le QTableWidget et le bouton à la fenêtre
         layout = QVBoxLayout(self)
         layout.addWidget(self.table)
         layout.addWidget(self.enregistrer_button)
-
         self.showEvent = self.update_liste
 
 
@@ -290,18 +238,14 @@ class ModifierOrdreDialog(QDialog):
         # Chargez les données de fiche.json
         with open('fiche.json', 'r') as f:
             self.champs = json.load(f)
-
         # Triez les champs par le numéro d'ordre (qui est la clé du dictionnaire)
         self.champs_sorted = sorted(self.champs.items(), key=lambda item: int(item[0]))
-
         # Mettez à jour le nombre de lignes de la table
         self.table.setRowCount(len(self.champs_sorted))
-
         # Parcourez tous les champs
         for i, (order, champ) in enumerate(self.champs_sorted):
             # Ajoutez le label de l'élément à la première colonne
             self.table.setItem(i, 0, QTableWidgetItem(champ.get("label_content", "")))
-
             # Ajoutez un QLineEdit pour modifier le numéro d'ordre à la deuxième colonne
             line_edit = QLineEdit(order)
             self.table.setCellWidget(i, 1, line_edit)
@@ -311,25 +255,20 @@ class ModifierOrdreDialog(QDialog):
     def enregistrer(self):
         # Collectez tous les nouveaux numéros d'ordre
         new_orders = [self.table.cellWidget(i, 1).text() for i in range(self.table.rowCount())]
-
         # Vérifiez si la liste contient des doublons
         if len(new_orders) != len(set(new_orders)):
             QMessageBox.critical(self, "Erreur", "Le numéro d'ordre est déjà utilisé.")
             return
-
         # Créez un nouveau dictionnaire pour les champs avec les nouveaux numéros d'ordre
         new_champs = {}
         for i, (order, champ) in enumerate(self.champs_sorted):
             new_champs[new_orders[i]] = champ
-
         # Enregistrez les modifications dans fiche.json
         with open('fiche.json', 'w') as f:
             json.dump(new_champs, f)
-
         # Mettez à jour self.champs et self.champs_sorted
         self.champs = new_champs
         self.champs_sorted = sorted(self.champs.items(), key=lambda item: int(item[0]))
-
         # Fermez la fenêtre
         self.accept()
 
@@ -347,12 +286,11 @@ class Worker(QObject):
             non_empty_lines = [line for line in lines if line.strip() != '']
             cleaned_output = '\n'.join(non_empty_lines)
             self.output.emit(cleaned_output)
-
         except subprocess.CalledProcessError as e:
             # Si la commande échoue, affiche l'erreur dans le label
             self.output.emit(f"Erreur : {e.stderr}")
             
-            
+
 # Classe principale de l'application
 class MainWindow(QMainWindow):
     
@@ -362,7 +300,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_Configuration() # Crée une instance de Ui_MainWindow
         self.ui.setupUi(self) # Charge l'interface utilisateur
         self.charger_conf() # Charge les données à partir du fichier JSON
-        self.ui.annuler.clicked.connect(self.close) # Ferme la fenêtre (annule les modifications
+        self.ui.annuler.clicked.connect(self.close) # Ferme la fenêtre (annule les modifications)
         self.ui.Enregistrer.clicked.connect(self.enregistrer_conf) # Enregistrement de la configuration
         self.ui.gpupdate.clicked.connect(self.make_gpupdate) # Exécution de gpupdate
         self.ui.aide_titres.clicked.connect(lambda: self.afficher_aide('titres')) # Affiche l'aide pour le titre
@@ -377,56 +315,46 @@ class MainWindow(QMainWindow):
         user_names = [user.name for user in users] # Récupère les noms des utilisateurs
         self.ui.session_user.addItems(user_names) # Ajoute les noms des utilisateurs dans la liste déroulante
         self.ui.session_activation.stateChanged.connect(self.session_activation_changed)
-        
         # Crée l'instance de classe pour l'ajout de champs de la fiche d'entrée
         self.ajouterchamp = AjouterChampDialog()
         self.ui.ajouter_champ.clicked.connect(self.ajouterchamp.add_champ)
-        
         # Crée l'instance de classe pour la suppression de champs de la fiche d'entrée
         self.supprimerchamp = SupprimerChampDialog()
         self.ui.supprimer_champ.clicked.connect(self.supprimerchamp.show)
-        
         # Crée l'instance de classe pour la modification de l'ordre des champs de la fiche d'entrée
         self.ui.modifierordre = ModifierOrdreDialog()
         self.ui.modifier_ordre.clicked.connect(self.ui.modifierordre.show)
-        
         # Connecte le signal clicked du bouton fiche_afficher à la méthode afficher_fiche_entree
         self.ui.fiche_afficher.clicked.connect(self.afficher_fiche_entree)
-
         # Ajouter les choix à la QComboBox fermeture_session
         self.ui.fermeture_session.addItem("Déconnecter")
         self.ui.fermeture_session.addItem("Verrouiller")
-
         # Connectez le signal currentTextChanged à une nouvelle méthode
         self.ui.fermeture_session.currentTextChanged.connect(self.on_combobox_changed)
-
         # Crée et affiche un QLabel avec un QMovie
         self.movie = QMovie("loading.gif")  # Remplacez "loading.gif" par le chemin de votre fichier GIF
         self.movie.setScaledSize(QSize(140, 80)) 
         self.gpupdate_thread = QThread()
         self.ui.retour_gpupdate.setMovie(self.movie)
-
         # Arrête le QMovie et cache le QLabel lorsque le thread est terminé
         self.gpupdate_thread.finished.connect(self.movie.stop)
-
+        # Gestion des différentes checkbox en fonction de l'état des autres checkbox qui leurs sont liées
         self.ui.fiche_activation.toggled.connect(self.fiche_activation_changed)
         self.ui.fiche_log.setEnabled(False)
-
         self.ui.fiche_15min.stateChanged.connect(self.check_duration_options)
         self.ui.fiche_30min.stateChanged.connect(self.check_duration_options)
         self.ui.fiche_1h.stateChanged.connect(self.check_duration_options)
         self.ui.fiche_duree_session.stateChanged.connect(self.fiche_duree_session_changed)
-        
-
         # Charge les données à partir du fichier JSON
         try:
             with open("config.json", "r") as f: # Ouvre le fichier JSON en lecture
                 data = json.load(f) # Charge les données dans un dictionnaire
         except FileNotFoundError: # Si le fichier n'est pas trouvé, crée un dictionnaire vide
             data = {}
-
         if data.get('fiche', {}).get('fiche_log', False):
             self.ui.fiche_log.setEnabled(True)
+
+
 
     # On affiche un message d'informations si l'utilisateur sélectionne "Verrouiller"
     def on_combobox_changed(self, text):
@@ -435,6 +363,7 @@ class MainWindow(QMainWindow):
 
 
 
+    # Fonction pour corréler l'activation de la fenêtre de log avec l'activation de la fiche d'entrée
     def fiche_activation_changed(self, checked):
         if not checked:
             self.ui.fiche_log.setChecked(False)
@@ -443,6 +372,8 @@ class MainWindow(QMainWindow):
             self.ui.fiche_log.setEnabled(True)
 
 
+
+    # Fonction pour corréler l'état de la case à cocher "Durée de la session" avec les cases à cocher "15 min", "30 min" et "1h"
     def check_duration_options(self):
         if not self.ui.fiche_15min.isChecked() and not self.ui.fiche_30min.isChecked() and not self.ui.fiche_1h.isChecked():
             self.ui.fiche_duree_session.setChecked(False)
@@ -451,6 +382,8 @@ class MainWindow(QMainWindow):
             self.ui.fiche_duree_session.setEnabled(True)
 
 
+
+    # Fonction pour afficher la popup de la fiche d'entrée
     def afficher_fiche_entree(self):
         # Crée et affiche une instance de FicheEntreeWindow
         self.fiche_entree_window = FicheEntreeWindow()
@@ -458,11 +391,13 @@ class MainWindow(QMainWindow):
 
 
 
+    # Fonction qui désactive la checkbox "Durée de la session" si aucune des cases à cocher "15 min", "30 min" et "1h" n'est cochée
     def fiche_duree_session_changed(self, checked):
         if not checked:
             self.ui.fiche_15min.setChecked(False)
             self.ui.fiche_30min.setChecked(False)
             self.ui.fiche_1h.setChecked(False)
+
 
 
     # Fonction pour créer le raccourci
@@ -540,12 +475,10 @@ class MainWindow(QMainWindow):
         self.gpupdate_thread = QThread()
         self.worker = Worker()
         self.worker.moveToThread(self.gpupdate_thread)
-
         # Connecte les signaux
         self.worker.output.connect(self.update_output)
         self.gpupdate_thread.started.connect(self.worker.run_gpupdate)
         self.gpupdate_thread.finished.connect(self.gpupdate_thread.deleteLater)
-        
         self.movie.start()
         # Démarre le thread
         self.gpupdate_thread.start()  
@@ -555,6 +488,7 @@ class MainWindow(QMainWindow):
     def update_output(self, text):
         # Met à jour le QLabel avec le résultat de la commande gpupdate /force
         self.ui.retour_gpupdate.setText(text)
+        
         
        
     # Fonction pour vérifier que les champs sont des entiers positifs
@@ -704,7 +638,7 @@ class MainWindow(QMainWindow):
         QTimer.singleShot(100, lambda: self.ui.police.setCurrentText(data.get("style", {}).get("police", "")))
         self.ui.taille_police.setText(data.get("style", {}).get("taille_police", ""))
         self.ui.fermeture_session.setCurrentText(data.get("fermeture", {}).get("fermeture_session", ""))
-        self.ui.activation_fermeture.setChecked(data.get("fermeture", {}).get("activation_fermeture", False))
+        self.ui.activation_fermeture.setChecked(data.get("fermeture", {}).get("fermeture_popup", False))
         
         
         

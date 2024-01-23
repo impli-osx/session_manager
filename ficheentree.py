@@ -70,6 +70,7 @@ class FicheWindow(QMainWindow):
         # Créez le QLabel et le QComboBox
         self.session_duration_label = QLabel("Choix du durée de votre session")
         self.session_duration_combo = QComboBox()
+        self.session_duration_combo.setObjectName("session_duration_combo")
 
         with open('config.json', 'r') as f:
             config = json.load(f)

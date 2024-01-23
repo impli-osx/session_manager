@@ -2,14 +2,17 @@ import json
 import sys
 import os
 import pandas as pd
+import zipfile
 from functools import partial
-from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy, QLineEdit
+from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import QTimer, Qt
 from ficheentree import FicheWindow as FicheEntreeWindow
 from PyQt6.QtWidgets import QApplication
 from openpyxl import Workbook
-
+from datetime import datetime
+from zipfile import BadZipFile
+from openpyxl import load_workbook
 
 # Charger le fichier de configuration
 with open('config.json') as f:
@@ -32,6 +35,11 @@ class FicheEntreeWindow(FicheEntreeWindow):
         fields = self.findChildren(QLineEdit)
         for field in fields:
             self.data[field.objectName()] = field.text()
+        combos = self.findChildren(QComboBox)
+        for combo in combos:
+            if combo.objectName() == "session_duration_combo":
+                self.data["ChoixDuréeSession"] = combo.currentText()
+    
     
     
     # Récupère les valeurs des différents champs
@@ -40,26 +48,47 @@ class FicheEntreeWindow(FicheEntreeWindow):
     
     
 
+    def adjust_column_widths(self, sheet):
+        for column in sheet.columns:
+            max_length = 0
+            column = [cell for cell in column]
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(cell.value)
+                except:
+                    pass
+            adjusted_width = (max_length + 2)
+            sheet.column_dimensions[column[0].column_letter].width = adjusted_width
+
     def save_to_excel(self, data):
-        # Lire le fichier Excel existant dans un DataFrame
-        if os.path.exists("data.xlsx"):
-            df = pd.read_excel("data.xlsx")
-        else:
-            df = pd.DataFrame()
-        # Convertir les données en DataFrame et les ajouter dans une nouvelle ligne du DataFrame
         data_df = pd.DataFrame(data, index=[0])
-        df = pd.concat([df, data_df], ignore_index=True)
-        # Trier les colonnes en fonction de l'ordre des clés dans le dictionnaire JSON
+        current_year = str(datetime.now().year)
         with open('fiche.json', 'r') as f:
             champs = json.load(f)
         ordered_keys = [champ.get("label_content", "").replace(" ", "") for order, champ in sorted(champs.items(), key=lambda item: int(item[0]))]
-        df = df.reindex(columns=ordered_keys)
-        # Remplacer les valeurs NaN par une chaîne vide
-        df = df.fillna("")
-        # Enregistrer le DataFrame dans le fichier Excel
-        df.to_excel("data.xlsx", index=False)
-        # Enregistrer le DataFrame dans le fichier Excel
-        df.to_excel("data.xlsx", index=False)
+        ordered_keys.append("ChoixDuréeSession")
+        data_df = data_df.reindex(columns=ordered_keys)
+        data_df = data_df.fillna("")
+        
+        if not os.path.isfile('data.xlsx'):
+            data_df.to_excel('data.xlsx', sheet_name=current_year, index=False)
+        else:
+            book = load_workbook('data.xlsx')
+            if current_year in book.sheetnames:
+                start_row = book[current_year].max_row + 1
+                for index, row in data_df.iterrows():
+                    for col_num, value in enumerate(row.values, start=1):
+                        book[current_year].cell(row=start_row + index, column=col_num, value=value)
+            else:
+                data_df.to_excel('data.xlsx', sheet_name=current_year, index=False)
+            book.save('data.xlsx')
+        
+        book = load_workbook("data.xlsx")
+        sheet = book[current_year]
+        self.adjust_column_widths(sheet)
+        book.save("data.xlsx")
+    
     
     
     # On déclenche les timers à la fermeture de la fenêtre FicheEntreeWindow
@@ -187,7 +216,6 @@ def end_session():
     else:
         # Verrouiller la session
         print("Fin de session. Verrouillage.")
-        
     app.quit() # Terminer l'application Qt
 
 
