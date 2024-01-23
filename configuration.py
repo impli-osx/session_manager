@@ -9,10 +9,10 @@ import winshell
 import threading
 import markdown
 from psutil import users as psutil_users
-from PyQt6 import QtWidgets, QtCore # Importe le module QtWidgets, QtCore
+from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit, QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame, QTableWidget, QTableWidgetItem # Importe les classes
-from PyQt6.QtGui import QFontDatabase, QMovie  # Importe la classe QFontDatabase
-from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize # Importe les classes Qt, QTimer
+from PyQt6.QtGui import QFontDatabase, QMovie
+from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize
 from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
 from Ui_configuration import Ui_Configuration # Importe la classe Ui_MainWindow du fichier Ui_mainwindow.py
 from ficheentree import FicheWindow as FicheEntreeWindow # Importe la classe Ui_FicheEntree du fichier Ui_FicheEntree.py
@@ -409,6 +409,9 @@ class MainWindow(QMainWindow):
         # Arrête le QMovie et cache le QLabel lorsque le thread est terminé
         self.gpupdate_thread.finished.connect(self.movie.stop)
 
+        self.ui.fiche_activation.toggled.connect(self.fiche_activation_changed)
+        self.ui.fiche_log.setEnabled(False)
+
         # Charge les données à partir du fichier JSON
         try:
             with open("config.json", "r") as f: # Ouvre le fichier JSON en lecture
@@ -416,11 +419,22 @@ class MainWindow(QMainWindow):
         except FileNotFoundError: # Si le fichier n'est pas trouvé, crée un dictionnaire vide
             data = {}
 
+        if data.get('fiche', {}).get('fiche_log', False):
+            self.ui.fiche_log.setEnabled(True)
 
     # On affiche un message d'informations si l'utilisateur sélectionne "Verrouiller"
     def on_combobox_changed(self, text):
         if text == "Verrouiller":
             QMessageBox.information(self, "Information", "Le verrouillage ne permettra pas de lancer le Session Manager automatiquement à la prochaine connexion de la session.\n\nVous devrez déconnecter la session manuellement pour que Session Manager fonctionne automatiquement.")
+
+
+
+    def fiche_activation_changed(self, checked):
+        if not checked:
+            self.ui.fiche_log.setChecked(False)
+            self.ui.fiche_log.setEnabled(False)
+        else:
+            self.ui.fiche_log.setEnabled(True)
 
 
 

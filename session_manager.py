@@ -26,11 +26,15 @@ class FicheEntreeWindow(FicheEntreeWindow):
         self.data = {}  # Initialisez self.data dans le constructeur
         self.fields = []
         
+        
+    # Boucle les champs présents dans FicheEntreeWindow
     def update_data(self):
         fields = self.findChildren(QLineEdit)
         for field in fields:
             self.data[field.objectName()] = field.text()
     
+    
+    # Récupère les valeurs des différents champs
     def get_data(self):
         return self.data
     
@@ -58,22 +62,24 @@ class FicheEntreeWindow(FicheEntreeWindow):
         df.to_excel("data.xlsx", index=False)
     
     
-    
+    # On déclenche les timers à la fermeture de la fenêtre FicheEntreeWindow
     def closeEvent(self, event):
         super().closeEvent(event)
         timer_duree_session()
         timer_popup_2()
         timer_fermeture()
-        self.update_data()
-        print(self.data)
-        self.save_to_excel(self.get_data())
+        # Si le log est activé, enregistrer les données dans le fichier Excel
+        if config['fiche']['fiche_log']:
+            self.update_data()
+            print(self.data)
+            self.save_to_excel(self.get_data())
         
         
 
 
 
 
-
+# Fonction pour créer le popup d'après le fichier de configuration
 def creation_popup(titre, texte, largeur, hauteur, police, taille_police, delai, fullscreen=False, use_timer=True):
     print(f"Appel fonction popup : {titre}, {texte}, {largeur}, {hauteur}, {police}, {taille_police}, {delai}")
     global fenetre
