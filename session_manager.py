@@ -1,15 +1,14 @@
 import json
 import sys
+import os
+import pandas as pd
 from functools import partial
-from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy
+from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy, QLineEdit
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import QTimer, Qt
 from ficheentree import FicheWindow as FicheEntreeWindow
 from PyQt6.QtWidgets import QApplication
-import json
-import sys
 from openpyxl import Workbook
-from PyQt6.QtCore import Qt
 
 
 # Charger le fichier de configuration
@@ -35,16 +34,30 @@ class FicheEntreeWindow(FicheEntreeWindow):
     def get_data(self):
         return self.data
     
+    
+
     def save_to_excel(self, data):
-        # Créer un nouveau classeur
-        wb = Workbook()
-        # Sélectionner la feuille active
-        ws = wb.active
-        # Ajouter les données dans la feuille
-        for row in data:
-            ws.append(row)
-        # Enregistrer le classeur
-        wb.save("data.xlsx")
+        # Lire le fichier Excel existant dans un DataFrame
+        if os.path.exists("data.xlsx"):
+            df = pd.read_excel("data.xlsx")
+        else:
+            df = pd.DataFrame()
+        # Convertir les données en DataFrame et les ajouter dans une nouvelle ligne du DataFrame
+        data_df = pd.DataFrame(data, index=[0])
+        df = pd.concat([df, data_df], ignore_index=True)
+        # Trier les colonnes en fonction de l'ordre des clés dans le dictionnaire JSON
+        with open('fiche.json', 'r') as f:
+            champs = json.load(f)
+        ordered_keys = [champ.get("label_content", "").replace(" ", "") for order, champ in sorted(champs.items(), key=lambda item: int(item[0]))]
+        df = df.reindex(columns=ordered_keys)
+        # Remplacer les valeurs NaN par une chaîne vide
+        df = df.fillna("")
+        # Enregistrer le DataFrame dans le fichier Excel
+        df.to_excel("data.xlsx", index=False)
+        # Enregistrer le DataFrame dans le fichier Excel
+        df.to_excel("data.xlsx", index=False)
+    
+    
     
     def closeEvent(self, event):
         super().closeEvent(event)
@@ -52,8 +65,8 @@ class FicheEntreeWindow(FicheEntreeWindow):
         timer_popup_2()
         timer_fermeture()
         self.update_data()
-        print(self.fields)
-        #self.save_to_excel(self.get_data())
+        print(self.data)
+        self.save_to_excel(self.get_data())
         
         
 
@@ -82,10 +95,11 @@ def creation_popup(titre, texte, largeur, hauteur, police, taille_police, delai,
         layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
     if use_timer:
         bouton = QPushButton("J'ai compris")
+        bouton.setFont(font)  # Utiliser la même police que le label
+        bouton.setStyleSheet(f"font-size: {taille_police}px;")  # Définir la taille de la police
         bouton.clicked.connect(fenetre.close)
-        layout.addWidget(bouton) 
+        layout.addWidget(bouton)
     fenetre.setLayout(layout)
-    fenetre.show()
     if use_timer:
         QTimer.singleShot(delai * 1000, fenetre.close)
     if fullscreen:

@@ -18,9 +18,7 @@ class FicheWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_Ficheentree()
         self.ui.setupUi(self)
-
         self.line_edits = []
-
         # Création d'un layout principal
         main_layout = QHBoxLayout(self)
         main_layout.addStretch(1)
@@ -28,7 +26,6 @@ class FicheWindow(QMainWindow):
         main_layout.addLayout(self.ui.formLayout_3)
         main_layout.addStretch(1)
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
-
         # Désactive le bouton 'connecter' au démarrage
         self.ui.connecter.setEnabled(False)
         # Connecte le signal 'clicked' de la checkbox à la méthode 'toggleConnectButton'
@@ -37,40 +34,34 @@ class FicheWindow(QMainWindow):
         self.ui.connecter.clicked.connect(self.close)
         # Charge le PDF
         self.load_pdf()
-     
         self.ajouter_champs()
+     
+     
      
     def ajouter_champs(self):
         # Vérifiez si le fichier fiche.json existe
         if not os.path.exists('fiche.json'):
             QMessageBox.critical(self, "Erreur", "Le fichier fiche.json n'existe pas.")
             return
-
         # Chargez les données de fiche.json
         with open('fiche.json', 'r') as f:
             champs = json.load(f)
-
         # Triez les champs par le numéro d'ordre (qui est la clé du dictionnaire)
         champs_sorted = sorted(champs.items(), key=lambda item: int(item[0]))
-
             # Parcourez tous les champs
         for i, (order, champ) in enumerate(champs_sorted):
             # Crée un QLabel pour le champ
             label = QLabel(champ.get("label_content", ""))
-
             # Crée un QVBoxLayout pour le QLabel et le QLineEdit
             layout = QVBoxLayout()
-
             # Ajoute le QLabel au QVBoxLayout
             layout.addWidget(label)
-
             # Crée un QLineEdit pour le champ si nécessaire et l'ajoute au QVBoxLayout
             if champ.get("add_line_edit", False):
                 line_edit = QLineEdit()
+                line_edit.setObjectName(champ.get("label_content", "").replace(" ", ""))
                 layout.addWidget(line_edit)
-
                 self.line_edits.append(line_edit)
-
             # Ajoute le QVBoxLayout au layout approprié
             if i % 2 == 0:
                 self.ui.form_gauche.addRow(layout)
@@ -96,7 +87,6 @@ class FicheWindow(QMainWindow):
                     QMessageBox.critical(self, "Erreur", "Vous devez remplir tous les champs d'informations pour ouvrir la session.")
                     event.ignore()
                     return
-
         # Si la checkbox est cochée et que tous les QLineEdit sont remplis, laissez la fenêtre se fermer
         event.accept()
  
@@ -112,13 +102,10 @@ class FicheWindow(QMainWindow):
         if not os.path.exists(pdf_path):
             print(f"Le fichier {pdf_path} n'existe pas.")
             return
-
         # Ouvrez le fichier PDF avec PyMuPDF
         doc = fitz.open(pdf_path)
-
         # Créez un QVBoxLayout pour contenir les images
         vbox = QVBoxLayout()
-
         # Parcourez toutes les pages du document
         for i in range(len(doc)):
             # Convertissez la page en image
@@ -126,29 +113,22 @@ class FicheWindow(QMainWindow):
             pix = page.get_pixmap()
             img = QImage(pix.samples, pix.width, pix.height, pix.stride, QImage.Format.Format_RGB888)
             pixmap = QPixmap.fromImage(img)
-
             # Créez un QLabel pour afficher l'image
             label = QLabel()
             label.setPixmap(pixmap.scaled(self.width(), pixmap.height(), Qt.AspectRatioMode.KeepAspectRatio))
-
             # Ajoutez le QLabel à votre layout
             vbox.addWidget(label)
-
         # Créez un QWidget pour contenir le QVBoxLayout
         widget = QWidget()
         widget.setLayout(vbox)
-
         # Définissez la politique de taille du QWidget à Expanding
         widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-
         # Créez un QScrollArea et définissez son layout
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setWidget(widget)
-
         # Définissez la politique de taille du QScrollArea à Expanding
         scroll.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-
         # Ajoutez le QScrollArea à votre layout
         self.ui.form_reglement.addWidget(scroll)
 
