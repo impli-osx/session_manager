@@ -3,7 +3,7 @@ import threading
 import time
 import sys
 from functools import partial
-from PyQt6.QtWidgets import QApplication, QMessageBox, QMainWindow, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy
+from PyQt6.QtWidgets import QApplication, QMessageBox, QMainWindow, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy, QLineEdit
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import QTimer, QCoreApplication, QTime, Qt
 from ficheentree import FicheWindow as FicheEntreeWindow
@@ -11,6 +11,7 @@ from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QApplication
 import json
 import sys
+from openpyxl import Workbook
 from PyQt6.QtCore import Qt
 
 
@@ -23,11 +24,43 @@ with open('config.json') as f:
     
     
 class FicheEntreeWindow(FicheEntreeWindow):
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.data = {}  # Initialisez self.data dans le constructeur
+        self.fields = []
+        
+    def update_data(self):
+        fields = self.findChildren(QLineEdit)
+        for field in fields:
+            self.data[field.objectName()] = field.text()
+    
+    def get_data(self):
+        return self.data
+    
+    def save_to_excel(self, data):
+        # Créer un nouveau classeur
+        wb = Workbook()
+        # Sélectionner la feuille active
+        ws = wb.active
+        # Ajouter les données dans la feuille
+        for row in data:
+            ws.append(row)
+        # Enregistrer le classeur
+        wb.save("data.xlsx")
+    
     def closeEvent(self, event):
         super().closeEvent(event)
         timer_duree_session()
         timer_popup_2()
         timer_fermeture()
+        self.update_data()
+        print(self.fields)
+        #self.save_to_excel(self.get_data())
+        
+        
+
+
 
 
 
