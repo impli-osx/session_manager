@@ -412,6 +412,12 @@ class MainWindow(QMainWindow):
         self.ui.fiche_activation.toggled.connect(self.fiche_activation_changed)
         self.ui.fiche_log.setEnabled(False)
 
+        self.ui.fiche_15min.stateChanged.connect(self.check_duration_options)
+        self.ui.fiche_30min.stateChanged.connect(self.check_duration_options)
+        self.ui.fiche_1h.stateChanged.connect(self.check_duration_options)
+        self.ui.fiche_duree_session.stateChanged.connect(self.fiche_duree_session_changed)
+        
+
         # Charge les données à partir du fichier JSON
         try:
             with open("config.json", "r") as f: # Ouvre le fichier JSON en lecture
@@ -437,12 +443,26 @@ class MainWindow(QMainWindow):
             self.ui.fiche_log.setEnabled(True)
 
 
+    def check_duration_options(self):
+        if not self.ui.fiche_15min.isChecked() and not self.ui.fiche_30min.isChecked() and not self.ui.fiche_1h.isChecked():
+            self.ui.fiche_duree_session.setChecked(False)
+            self.ui.fiche_duree_session.setEnabled(False)
+        else:
+            self.ui.fiche_duree_session.setEnabled(True)
+
 
     def afficher_fiche_entree(self):
         # Crée et affiche une instance de FicheEntreeWindow
         self.fiche_entree_window = FicheEntreeWindow()
         self.fiche_entree_window.show()
 
+
+
+    def fiche_duree_session_changed(self, checked):
+        if not checked:
+            self.ui.fiche_15min.setChecked(False)
+            self.ui.fiche_30min.setChecked(False)
+            self.ui.fiche_1h.setChecked(False)
 
 
     # Fonction pour créer le raccourci

@@ -2,7 +2,7 @@ import json
 import os
 import sys
 import fitz
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QMessageBox, QMainWindow, QSpacerItem, QSizePolicy, QLabel, QLineEdit, QScrollArea
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QMessageBox, QMainWindow, QSpacerItem, QSizePolicy, QLabel, QLineEdit, QScrollArea, QComboBox
 from Ui_FicheEntree import Ui_Ficheentree
 from PyQt6.QtGui import QFont, QPixmap, QImage
 from PyQt6.QtCore import Qt, QUrl, QMetaObject, pyqtSlot
@@ -67,6 +67,34 @@ class FicheWindow(QMainWindow):
                 self.ui.form_gauche.addRow(layout)
             else:
                 self.ui.form_centre.addRow(layout)
+        # Créez le QLabel et le QComboBox
+        self.session_duration_label = QLabel("Choix du durée de votre session")
+        self.session_duration_combo = QComboBox()
+
+        with open('config.json', 'r') as f:
+            config = json.load(f)
+
+        if config['fiche']['fiche_15min']:
+            self.session_duration_combo.addItem("15 minutes")
+        if config['fiche']['fiche_30min']:
+            self.session_duration_combo.addItem("30 minutes")
+        if config['fiche']['fiche_1h']:
+            self.session_duration_combo.addItem("1 heure")
+
+        # Ajoutez le QLabel et le QComboBox à votre layout
+        layout = QVBoxLayout()
+        layout.addWidget(self.session_duration_label)
+        layout.addWidget(self.session_duration_combo)
+
+        if config['fiche']['fiche_duree_session']:
+            if len(champs_sorted) % 2 == 0:
+                self.ui.form_gauche.addRow(layout)
+            else:
+                self.ui.form_centre.addRow(layout)
+        else:
+            self.session_duration_label.hide()
+            self.session_duration_combo.hide()
+                
         
         
         

@@ -67,7 +67,8 @@ class FicheEntreeWindow(FicheEntreeWindow):
         super().closeEvent(event)
         timer_duree_session()
         timer_popup_2()
-        timer_fermeture()
+        if config['fermeture']['fermeture_popup']:
+            timer_fermeture()
         # Si le log est activé, enregistrer les données dans le fichier Excel
         if config['fiche']['fiche_log']:
             self.update_data()
