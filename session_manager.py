@@ -71,20 +71,21 @@ class FicheEntreeWindow(FicheEntreeWindow):
         ordered_keys.append("ChoixDuréeSession")
 
         if not os.path.isfile('data.xlsx'):
-            data_df = pd.DataFrame(data, columns=ordered_keys)
+            data_df = pd.DataFrame(data, columns=ordered_keys, index=[0])
             data_df.to_excel('data.xlsx', sheet_name=current_year, index=False)
         else:
             book = load_workbook('data.xlsx')
+            writer = pd.ExcelWriter('data.xlsx', engine='openpyxl', mode='a')
             if current_year in book.sheetnames:
                 data_df = pd.read_excel('data.xlsx', sheet_name=current_year, engine='openpyxl')
-                new_data_df = pd.DataFrame(data, columns=ordered_keys)
+                new_data_df = pd.DataFrame(data, columns=ordered_keys, index=[0])
                 new_data_df = new_data_df.reindex(columns=data_df.columns)  # Reorder the columns to match the existing data
                 data_df = pd.concat([data_df, new_data_df])
+                book.remove(book[current_year])  # Remove the existing sheet
             else:
-                data_df = pd.DataFrame(data, columns=ordered_keys)
+                data_df = pd.DataFrame(data, columns=ordered_keys, index=[0])
 
-            with pd.ExcelWriter('data.xlsx', engine='openpyxl', mode='a') as writer:
-                data_df.to_excel(writer, index=False, sheet_name=current_year)
+            data_df.to_excel(writer, index=False, sheet_name=current_year)
 
         book = load_workbook("data.xlsx")
         sheet = book[current_year]
