@@ -5,7 +5,7 @@ import pandas as pd
 import zipfile
 import openpyxl
 from functools import partial
-from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox
+from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox, QMessageBox
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import QTimer, Qt
 from ficheentree import FicheWindow as FicheEntreeWindow
@@ -16,10 +16,25 @@ from zipfile import BadZipFile
 from openpyxl import load_workbook
 
 
+try:
+    with open('config.json') as f:
+        config = json.load(f)
+except FileNotFoundError:
+    error_dialog = QMessageBox()
+    error_dialog.setWindowTitle("Erreur")
+    error_dialog.setText("Le fichier 'config.json' n'a pas été trouvé dans le répertoire courant.")
+    error_dialog.setIcon(QMessageBox.Icon.Critical)
+    error_dialog.exec()
+    sys.exit(1)
 
-# Charger le fichier de configuration
-with open('config.json') as f:
-    config = json.load(f)
+# Vérifier la présence de configuration.exe
+if not os.path.isfile('configuration.exe'):
+    error_dialog = QMessageBox()
+    error_dialog.setWindowTitle("Erreur")
+    error_dialog.setText("Le fichier 'configuration.exe' n'a pas été trouvé dans le répertoire courant.")
+    error_dialog.setIcon(QMessageBox.Icon.Critical)
+    error_dialog.exec()
+    sys.exit(1)
     
     
     

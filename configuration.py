@@ -8,6 +8,7 @@ import psutil
 import winshell
 import threading
 import markdown
+import sys
 from psutil import users as psutil_users
 from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit, QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame, QTableWidget, QTableWidgetItem # Importe les classes
@@ -299,6 +300,21 @@ class MainWindow(QMainWindow):
         super().__init__(parent) # Appelle le constructeur de la classe parente
         self.ui = Ui_Configuration() # Crée une instance de Ui_MainWindow
         self.ui.setupUi(self) # Charge l'interface utilisateur
+        
+        if not os.path.isdir('Aide'):
+            self.show_error("Le dossier 'Aide' n'a pas été trouvé dans le répertoire courant.")
+            sys.exit(1)
+        aide_files = ['titres', 'textes', 'temps', 'fiche', 'gestion', 'style', 'accueil']
+        for file in aide_files:
+            if not os.path.isfile(f'Aide/{file}.md'):
+                self.show_error(f"Le fichier d'aide '{file}.md' n'a pas été trouvé dans le dossier 'Aide'.")
+                sys.exit(1)
+        
+        if not os.path.isfile('session_manager.exe'):
+            self.show_error("Le fichier 'session_manager.exe' n'a pas été trouvé dans le répertoire courant.")
+            sys.exit(1)
+        
+        
         self.charger_conf() # Charge les données à partir du fichier JSON
         self.ui.annuler.clicked.connect(self.close) # Ferme la fenêtre (annule les modifications)
         self.ui.Enregistrer.clicked.connect(self.enregistrer_conf) # Enregistrement de la configuration
@@ -356,6 +372,15 @@ class MainWindow(QMainWindow):
             data = {}
         if data.get('fiche', {}).get('fiche_log', False):
             self.ui.fiche_log.setEnabled(True)
+
+
+    # Gestion des erreurs
+    def show_error(self, message):
+        error_dialog = QMessageBox()
+        error_dialog.setWindowTitle("Erreur")
+        error_dialog.setText(message)
+        error_dialog.setIcon(QMessageBox.Icon.Critical)
+        error_dialog.exec()
 
 
 
