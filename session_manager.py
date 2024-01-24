@@ -3,6 +3,7 @@ import sys
 import os
 import pandas as pd
 import zipfile
+import openpyxl
 from functools import partial
 from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox
 from PyQt6.QtGui import QFont
@@ -63,6 +64,7 @@ class FicheEntreeWindow(FicheEntreeWindow):
 
 
 
+
     def save_to_excel(self, data):
         current_year = str(datetime.now().year)
         with open('fiche.json', 'r') as f:
@@ -70,22 +72,25 @@ class FicheEntreeWindow(FicheEntreeWindow):
         ordered_keys = [champ.get("label_content", "").replace(" ", "") for order, champ in sorted(champs.items(), key=lambda item: int(item[0]))]
         ordered_keys.append("ChoixDuréeSession")
 
+        new_data_df = pd.DataFrame(data, columns=ordered_keys, index=[0])
+
         if not os.path.isfile('data.xlsx'):
-            data_df = pd.DataFrame(data, columns=ordered_keys, index=[0])
-            data_df.to_excel('data.xlsx', sheet_name=current_year, index=False)
+            new_data_df.to_excel('data.xlsx', sheet_name=current_year, index=False)
         else:
             book = load_workbook('data.xlsx')
-            writer = pd.ExcelWriter('data.xlsx', engine='openpyxl', mode='a')
             if current_year in book.sheetnames:
                 data_df = pd.read_excel('data.xlsx', sheet_name=current_year, engine='openpyxl')
-                new_data_df = pd.DataFrame(data, columns=ordered_keys, index=[0])
-                new_data_df = new_data_df.reindex(columns=data_df.columns)  # Reorder the columns to match the existing data
-                data_df = pd.concat([data_df, new_data_df])
-                book.remove(book[current_year])  # Remove the existing sheet
+                data_df = pd.concat([data_df, new_data_df], ignore_index=True)
             else:
-                data_df = pd.DataFrame(data, columns=ordered_keys, index=[0])
+                data_df = new_data_df
 
-            data_df.to_excel(writer, index=False, sheet_name=current_year)
+            # Create a new Excel file with the updated data
+            with pd.ExcelWriter('data_temp.xlsx', engine='openpyxl') as writer:
+                data_df.to_excel(writer, index=False, sheet_name=current_year)
+
+            # Replace the old file with the new one
+            os.remove('data.xlsx')
+            os.rename('data_temp.xlsx', 'data.xlsx')
 
         book = load_workbook("data.xlsx")
         sheet = book[current_year]
