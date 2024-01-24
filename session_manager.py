@@ -15,11 +15,11 @@ from datetime import datetime
 from zipfile import BadZipFile
 from openpyxl import load_workbook
 
+
+
 # Charger le fichier de configuration
 with open('config.json') as f:
     config = json.load(f)
-    
-    
     
     
     
@@ -48,7 +48,7 @@ class FicheEntreeWindow(FicheEntreeWindow):
         return self.data
     
     
-
+    # Ajuste la largeur des colonnes du fichier Excel
     def adjust_column_widths(self, sheet):
         for column in sheet.columns:
             max_length = 0
@@ -64,16 +64,14 @@ class FicheEntreeWindow(FicheEntreeWindow):
 
 
 
-
+    # Enregistre les données dans le fichier Excel
     def save_to_excel(self, data):
         current_year = str(datetime.now().year)
         with open('fiche.json', 'r') as f:
             champs = json.load(f)
         ordered_keys = [champ.get("label_content", "").replace(" ", "") for order, champ in sorted(champs.items(), key=lambda item: int(item[0]))]
         ordered_keys.append("ChoixDuréeSession")
-
         new_data_df = pd.DataFrame(data, columns=ordered_keys, index=[0])
-
         if not os.path.isfile('data.xlsx'):
             new_data_df.to_excel('data.xlsx', sheet_name=current_year, index=False)
         else:
@@ -83,19 +81,17 @@ class FicheEntreeWindow(FicheEntreeWindow):
                 data_df = pd.concat([data_df, new_data_df], ignore_index=True)
             else:
                 data_df = new_data_df
-
             # Create a new Excel file with the updated data
             with pd.ExcelWriter('data_temp.xlsx', engine='openpyxl') as writer:
                 data_df.to_excel(writer, index=False, sheet_name=current_year)
-
             # Replace the old file with the new one
             os.remove('data.xlsx')
             os.rename('data_temp.xlsx', 'data.xlsx')
-
         book = load_workbook("data.xlsx")
         sheet = book[current_year]
         self.adjust_column_widths(sheet)
         book.save("data.xlsx")
+    
     
     
     # On déclenche les timers à la fermeture de la fenêtre FicheEntreeWindow
@@ -108,17 +104,15 @@ class FicheEntreeWindow(FicheEntreeWindow):
         # Si le log est activé, enregistrer les données dans le fichier Excel
         if config['fiche']['fiche_log']:
             self.update_data()
-            print(self.data)
+            #print(self.data) # Pour débugger
             self.save_to_excel(self.get_data())
         
         
 
 
-
-
 # Fonction pour créer le popup d'après le fichier de configuration
 def creation_popup(titre, texte, largeur, hauteur, police, taille_police, delai, fullscreen=False, use_timer=True):
-    print(f"Appel fonction popup : {titre}, {texte}, {largeur}, {hauteur}, {police}, {taille_police}, {delai}")
+    #print(f"Appel fonction popup : {titre}, {texte}, {largeur}, {hauteur}, {police}, {taille_police}, {delai}") # Pour débugger
     global fenetre
     fenetre = QDialog()
     fenetre.resize(largeur, hauteur)
@@ -149,14 +143,15 @@ def creation_popup(titre, texte, largeur, hauteur, police, taille_police, delai,
         fenetre.showFullScreen()
     else:
         fenetre.show()
-    print("Popup créée.")
+    #print("Popup créée.") # Pour débugger
 
 
 
+# Fonction pour créer le timer de la durée de la session
 def timer_duree_session():
     # Convertir la durée de la session en secondes
-    duree_session = int(config['timer']['duree_session']) * 60
-    print(f"Durée session : {duree_session}")
+    duree_session = (int(config['timer']['duree_session']) * 60) + int(config['timer']['timer_popup_3'])
+    #print(f"Durée session : {duree_session}") # Pour débugger
     # Créer un timer
     global timer
     timer = QTimer()
@@ -165,46 +160,46 @@ def timer_duree_session():
     # Démarrer le timer
     timer.start(duree_session * 1000)  # Convertir les secondes en millisecondes
     # Imprimer un message pour indiquer que le timer est actif
-    print("Le timer durée session est actif.")
+    #print("Le timer durée session est actif.") # Pour débugger
     timer_popup_1()
 
 
-    
+
+# Fonction pour créer le timer du premier popup
 def timer_popup_1():
-    timer_1 = int(config['timer']['timer_popup_1']) * 60
+    timer_1 = (int(config['timer']['timer_popup_1']) * 60)
     global timer1
-    print(f"Timer popup 1 : {timer_1}")
+    #print(f"Timer popup 1 : {timer_1}") # Pour débugger
     timer1 = QTimer(app)
     timer1.stop()  # Arrêter le timer avant de le configurer
     creation_popup_1 = partial(creation_popup, config['titre']['titre_popup_1'], config['text']['text_popup_1'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture']))
     timer1.timeout.connect(creation_popup_1)
-    #timer1.timeout.connect(timer_popup_2)
     timer1.timeout.connect(timer1.stop)
-    #timer1.start(timer_1 * 60 * 1000) # Convertir les minutes en millisecondes
     timer1.start(timer_1 * 1000) # DEBUG
-    print("Le timer popup 1 est actif.")
+    #print("Le timer popup 1 est actif.") # Pour débugger
 
 
 
+# Fonction pour créer le timer du deuxième popup
 def timer_popup_2():
     global timer_2
     timer_2 = (int(config['timer']['duree_session']) * 60) - (int(config['timer']['timer_popup_2']) * 60)
-    print(f"Timer popup 2 : {timer_2}")
+    #print(f"Timer popup 2 : {timer_2}") # Pour débugger
     global timer2
     timer2 = QTimer(app)
     timer2.stop()  # Arrêter le timer avant de le configurer
     creation_popup_2 = partial(creation_popup, config['titre']['titre_popup_2'], config['text']['text_popup_2'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture']))
     timer2.timeout.connect(creation_popup_2)
-    #timer2.timeout.connect(timer_fermeture)
     timer2.timeout.connect(timer2.stop)
     timer2.start(timer_2 * 1000) # Convertir les secondes en millisecondes
-    print("Le timer popup 2 est actif.")
+    #print("Le timer popup 2 est actif.") # Pour débugger
     
     
-    
+
+# Fonction pour créer le timer de fermeture de la session
 def timer_fermeture():
-    timerfermeture = (int(config['timer']['duree_session']) * 60) - int(config['timer']['timer_popup_3'])
-    print(f"Timer fermeture : {timerfermeture}")
+    timerfermeture = (int(config['timer']['duree_session']) * 60)
+    #print(f"Timer fermeture : {timerfermeture}") # Pour débugger
     global timerfin
     timerfin = QTimer(app)
     timerfin.stop()  # Arrêter le timer avant de le configurer
@@ -214,28 +209,28 @@ def timer_fermeture():
     timerfin.start(timerfermeture * 1000)
     
     
-    
+
+# Fonction appelée par duree_session : déconnecte ou verrouille la session
 def end_session():
     # Fermer la session en fonction de la valeur de session_fermeture
     if config['fermeture']['fermeture_session'] == 'Déconnecter':
         # Déconnecter l'utilisateur
-        print("Fin de session. Déconnexion.")
+        os.system('logoff')
+        #print("Fin de session. Déconnexion.") # Pour débugger
     else:
         # Verrouiller la session
-        print("Fin de session. Verrouillage.")
+        os.system('rundll32.exe user32.dll,LockWorkStation')
+        #print("Fin de session. Verrouillage.") # Pour débugger
     app.quit() # Terminer l'application Qt
 
 
 
 # Créer une application Qt
 app = QApplication(sys.argv)
-
 # Ne pas quitter l'application lorsque la dernière fenêtre est fermée
 app.setQuitOnLastWindowClosed(False)
-
 # Créer et afficher la fenêtre FicheEntreeWindow
 window = FicheEntreeWindow()
 window.showFullScreen()
-
 # Démarrer la boucle d'événements
 sys.exit(app.exec())
