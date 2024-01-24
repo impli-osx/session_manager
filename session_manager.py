@@ -16,26 +16,28 @@ from zipfile import BadZipFile
 from openpyxl import load_workbook
 
 
-try:
-    with open('config.json') as f:
-        config = json.load(f)
-except FileNotFoundError:
-    error_dialog = QMessageBox()
-    error_dialog.setWindowTitle("Erreur")
-    error_dialog.setText("Le fichier 'config.json' n'a pas été trouvé dans le répertoire courant.")
-    error_dialog.setIcon(QMessageBox.Icon.Critical)
-    error_dialog.exec()
-    sys.exit(1)
 
-# Vérifier la présence de configuration.exe
-if not os.path.isfile('configuration.exe'):
+def load_config():
+    try:
+        with open('config.json') as f:
+            config = json.load(f)
+    except FileNotFoundError:
+        show_error("Le fichier 'config.json' n'a pas été trouvé dans le répertoire courant.")
+    return config
+
+
+
+def show_error(message):
     error_dialog = QMessageBox()
     error_dialog.setWindowTitle("Erreur")
-    error_dialog.setText("Le fichier 'configuration.exe' n'a pas été trouvé dans le répertoire courant.")
+    error_dialog.setText(message)
     error_dialog.setIcon(QMessageBox.Icon.Critical)
     error_dialog.exec()
-    sys.exit(1)
+    os._exit(1) 
     
+    
+global config
+config = load_config()
     
     
 class FicheEntreeWindow(FicheEntreeWindow):
@@ -45,6 +47,16 @@ class FicheEntreeWindow(FicheEntreeWindow):
         self.data = {}  # Initialisez self.data dans le constructeur
         self.fields = []
         
+        
+        if not os.path.isfile('configuration.exe'):
+            show_error("Le fichier 'configuration.exe' n'a pas été trouvé dans le répertoire courant.")
+
+    def show_error(self, message):
+        error_dialog = QMessageBox()
+        error_dialog.setWindowTitle("Erreur")
+        error_dialog.setText(message)
+        error_dialog.setIcon(QMessageBox.Icon.Critical)
+        error_dialog.exec()
         
     # Boucle les champs présents dans FicheEntreeWindow
     def update_data(self):
