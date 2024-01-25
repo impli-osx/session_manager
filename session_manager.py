@@ -16,6 +16,10 @@ from zipfile import BadZipFile
 from openpyxl import load_workbook
 
 
+# Créer une application Qt
+app = QApplication(sys.argv)
+# Ne pas quitter l'application lorsque la dernière fenêtre est fermée
+app.setQuitOnLastWindowClosed(False)
 
 def load_config():
     try:
@@ -23,6 +27,7 @@ def load_config():
             config = json.load(f)
     except FileNotFoundError:
         show_error("Le fichier 'config.json' n'a pas été trouvé dans le répertoire courant.")
+        return
     return config
 
 
@@ -252,10 +257,10 @@ def end_session():
 
 
 
-# Créer une application Qt
-app = QApplication(sys.argv)
-# Ne pas quitter l'application lorsque la dernière fenêtre est fermée
-app.setQuitOnLastWindowClosed(False)
+# # Créer une application Qt
+# app = QApplication(sys.argv)
+# # Ne pas quitter l'application lorsque la dernière fenêtre est fermée
+# app.setQuitOnLastWindowClosed(False)
 # Créer et afficher la fenêtre FicheEntreeWindow
 window = FicheEntreeWindow()
 window.showFullScreen()
