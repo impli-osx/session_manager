@@ -23,8 +23,8 @@
         "fiche_log": true,
         "fiche_activation": true,
         "fiche_duree_session": true,
-        "fiche_15min": false,
-        "fiche_30min": false,
+        "fiche_15min": true,
+        "fiche_30min": true,
         "fiche_1h": true
     },
     "session": {
