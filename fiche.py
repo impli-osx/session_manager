@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, QHBoxLayout
                              QLabel, QLineEdit, QCheckBox, QPushButton, QScrollArea, QFrame, QWidget,
                              QSpacerItem, QSizePolicy, QFormLayout, QGridLayout, QMessageBox, QComboBox,
                              QMessageBox, QGraphicsScene, QGraphicsView, QGraphicsPixmapItem)
-from PyQt6.QtGui import QPixmap, QFont, QPalette, QColor, QImage
+from PyQt6.QtGui import QPixmap, QFont, QPalette, QColor, QImage, QImageReader
 from PyQt6.QtCore import Qt, QUrl
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtWebEngineWidgets import QWebEngineView
@@ -16,11 +16,14 @@ class FicheWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-
         self.session_duration_label = QLabel("Choix de la durée de votre session")
         self.session_duration_combo = QComboBox()
         self.session_duration_combo.setObjectName("session_duration_combo")
 
+
+        self.pdf_scroll_area = QScrollArea(self)
+        
+        
         # Créer un widget central pour la fenêtre
         central_widget = QWidget(self)
         self.setCentralWidget(central_widget)
@@ -112,21 +115,6 @@ class FicheWindow(QMainWindow):
         if not config['fiche']['fiche_duree_session']:
             self.session_duration_label.hide()
             self.session_duration_combo.hide()
-        # line_edit.setStyleSheet("""
-        #     .QLineEdit {
-        #         padding: 0px;
-        #         font-size: 13px;
-        #         border-width: 0px;
-        #         border-color: #8d7dc0;
-        #         background-color: #FFFFFF;
-        #         color: #000000;
-        #         border-style: solid;
-        #         border-radius: 0px;
-        #     }
-        #     .QLineEdit:focus {
-        #         outline:none;
-        #     }            
-        # """)
 
         # Ajouter un spacer à la fin du layout vertical
         spacer = QSpacerItem(20, 40, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -148,13 +136,16 @@ class FicheWindow(QMainWindow):
         pdf_title.setFont(QFont('Arial', 15, QFont.Weight.Bold))
         pdf_title.setStyleSheet("color: #476e9e;")
         pdf_layout.addWidget(pdf_title, alignment=Qt.AlignmentFlag.AlignCenter)
-        pdf_frame = QFrame(self)
-        pdf_frame.setFrameShape(QFrame.Shape.Box)
-        pdf_frame.setFrameShadow(QFrame.Shadow.Sunken)
-        pdf_scroll_area = QScrollArea(self)
-        pdf_scroll_area.setWidget(pdf_frame)
-        pdf_scroll_area.setWidgetResizable(True)
-        pdf_layout.addWidget(pdf_scroll_area)
+        self.pdf_frame = QFrame(self)
+        self.pdf_frame.setFrameShape(QFrame.Shape.Box)
+        self.pdf_frame.setLayout(QVBoxLayout())
+        self.pdf_frame.layout().setContentsMargins(0, 0, 0, 0)
+
+        self.pdf_frame.setFrameShadow(QFrame.Shadow.Sunken)
+        self.pdf_scroll_area = QScrollArea(self)
+        self.pdf_scroll_area.setWidget(self.pdf_frame)
+        self.pdf_scroll_area.setWidgetResizable(True)
+        pdf_layout.addWidget(self.pdf_scroll_area)
         columns_and_pdf_layout.addLayout(pdf_layout)
 
         # Ajouter une marge à droite pour le cadre PDF
@@ -284,34 +275,55 @@ class FicheWindow(QMainWindow):
         try:
             # Obtenir le chemin absolu du fichier
             pdf_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
-
-            # Ouvrir le PDF
-            doc = fitz.open(pdf_path)
+            print(f"Chemin : {pdf_path} ")
 
             # Créer une scène pour les pages du PDF
             scene = QGraphicsScene()
 
+            # Utiliser QImageReader pour charger les images du PDF
+            image_reader = QImageReader(pdf_path)
+
             # Convertir chaque page en image et l'ajouter à la scène
-            for i in range(len(doc)):
-                # Convertir la page en pixmap
-                pix = doc[i].get_pixmap()
+            for i in range(image_reader.imageCount()):
+                print(f"Boucle {i}")
+                try:
+                    # Charger l'image avec QImageReader
+                    img = image_reader.read()
 
-                # Convertir la pixmap en QImage
-                img = QImage(pix.samples, pix.width, pix.height, QImage.Format.Format_RGB888)
+                    # Afficher les dimensions de l'image avant redimensionnement
+                    print("Dimensions de l'image (avant redimensionnement) : ", img.width(), img.height())
 
-                # Créer un QGraphicsPixmapItem pour afficher l'image
-                pixmap_item = QGraphicsPixmapItem(QPixmap.fromImage(img))
+                    # Créer un QGraphicsPixmapItem pour afficher l'image sans redimensionnement
+                    pixmap_item = QGraphicsPixmapItem(QPixmap.fromImage(img))
 
-                # Ajouter le QGraphicsPixmapItem à la scène
-                scene.addItem(pixmap_item)
+                    # Ajouter le QGraphicsPixmapItem à la scène
+                    scene.addItem(pixmap_item)
+
+                    print("Objet ajouté à la scène")
+
+                except Exception as conversion_error:
+                    print(f"Erreur lors de la conversion de l'image {i}: {conversion_error}")
+                    import traceback
+                    traceback.print_exc()  # Affiche la trace de la pile d'appels
 
             # Créer un QGraphicsView pour afficher la scène
+            print("Création de la vue")
             view = QGraphicsView(scene)
+            print("Création du QGraphicsView")
 
             # Ajouter le QGraphicsView au cadre PDF
-            self.pdf_frame.setWidget(view)
+            self.pdf_frame.layout().addWidget(view)
+            # Utiliser la variable de classe
+            print("Ajout de la vue au cadre PDF")
+
+            # Ajouter un message après la création du QGraphicsView pour vérifier si cette partie du code est atteinte
+            print("Fin du traitement")
+
         except Exception as e:
-            print(f"Une exception s'est produite : {e}")
+            print(f"Erreur générale : {e}")
+            import traceback
+            traceback.print_exc()
+        print("Fin du traitement")
 
 
 if __name__ == "__main__":
