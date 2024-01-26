@@ -157,6 +157,7 @@ def creation_popup(titre, texte, largeur, hauteur, police, taille_police, delai,
     font = QFont(police, taille_police)
     label.setFont(font)
     if fullscreen:
+        fenetre.setStyleSheet("background-color: white;")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
     layout.addWidget(label)
     if fullscreen:

@@ -348,7 +348,7 @@ class MainWindow(QMainWindow):
         # Connectez le signal currentTextChanged à une nouvelle méthode
         self.ui.fermeture_session.currentTextChanged.connect(self.on_combobox_changed)
         # Crée et affiche un QLabel avec un QMovie
-        self.movie = QMovie("loading.gif")  # Remplacez "loading.gif" par le chemin de votre fichier GIF
+        self.movie = QMovie("img\\loading.gif")  # Remplacez "loading.gif" par le chemin de votre fichier GIF
         self.movie.setScaledSize(QSize(140, 80)) 
         self.gpupdate_thread = QThread()
         self.ui.retour_gpupdate.setMovie(self.movie)

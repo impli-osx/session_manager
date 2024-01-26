@@ -19,12 +19,6 @@ class FicheWindow(QMainWindow):
         self.ui = Ui_Ficheentree()
         self.ui.setupUi(self)
         self.line_edits = []
-        # Création d'un layout principal
-        main_layout = QHBoxLayout(self)
-        main_layout.addStretch(1)
-        main_layout.addLayout(self.ui.formLayout_2)
-        main_layout.addLayout(self.ui.formLayout_3)
-        main_layout.addStretch(1)
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
         # Désactive le bouton 'connecter' au démarrage
         self.ui.connecter.setEnabled(False)
@@ -35,6 +29,17 @@ class FicheWindow(QMainWindow):
         # Charge le PDF
         self.load_pdf()
         self.ajouter_champs()
+        
+        self.setStyleSheet("background-color: white;")
+
+        # Ajouter un logo
+        logo = QLabel(self)
+        pixmap = QPixmap('img\\logo_mairie.png')
+
+        logo.setPixmap(pixmap)
+        logo.resize(pixmap.width(), pixmap.height())  # Ajuster la taille du QLabel
+        logo.move(10, 10)  # Déplacez le logo en haut à gauche
+     
      
      
      
