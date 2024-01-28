@@ -7,7 +7,7 @@ import openpyxl
 from functools import partial
 from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox, QMessageBox, QColorDialog
 from PyQt6.QtGui import QFont, QColor
-from PyQt6.QtCore import QTimer, Qt
+from PyQt6.QtCore import QTimer, Qt, QTranslator, QLocale, QLibraryInfo
 from ficheentree import FicheWindow as FicheEntreeWindow
 from PyQt6.QtWidgets import QApplication
 from openpyxl import Workbook
@@ -102,16 +102,23 @@ class test(QDialog):
         #print("Popup créée.") # Pour débugger
         
         
-def get_color():
+def get_color(app):
+    translator = QTranslator(app)
+    locale = QLocale.system().name()
+    path = QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)
+    translator.load("qt_" + locale, path)
+    app.installTranslator(translator)
+
     color = QColorDialog.getColor()
     if color.isValid():
         print(color.name())
+
         
 window = test()
 texte = "Bonjour, je suis un popup qui a beaucoup de choses à dire afin de tester la mise en page et les marges de la fenêtre !"
 largeur = 500
 hauteur = 300
-window.creation_popup("Titre", texte, largeur, hauteur, "Arial", 14, 30)
-get_color()
+#window.creation_popup("Titre", texte, largeur, hauteur, "Arial", 14, 30)
+get_color(app)
 # Démarrer la boucle d'événements
 sys.exit(app.exec())
