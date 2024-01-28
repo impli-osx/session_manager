@@ -149,6 +149,7 @@ def creation_popup(titre, texte, largeur, hauteur, police, taille_police, delai,
     fenetre = QDialog()
     fenetre.resize(largeur, hauteur)
     fenetre.setWindowTitle(titre)
+    fenetre.setStyleSheet("background-color: white; border-radius: 10px;")
     layout = QVBoxLayout(fenetre)
     if fullscreen:
         # Ajouter un QSpacerItem en haut pour centrer le texte
