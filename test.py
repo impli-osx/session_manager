@@ -1,18 +1,8 @@
-import json
 import sys
-import os
-import pandas as pd
-import zipfile
-import openpyxl
-from functools import partial
 from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox, QMessageBox, QColorDialog
 from PyQt6.QtGui import QFont, QColor
 from PyQt6.QtCore import QTimer, Qt, QTranslator, QLocale, QLibraryInfo
-from ficheentree import FicheWindow as FicheEntreeWindow
 from PyQt6.QtWidgets import QApplication
-from openpyxl import Workbook
-from datetime import datetime
-from zipfile import BadZipFile
 from openpyxl import load_workbook
 
 # Créer une application Qt
