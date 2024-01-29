@@ -13,7 +13,7 @@ from psutil import users as psutil_users
 from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit, QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame, QTableWidget, QTableWidgetItem # Importe les classes
 from PyQt6.QtGui import QFontDatabase, QMovie
-from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize
+from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize, QTranslator, QLocale, QLibraryInfo
 from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
 from Ui_configuration import Ui_Configuration # Importe la classe Ui_MainWindow du fichier Ui_mainwindow.py
 from ficheentree import FicheWindow as FicheEntreeWindow # Importe la classe Ui_FicheEntree du fichier Ui_FicheEntree.py
@@ -319,13 +319,17 @@ class MainWindow(QMainWindow):
         self.ui.annuler.clicked.connect(self.close) # Ferme la fenêtre (annule les modifications)
         self.ui.Enregistrer.clicked.connect(self.enregistrer_conf) # Enregistrement de la configuration
         self.ui.gpupdate.clicked.connect(self.make_gpupdate) # Exécution de gpupdate
-        self.ui.aide_titres.clicked.connect(lambda: self.afficher_aide('titres')) # Affiche l'aide pour le titre
         self.ui.aide_textes.clicked.connect(lambda: self.afficher_aide('textes')) # Affiche l'aide pour le texte
         self.ui.aide_temps.clicked.connect(lambda: self.afficher_aide('temps')) # Affiche l'aide pour le timer
         self.ui.aide_fiche.clicked.connect(lambda: self.afficher_aide('fiche')) # Affiche l'aide pour la fiche
         self.ui.aide_gestion.clicked.connect(lambda: self.afficher_aide('gestion')) # Affiche l'aide pour la gestion
         self.ui.aide_style.clicked.connect(lambda: self.afficher_aide('style')) # Affiche l'aide pour le style
         self.ui.aide_accueil.clicked.connect(lambda: self.afficher_aide('accueil')) # Affiche l'aide pour l'accueil
+        self.ui.mod_fond.clicked.connect(lambda: self.modifier_couleur('fond')) # Modifie le fond de la fenêtre
+        self.ui.mod_texte.clicked.connect(lambda: self.modifier_couleur('texte')) # Modifie le texte de la fenêtre
+        self.ui.mod_bouton.clicked.connect(lambda: self.modifier_couleur('bouton')) # Modifie la couleur des boutons
+        self.ui.mod_bouton_texte.clicked.connect(lambda: self.modifier_couleur('bouton_texte')) # Modifie la couleur du texte des boutons
+        self.ui.mod_bouton_survol.clicked.connect(lambda: self.modifier_couleur('bouton_survol')) # Modifie la couleur des boutons au survol
         self.ui.police.addItems(QFontDatabase.families()) # Ajoute les polices disponibles dans la liste déroulante
         users = psutil_users() # Récupère la liste des utilisateurs
         user_names = [user.name for user in users] # Récupère les noms des utilisateurs
@@ -501,7 +505,33 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Erreur", f"Le fichier d'aide pour {type_aide} n'a pas été trouvé.")
 
 
-            
+
+    # Fonction pour modifier les couleurs de la fenêtre popup
+    def modifier_couleur(self, type_modification):
+        translator = QTranslator(app)
+        locale = QLocale.system().name()
+        path = QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)
+        translator.load("qt_" + locale, path)
+        app.installTranslator(translator)
+        # Affiche une fenêtre de dialogue pour choisir la couleur
+        couleur = QtWidgets.QColorDialog.getColor()
+        if couleur.isValid():
+            # Récupère le code hexadécimal de la couleur
+            code_hexa = couleur.name()
+            # Définit la couleur du bouton en fonction du type de modification
+            if type_modification == "fond":
+                self.ui.couleur_fond.setText(code_hexa)
+            elif type_modification == "texte":
+                self.ui.couleur_texte.setText(code_hexa)
+            elif type_modification == "bouton":
+                self.ui.couleur_bouton.setText(code_hexa)
+            elif type_modification == "bouton_texte":
+                self.ui.couleur_bouton_texte.setText(code_hexa)
+            elif type_modification == "bouton_survol":
+                self.ui.couleur_bouton_survol.setText(code_hexa)
+    
+    
+    
         
         
     # Fonction pour modifier le label retour_gpupdate et éxecuter la fonction run_gpupdate dans un thread
@@ -587,13 +617,6 @@ class MainWindow(QMainWindow):
             # Crée un dictionnaire avec les données de l'interface utilisateur
             # Les données sont stockées dans un dictionnaire imbriqué
             config = {
-                "titre" :{
-                    "titre_popup_1" : self.ui.titre_popup_1.text(), # Récupère le texte du champ titre_popup_1
-                    "titre_popup_2" : self.ui.titre_popup_2.text(), # Récupère le texte du champ titre_popup_2
-                    "titre_popup_3" : self.ui.titre_popup_3.text(), # Récupère le texte du champ titre_popup_3
-                    "titre_fermeture" : self.ui.titre_fermeture.text(), # Récupère le texte du champ titre_popup_4
-                    "titre_reglement" : self.ui.titre_reglement.text(), # Récupère le texte du champ titre_reglement
-                },
                 "text" :{
                     "text_popup_1" : self.ui.text_popup_1.toPlainText(), # Récupère le texte du champ text_popup_1
                     "text_popup_2" : self.ui.text_popup_2.toPlainText(), # Récupère le texte du champ text_popup_2
@@ -624,6 +647,12 @@ class MainWindow(QMainWindow):
                     "hauteur_popup" : self.ui.hauteur_popup.text(),
                     "police" : self.ui.police.currentText(),
                     "taille_police" : self.ui.taille_police.text(),
+                    "couleur_fond" : self.ui.couleur_fond.text(),
+                    "couleur_texte" : self.ui.couleur_texte.text(),
+                    "couleur_bouton" : self.ui.couleur_bouton.text(),
+                    "couleur_bouton_texte" : self.ui.couleur_bouton_texte.text(),
+                    "couleur_bouton_survol" : self.ui.couleur_bouton_survol.text(),
+                    "texte_bouton" : self.ui.texte_bouton.text(),
                 },
                 "fermeture" :{
                     "fermeture_session" : self.ui.fermeture_session.currentText(),
@@ -649,11 +678,6 @@ class MainWindow(QMainWindow):
         except FileNotFoundError:
             data = {}
         # Charge les données dans l'interface utilisateur
-        self.ui.titre_popup_1.setText(data.get("titre", {}).get("titre_popup_1", "")) # Récupère le texte du champ titre_popup_1
-        self.ui.titre_popup_2.setText(data.get("titre", {}).get("titre_popup_2", "")) # Récupère le texte du champ titre_popup_2
-        self.ui.titre_popup_3.setText(data.get("titre", {}).get("titre_popup_3", "")) # Vous avez compris le concept...
-        self.ui.titre_fermeture.setText(data.get("titre", {}).get("titre_fermeture", ""))
-        self.ui.titre_reglement.setText(data.get("titre", {}).get("titre_reglement", ""))
         self.ui.text_popup_1.setPlainText(data.get("text", {}).get("text_popup_1", ""))
         self.ui.text_popup_2.setPlainText(data.get("text", {}).get("text_popup_2", ""))
         self.ui.text_popup_3.setPlainText(data.get("text", {}).get("text_popup_3", ""))
@@ -675,6 +699,11 @@ class MainWindow(QMainWindow):
         self.ui.hauteur_popup.setText(data.get("style", {}).get("hauteur_popup", ""))
         QTimer.singleShot(100, lambda: self.ui.police.setCurrentText(data.get("style", {}).get("police", "")))
         self.ui.taille_police.setText(data.get("style", {}).get("taille_police", ""))
+        self.ui.couleur_fond.setText(data.get("style", {}).get("couleur_fond", ""))
+        self.ui.couleur_texte.setText(data.get("style", {}).get("couleur_texte", ""))
+        self.ui.couleur_bouton.setText(data.get("style", {}).get("couleur_bouton", ""))
+        self.ui.couleur_bouton_texte.setText(data.get("style", {}).get("couleur_bouton_texte", ""))
+        self.ui.texte_bouton.setText(data.get("style", {}).get("texte_bouton", ""))
         self.ui.fermeture_session.setCurrentText(data.get("fermeture", {}).get("fermeture_session", ""))
         self.ui.activation_fermeture.setChecked(data.get("fermeture", {}).get("fermeture_popup", False))
         

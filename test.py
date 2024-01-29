@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox, QMessageBox, QColorDialog
+from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox, QMessageBox, QColorDialog
 from PyQt6.QtGui import QFont, QColor
 from PyQt6.QtCore import QTimer, Qt, QTranslator, QLocale, QLibraryInfo
 from PyQt6.QtWidgets import QApplication
@@ -55,33 +55,42 @@ class test(QDialog):
 
         if use_timer:
             bouton = QPushButton("J'ai compris")
-            bouton.setFont(font)  # Utiliser la même police que le label
-            bouton.setStyleSheet(f"font-size: {taille_police}px;")  # Définir la taille de la police
-            bouton.setStyleSheet("""
-            QPushButton:enabled {
-                background: linear-gradient(to bottom, #7892c2 5%, #476e9e 100%);
+            bouton.setFixedSize(300, 50)
+            bouton.setStyleSheet(f"""
+            QPushButton:enabled {{
+                background: linear-gradient(to bottom, #7892c2 50%, #ffffff 100%);
                 background-color: #5472bd;
-                border-radius: 4px;
+                border-radius: 15px;
                 border: 1px solid #4e6096;
                 color: #ffffff;
                 font-family: Arial;
-                font-size: 15px;
+                font-size: {taille_police}px;
                 font-weight: bold;
                 padding: 9px 50px;
                 text-decoration: none;
-            }
-            QPushButton:hover {
-                background: linear-gradient(to bottom, #476e9e 5%, #7892c2 100%);
+            }}
+            QPushButton:hover {{
+                background: linear-gradient(to bottom, #476e9e 50%, #7892c2 100%);
                 background-color: #476e9e;
-            }
-            QPushButton:pressed {
+            }}
+            QPushButton:pressed {{
                 position: relative;
                 top: 1px;
-            }
+            }}
             """)
-
+            #bouton.setFont(font)
             bouton.clicked.connect(fenetre.close)
             layout.addWidget(bouton)
+            # Créer un QHBoxLayout
+            layout_bouton = QHBoxLayout()
+            # Ajouter un QSpacerItem à gauche
+            layout_bouton.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+            # Ajouter le bouton au layout
+            layout_bouton.addWidget(bouton)
+            # Ajouter un QSpacerItem à droite
+            layout_bouton.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+            # Ajouter le layout_bouton au layout principal
+            layout.addLayout(layout_bouton)
         fenetre.setLayout(layout)
         if use_timer:
             QTimer.singleShot(delai * 1000, fenetre.close)
@@ -108,7 +117,7 @@ window = test()
 texte = "Bonjour, je suis un popup qui a beaucoup de choses à dire afin de tester la mise en page et les marges de la fenêtre !"
 largeur = 500
 hauteur = 300
-#window.creation_popup("Titre", texte, largeur, hauteur, "Arial", 14, 30)
-get_color(app)
+window.creation_popup("Titre", texte, largeur, hauteur, "Arial", 14, 30)
+#get_color(app)
 # Démarrer la boucle d'événements
 sys.exit(app.exec())

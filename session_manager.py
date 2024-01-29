@@ -5,10 +5,10 @@ import pandas as pd
 import zipfile
 import openpyxl
 from functools import partial
-from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox, QMessageBox
+from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox, QMessageBox
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import QTimer, Qt
-from ficheentree import FicheWindow as FicheEntreeWindow
+from fiche import FicheWindow as FicheWindow
 from PyQt6.QtWidgets import QApplication
 from openpyxl import Workbook
 from datetime import datetime
@@ -45,7 +45,7 @@ global config
 config = load_config()
     
     
-class FicheEntreeWindow(FicheEntreeWindow):
+class FicheWindow(FicheWindow):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -143,36 +143,86 @@ class FicheEntreeWindow(FicheEntreeWindow):
 
 
 # Fonction pour créer le popup d'après le fichier de configuration
-def creation_popup(titre, texte, largeur, hauteur, police, taille_police, delai, fullscreen=False, use_timer=True):
-    #print(f"Appel fonction popup : {titre}, {texte}, {largeur}, {hauteur}, {police}, {taille_police}, {delai}") # Pour débugger
+def creation_popup(texte, fullscreen=False, use_timer=True):
+    #print(f"Appel fonction popup : {texte}, {largeur}, {hauteur}, {police}, {taille_police}, {delai}") # Pour débugger
     global fenetre
     fenetre = QDialog()
-    fenetre.resize(largeur, hauteur)
-    fenetre.setWindowTitle(titre)
-    fenetre.setStyleSheet("background-color: white; border-radius: 10px;")
+    fenetre.setFixedSize(int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']))
+    fenetre.setStyleSheet(f"background-color: {config['style']['couleur_fond']};")
+    fenetre.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+    fenetre.setWindowFlags(fenetre.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
     layout = QVBoxLayout(fenetre)
+
+    # Créer un nouveau layout pour le label
+    layout_texte = QVBoxLayout()
+    layout_texte.setContentsMargins(20, 0, 20, 0)  # Appliquer une marge de 10 pixels
+
     if fullscreen:
         # Ajouter un QSpacerItem en haut pour centrer le texte
         layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+
     label = QLabel(texte)
+    label.setWordWrap(True)
+    label.setStyleSheet(f"color : {config['style']['couleur_texte']};")
+    police = config['style']['police']
+    taille_police = int(config['style']['taille_police'])
     font = QFont(police, taille_police)
     label.setFont(font)
+
+    # Ajouter le label au layout_texte au lieu du layout principal
+    layout_texte.addWidget(label)
+
     if fullscreen:
         fenetre.setStyleSheet("background-color: white;")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-    layout.addWidget(label)
+
+    # Ajouter le layout_texte au layout principal
+    layout.addLayout(layout_texte)
+
     if fullscreen:
         # Ajouter un QSpacerItem en bas pour centrer le texte
         layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+
     if use_timer:
-        bouton = QPushButton("J'ai compris")
-        bouton.setFont(font)  # Utiliser la même police que le label
-        bouton.setStyleSheet(f"font-size: {taille_police}px;")  # Définir la taille de la police
+        bouton = QPushButton(f"{config['style']['texte_bouton']}")
+        bouton.setSizePolicy(int(40), QSizePolicy.Policy.Minimum)
+        taille_police = taille_police - 2
+        bouton.setStyleSheet(f"""
+        QPushButton:enabled {{
+            background-color: {config['style']['couleur_bouton']};
+            border-radius: 1px;
+            border: 1px solid #4e6096;
+            color: {config['style']['couleur_bouton_texte']};
+            font-family: {config['style']['police']};
+            font-size: {taille_police}px;
+            font-weight: bold;
+            padding: 1px 5px;
+            text-decoration: none;
+        }}
+        QPushButton:hover {{
+            background-color: {config['style']['couleur_bouton_survol']};
+        }}
+        QPushButton:pressed {{
+            position: relative;
+            top: 1px;
+        }}
+        """)
+        #bouton.setFont(font)
         bouton.clicked.connect(fenetre.close)
         layout.addWidget(bouton)
+        # Créer un QHBoxLayout
+        layout_bouton = QHBoxLayout()
+        # Ajouter un QSpacerItem à gauche
+        layout_bouton.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        # Ajouter le bouton au layout
+        layout_bouton.addWidget(bouton)
+        # Ajouter un QSpacerItem à droite
+        layout_bouton.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        # Ajouter le layout_bouton au layout principal
+        layout.addLayout(layout_bouton)
     fenetre.setLayout(layout)
     if use_timer:
-        QTimer.singleShot(delai * 1000, fenetre.close)
+        QTimer.singleShot(int(config['timer']['delai_fermeture']) * 1000, fenetre.close)
     if fullscreen:
         fenetre.showFullScreen()
     else:
@@ -206,7 +256,7 @@ def timer_popup_1():
     #print(f"Timer popup 1 : {timer_1}") # Pour débugger
     timer1 = QTimer(app)
     timer1.stop()  # Arrêter le timer avant de le configurer
-    creation_popup_1 = partial(creation_popup, config['titre']['titre_popup_1'], config['text']['text_popup_1'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture']))
+    creation_popup_1 = partial(creation_popup, config['text']['text_popup_1'])
     timer1.timeout.connect(creation_popup_1)
     timer1.timeout.connect(timer1.stop)
     timer1.start(timer_1 * 1000) # DEBUG
@@ -222,7 +272,7 @@ def timer_popup_2():
     global timer2
     timer2 = QTimer(app)
     timer2.stop()  # Arrêter le timer avant de le configurer
-    creation_popup_2 = partial(creation_popup, config['titre']['titre_popup_2'], config['text']['text_popup_2'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture']))
+    creation_popup_2 = partial(creation_popup, config['text']['text_popup_2'])
     timer2.timeout.connect(creation_popup_2)
     timer2.timeout.connect(timer2.stop)
     timer2.start(timer_2 * 1000) # Convertir les secondes en millisecondes
@@ -237,7 +287,7 @@ def timer_fermeture():
     global timerfin
     timerfin = QTimer(app)
     timerfin.stop()  # Arrêter le timer avant de le configurer
-    creation_fin = partial(creation_popup, config['titre']['titre_popup_3'], config['text']['text_popup_3'], int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']), config['style']['police'], int(config['style']['taille_police']), int(config['timer']['delai_fermeture']), fullscreen=True, use_timer=False)
+    creation_fin = partial(creation_popup, config['text']['text_popup_3'], fullscreen=True, use_timer=False)
     timerfin.timeout.connect(creation_fin)
     timerfin.timeout.connect(timerfin.stop)
     timerfin.start(timerfermeture * 1000)
@@ -249,12 +299,12 @@ def end_session():
     # Fermer la session en fonction de la valeur de session_fermeture
     if config['fermeture']['fermeture_session'] == 'Déconnecter':
         # Déconnecter l'utilisateur
-        os.system('logoff')
-        #print("Fin de session. Déconnexion.") # Pour débugger
+        #os.system('logoff')
+        print("Fin de session. Déconnexion.") # Pour débugger
     else:
         # Verrouiller la session
-        os.system('rundll32.exe user32.dll,LockWorkStation')
-        #print("Fin de session. Verrouillage.") # Pour débugger
+        #os.system('rundll32.exe user32.dll,LockWorkStation')
+        print("Fin de session. Verrouillage.") # Pour débugger
     app.quit() # Terminer l'application Qt
 
 
@@ -264,7 +314,8 @@ def end_session():
 # # Ne pas quitter l'application lorsque la dernière fenêtre est fermée
 # app.setQuitOnLastWindowClosed(False)
 # Créer et afficher la fenêtre FicheEntreeWindow
-window = FicheEntreeWindow()
-window.showFullScreen()
+#window = FicheWindow()
+#window.showFullScreen()
+creation_popup(config['text']['text_popup_1'])
 # Démarrer la boucle d'événements
 sys.exit(app.exec())
