@@ -185,7 +185,7 @@ def creation_popup(texte, fullscreen=False, use_timer=True):
 
     if use_timer:
         bouton = QPushButton(f"{config['style']['texte_bouton']}")
-        bouton.setSizePolicy(int(40), QSizePolicy.Policy.Minimum)
+        bouton.adjustSize()
         taille_police = taille_police - 2
         bouton.setStyleSheet(f"""
         QPushButton:enabled {{

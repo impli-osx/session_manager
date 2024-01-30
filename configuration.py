@@ -11,8 +11,10 @@ import markdown
 import sys
 from psutil import users as psutil_users
 from PyQt6 import QtWidgets, QtCore
-from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit, QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame, QTableWidget, QTableWidgetItem # Importe les classes
-from PyQt6.QtGui import QFontDatabase, QMovie
+from PyQt6.QtWidgets import (QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit,
+                             QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame, QTableWidget,
+                             QTableWidgetItem, QSpacerItem, QSizePolicy, QHBoxLayout)
+from PyQt6.QtGui import QFontDatabase, QMovie, QFont
 from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize, QTranslator, QLocale, QLibraryInfo
 from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
 from Ui_configuration import Ui_Configuration # Importe la classe Ui_MainWindow du fichier Ui_mainwindow.py
@@ -368,6 +370,8 @@ class MainWindow(QMainWindow):
         self.ui.fiche_15min.stateChanged.connect(self.update_fiche_duree_session)
         self.ui.fiche_30min.stateChanged.connect(self.update_fiche_duree_session)
         self.ui.fiche_1h.stateChanged.connect(self.update_fiche_duree_session)
+        
+        self.ui.previsu_popup.clicked.connect(self.afficher_popup)
         # Charge les données à partir du fichier JSON
         try:
             with open("config.json", "r") as f: # Ouvre le fichier JSON en lecture
@@ -385,6 +389,82 @@ class MainWindow(QMainWindow):
         error_dialog.setText(message)
         error_dialog.setIcon(QMessageBox.Icon.Critical)
         error_dialog.exec()
+
+
+
+    # Fonction pour afficher le popup de prévisualisation
+    def afficher_popup(self):
+        try:
+            with open('config.json') as f:
+                config = json.load(f)
+        except FileNotFoundError:
+            #show_error("Le fichier 'config.json' n'a pas été trouvé dans le répertoire courant.")
+            return 
+        fenetre = QDialog()
+        fenetre.setFixedSize(int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']))
+        fenetre.setStyleSheet(f"background-color: {config['style']['couleur_fond']};")
+        fenetre.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        fenetre.setWindowFlags(fenetre.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
+        layout = QVBoxLayout(fenetre)
+
+        # Créer un nouveau layout pour le label
+        layout_texte = QVBoxLayout()
+        layout_texte.setContentsMargins(20, 0, 20, 0)  # Appliquer une marge de 10 pixels
+
+        label = QLabel(config['text']['text_popup_1'])
+        label.setWordWrap(True)
+        label.setStyleSheet(f"color : {config['style']['couleur_texte']};")
+        police = config['style']['police']
+        taille_police = int(config['style']['taille_police'])
+        font = QFont(police, taille_police)
+        label.setFont(font)
+
+        # Ajouter le label au layout_texte au lieu du layout principal
+        layout_texte.addWidget(label)
+
+        # Ajouter le layout_texte au layout principal
+        layout.addLayout(layout_texte)
+
+        bouton = QPushButton(f"{config['style']['texte_bouton']}")
+        bouton.adjustSize()
+        taille_police = taille_police - 2
+        bouton.setStyleSheet(f"""
+        QPushButton:enabled {{
+            background-color: {config['style']['couleur_bouton']};
+            border-radius: 1px;
+            border: 1px solid #4e6096;
+            color: {config['style']['couleur_bouton_texte']};
+            font-family: {config['style']['police']};
+            font-size: {taille_police}px;
+            font-weight: bold;
+            padding: 1px 5px;
+            text-decoration: none;
+        }}
+        QPushButton:hover {{
+            background-color: {config['style']['couleur_bouton_survol']};
+        }}
+        QPushButton:pressed {{
+            position: relative;
+            top: 1px;
+        }}
+        """)
+        #bouton.setFont(font)
+        bouton.clicked.connect(fenetre.close)
+        layout.addWidget(bouton)
+        # Créer un QHBoxLayout
+        layout_bouton = QHBoxLayout()
+        # Ajouter un QSpacerItem à gauche
+        layout_bouton.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        # Ajouter le bouton au layout
+        layout_bouton.addWidget(bouton)
+        # Ajouter un QSpacerItem à droite
+        layout_bouton.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        # Ajouter le layout_bouton au layout principal
+        layout.addLayout(layout_bouton)
+        fenetre.setLayout(layout)
+        fenetre.show()
+        #print("Popup créée.") # Pour débugger
+        fenetre.exec()
 
 
 

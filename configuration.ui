@@ -618,7 +618,7 @@
         <x>370</x>
         <y>40</y>
         <width>381</width>
-        <height>271</height>
+        <height>301</height>
        </rect>
       </property>
       <property name="title">
@@ -825,6 +825,19 @@
          <width>171</width>
          <height>21</height>
         </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="previsu_popup">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>270</y>
+         <width>151</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Prévisualiser la fenêtre</string>
        </property>
       </widget>
      </widget>
