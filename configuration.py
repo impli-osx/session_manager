@@ -18,7 +18,7 @@ from PyQt6.QtGui import QFontDatabase, QMovie, QFont
 from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize, QTranslator, QLocale, QLibraryInfo
 from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
 from Ui_configuration import Ui_Configuration # Importe la classe Ui_MainWindow du fichier Ui_mainwindow.py
-from ficheentree import FicheWindow as FicheEntreeWindow # Importe la classe Ui_FicheEntree du fichier Ui_FicheEntree.py
+from fiche import FicheWindow as FicheEntreeWindow
 
 
 
