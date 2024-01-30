@@ -15,7 +15,7 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QMessageBox, QComboBox, 
                              QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame, QTableWidget,
                              QTableWidgetItem, QSpacerItem, QSizePolicy, QHBoxLayout)
 from PyQt6.QtGui import QFontDatabase, QMovie, QFont
-from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize, QTranslator, QLocale, QLibraryInfo, QFileSystemWatcher
+from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize, QTranslator, QLocale, QLibraryInfo
 from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
 from Ui_configuration import Ui_Configuration # Importe la classe Ui_MainWindow du fichier Ui_mainwindow.py
 from fiche import FicheWindow as FicheEntreeWindow
@@ -371,10 +371,20 @@ class MainWindow(QMainWindow):
         self.ui.fiche_30min.stateChanged.connect(self.update_fiche_duree_session)
         self.ui.fiche_1h.stateChanged.connect(self.update_fiche_duree_session)
         
+        self.ui.couleur_fond.textChanged.connect(lambda text: self.save_tmp('couleur_fond', text))
+        self.ui.couleur_texte.textChanged.connect(lambda text: self.save_tmp('couleur_texte', text))
+        self.ui.couleur_bouton.textChanged.connect(lambda text: self.save_tmp('couleur_bouton', text))
+        self.ui.couleur_bouton_texte.textChanged.connect(lambda text: self.save_tmp('couleur_bouton_texte', text))
+        self.ui.couleur_bouton_survol.textChanged.connect(lambda text: self.save_tmp('couleur_bouton_survol', text))
+        self.ui.texte_bouton.textChanged.connect(lambda text: self.save_tmp('texte_bouton', text))
+        self.ui.largeur_popup.textChanged.connect(lambda text: self.save_tmp('largeur_popup', text))
+        self.ui.hauteur_popup.textChanged.connect(lambda text: self.save_tmp('hauteur_popup', text))
+        self.ui.police.currentTextChanged.connect(lambda text: self.save_tmp('police', text))
+        self.ui.taille_police.textChanged.connect(lambda text: self.save_tmp('taille_police', text))
+        
+        
+        
         self.ui.previsu_popup.clicked.connect(self.afficher_popup)
-        self.watcher = QFileSystemWatcher()
-        self.watcher.addPath("config.json")
-        self.warcher.fileChanged.connect(self.charger_popup)
         # Charge les données à partir du fichier JSON
         try:
             with open("config.json", "r") as f: # Ouvre le fichier JSON en lecture
@@ -395,36 +405,31 @@ class MainWindow(QMainWindow):
 
 
 
-    def charger_config(self, path):
+    # Fonction pour sauvegarder les données dans la popup dans un fichier tmp
+    def save_tmp(self, field_name, text):
+        # Charger les données existantes
         try:
-            with open(path) as f:
-                self.config = json.load(f)
+            with open('data.tmp', 'r') as f:
+                data = json.load(f)
         except FileNotFoundError:
-            #show_error("Le fichier 'config.json' n'a pas été trouvé dans le répertoire courant.")
-            return 
-        # Mettre à jour la fenêtre de dialogue avec la nouvelle configuration
-        if self.fenetre is not None:
-            self.fenetre.setFixedSize(int(self.config['style']['largeur_popup']), int(self.config['style']['hauteur_popup']))
-            self.fenetre.setStyleSheet(f"background-color: {self.config['style']['couleur_fond']};")
-            self.label.setText(self.config['text']['text_popup_1'])
-            self.label.setStyleSheet(f"color : {self.config['style']['couleur_texte']};")
-            self.label.setFont(QFont(self.config['style']['police'], int(self.config['style']['taille_police'])))
-            
+            data = {}
 
+        # Mettre à jour les données avec la nouvelle valeur
+        data[field_name] = text
 
-
-
+        # Écrire les données dans le fichier
+        with open('data.tmp', 'w') as f:
+            json.dump(data, f)
+    
+    
+    
     # Fonction pour afficher le popup de prévisualisation
     def afficher_popup(self):
-        try:
-            with open('config.json') as f:
-                config = json.load(f)
-        except FileNotFoundError:
-            #show_error("Le fichier 'config.json' n'a pas été trouvé dans le répertoire courant.")
-            return 
+        with open('config.json') as f:
+            tmp = json.load(f)
         fenetre = QDialog()
-        fenetre.setFixedSize(int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']))
-        fenetre.setStyleSheet(f"background-color: {config['style']['couleur_fond']};")
+        fenetre.setFixedSize(int(tmp['style']['largeur_popup']), int(tmp['style']['hauteur_popup']))
+        fenetre.setStyleSheet(f"background-color: {self.config_data['style']['couleur_fond']};")
         fenetre.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         fenetre.setWindowFlags(fenetre.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
         layout = QVBoxLayout(fenetre)
@@ -433,11 +438,11 @@ class MainWindow(QMainWindow):
         layout_texte = QVBoxLayout()
         layout_texte.setContentsMargins(20, 0, 20, 0)  # Appliquer une marge de 10 pixels
 
-        label = QLabel(config['text']['text_popup_1'])
+        label = QLabel(self.config_data['text']['text_popup_1'])
         label.setWordWrap(True)
-        label.setStyleSheet(f"color : {config['style']['couleur_texte']};")
-        police = config['style']['police']
-        taille_police = int(config['style']['taille_police'])
+        label.setStyleSheet(f"color : {self.config_data['style']['couleur_texte']};")
+        police = self.config_data['style']['police']
+        taille_police = int(self.config_data['style']['taille_police'])
         font = QFont(police, taille_police)
         label.setFont(font)
 
@@ -447,23 +452,23 @@ class MainWindow(QMainWindow):
         # Ajouter le layout_texte au layout principal
         layout.addLayout(layout_texte)
 
-        bouton = QPushButton(f"{config['style']['texte_bouton']}")
+        bouton = QPushButton(f"{self.config_data['style']['texte_bouton']}")
         bouton.adjustSize()
         taille_police = taille_police - 2
         bouton.setStyleSheet(f"""
         QPushButton:enabled {{
-            background-color: {config['style']['couleur_bouton']};
+            background-color: {self.config_data['style']['couleur_bouton']};
             border-radius: 1px;
             border: 1px solid #4e6096;
-            color: {config['style']['couleur_bouton_texte']};
-            font-family: {config['style']['police']};
+            color: {self.config_data['style']['couleur_bouton_texte']};
+            font-family: {self.config_data['style']['police']};
             font-size: {taille_police}px;
             font-weight: bold;
             padding: 1px 5px;
             text-decoration: none;
         }}
         QPushButton:hover {{
-            background-color: {config['style']['couleur_bouton_survol']};
+            background-color: {self.config_data['style']['couleur_bouton_survol']};
         }}
         QPushButton:pressed {{
             position: relative;
