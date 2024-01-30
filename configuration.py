@@ -15,7 +15,7 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QMessageBox, QComboBox, 
                              QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame, QTableWidget,
                              QTableWidgetItem, QSpacerItem, QSizePolicy, QHBoxLayout)
 from PyQt6.QtGui import QFontDatabase, QMovie, QFont
-from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize, QTranslator, QLocale, QLibraryInfo
+from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize, QTranslator, QLocale, QLibraryInfo, QFileSystemWatcher
 from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
 from Ui_configuration import Ui_Configuration # Importe la classe Ui_MainWindow du fichier Ui_mainwindow.py
 from fiche import FicheWindow as FicheEntreeWindow
@@ -372,6 +372,9 @@ class MainWindow(QMainWindow):
         self.ui.fiche_1h.stateChanged.connect(self.update_fiche_duree_session)
         
         self.ui.previsu_popup.clicked.connect(self.afficher_popup)
+        self.watcher = QFileSystemWatcher()
+        self.watcher.addPath("config.json")
+        self.warcher.fileChanged.connect(self.charger_popup)
         # Charge les données à partir du fichier JSON
         try:
             with open("config.json", "r") as f: # Ouvre le fichier JSON en lecture
@@ -389,6 +392,25 @@ class MainWindow(QMainWindow):
         error_dialog.setText(message)
         error_dialog.setIcon(QMessageBox.Icon.Critical)
         error_dialog.exec()
+
+
+
+    def charger_config(self, path):
+        try:
+            with open(path) as f:
+                self.config = json.load(f)
+        except FileNotFoundError:
+            #show_error("Le fichier 'config.json' n'a pas été trouvé dans le répertoire courant.")
+            return 
+        # Mettre à jour la fenêtre de dialogue avec la nouvelle configuration
+        if self.fenetre is not None:
+            self.fenetre.setFixedSize(int(self.config['style']['largeur_popup']), int(self.config['style']['hauteur_popup']))
+            self.fenetre.setStyleSheet(f"background-color: {self.config['style']['couleur_fond']};")
+            self.label.setText(self.config['text']['text_popup_1'])
+            self.label.setStyleSheet(f"color : {self.config['style']['couleur_texte']};")
+            self.label.setFont(QFont(self.config['style']['police'], int(self.config['style']['taille_police'])))
+            
+
 
 
 
@@ -784,6 +806,7 @@ class MainWindow(QMainWindow):
         self.ui.couleur_bouton.setText(data.get("style", {}).get("couleur_bouton", ""))
         self.ui.couleur_bouton_texte.setText(data.get("style", {}).get("couleur_bouton_texte", ""))
         self.ui.texte_bouton.setText(data.get("style", {}).get("texte_bouton", ""))
+        self.ui.couleur_bouton_survol.setText(data.get("style", {}).get("couleur_bouton_survol", ""))
         self.ui.fermeture_session.setCurrentText(data.get("fermeture", {}).get("fermeture_session", ""))
         self.ui.activation_fermeture.setChecked(data.get("fermeture", {}).get("fermeture_popup", False))
         
