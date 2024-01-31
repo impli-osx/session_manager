@@ -617,7 +617,7 @@
        <rect>
         <x>370</x>
         <y>40</y>
-        <width>381</width>
+        <width>401</width>
         <height>301</height>
        </rect>
       </property>
@@ -719,7 +719,7 @@
       <widget class="QPushButton" name="mod_fond">
        <property name="geometry">
         <rect>
-         <x>270</x>
+         <x>320</x>
          <y>30</y>
          <width>75</width>
          <height>24</height>
@@ -732,7 +732,7 @@
       <widget class="QPushButton" name="mod_texte">
        <property name="geometry">
         <rect>
-         <x>270</x>
+         <x>320</x>
          <y>70</y>
          <width>75</width>
          <height>24</height>
@@ -745,7 +745,7 @@
       <widget class="QPushButton" name="mod_bouton">
        <property name="geometry">
         <rect>
-         <x>270</x>
+         <x>320</x>
          <y>110</y>
          <width>75</width>
          <height>24</height>
@@ -758,7 +758,7 @@
       <widget class="QPushButton" name="mod_bouton_texte">
        <property name="geometry">
         <rect>
-         <x>270</x>
+         <x>320</x>
          <y>150</y>
          <width>75</width>
          <height>24</height>
@@ -794,7 +794,7 @@
       <widget class="QPushButton" name="mod_bouton_survol">
        <property name="geometry">
         <rect>
-         <x>270</x>
+         <x>320</x>
          <y>190</y>
          <width>75</width>
          <height>24</height>
@@ -838,6 +838,71 @@
        </property>
        <property name="text">
         <string>Prévisualiser la fenêtre</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_fond">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>30</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_texte">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>70</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_bouton">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>110</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_bouton_texte">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>150</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_survol">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>190</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </widget>

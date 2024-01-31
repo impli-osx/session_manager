@@ -29,9 +29,9 @@
         "hauteur_popup": "250",
         "police": "Calibri",
         "taille_police": "15",
-        "couleur_fond": "#7dfffb",
-        "couleur_texte": "#6c5544",
-        "couleur_bouton": "#4f6bd0",
+        "couleur_fond": "#ceeeff",
+        "couleur_texte": "#b6ffa0",
+        "couleur_bouton": "#fff2f6",
         "couleur_bouton_texte": "#ffffff",
         "couleur_bouton_survol": "#a87076",
         "texte_bouton": "J'ai compris"

@@ -14,7 +14,7 @@ from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit,
                              QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame, QTableWidget,
                              QTableWidgetItem, QSpacerItem, QSizePolicy, QHBoxLayout)
-from PyQt6.QtGui import QFontDatabase, QMovie, QFont
+from PyQt6.QtGui import QFontDatabase, QMovie, QFont, QColor
 from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize, QTranslator, QLocale, QLibraryInfo
 from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
 from Ui_configuration import Ui_Configuration # Importe la classe Ui_MainWindow du fichier Ui_mainwindow.py
@@ -370,21 +370,26 @@ class MainWindow(QMainWindow):
         self.ui.fiche_15min.stateChanged.connect(self.update_fiche_duree_session)
         self.ui.fiche_30min.stateChanged.connect(self.update_fiche_duree_session)
         self.ui.fiche_1h.stateChanged.connect(self.update_fiche_duree_session)
-        
+        # Gestion des couleurs de la fenêtre popup
         self.ui.couleur_fond.textChanged.connect(lambda text: self.save_tmp('couleur_fond', text))
+        self.ui.couleur_fond.textChanged.connect(self.update_color)
         self.ui.couleur_texte.textChanged.connect(lambda text: self.save_tmp('couleur_texte', text))
+        self.ui.couleur_texte.textChanged.connect(self.update_color)
         self.ui.couleur_bouton.textChanged.connect(lambda text: self.save_tmp('couleur_bouton', text))
+        self.ui.couleur_bouton.textChanged.connect(self.update_color)
         self.ui.couleur_bouton_texte.textChanged.connect(lambda text: self.save_tmp('couleur_bouton_texte', text))
+        self.ui.couleur_bouton_texte.textChanged.connect(self.update_color)
         self.ui.couleur_bouton_survol.textChanged.connect(lambda text: self.save_tmp('couleur_bouton_survol', text))
+        self.ui.couleur_bouton_survol.textChanged.connect(self.update_color)
         self.ui.texte_bouton.textChanged.connect(lambda text: self.save_tmp('texte_bouton', text))
         self.ui.largeur_popup.textChanged.connect(lambda text: self.save_tmp('largeur_popup', text))
         self.ui.hauteur_popup.textChanged.connect(lambda text: self.save_tmp('hauteur_popup', text))
         self.ui.police.currentTextChanged.connect(lambda text: self.save_tmp('police', text))
         self.ui.taille_police.textChanged.connect(lambda text: self.save_tmp('taille_police', text))
         
-        
-        
         self.ui.previsu_popup.clicked.connect(self.afficher_popup)
+        
+        self.update_color()
         # Charge les données à partir du fichier JSON
         try:
             with open("config.json", "r") as f: # Ouvre le fichier JSON en lecture
@@ -406,6 +411,7 @@ class MainWindow(QMainWindow):
 
 
     # Fonction pour sauvegarder les données dans la popup dans un fichier tmp
+    # Les données tmp sont enregistrées lors d'un changement de champ dans l'onglet Style
     def save_tmp(self, field_name, text):
         # Charger les données existantes
         try:
@@ -413,23 +419,57 @@ class MainWindow(QMainWindow):
                 data = json.load(f)
         except FileNotFoundError:
             data = {}
-
         # Mettre à jour les données avec la nouvelle valeur
         data[field_name] = text
-
         # Écrire les données dans le fichier
         with open('data.tmp', 'w') as f:
             json.dump(data, f)
     
     
     
+    def update_color(self):
+        try:
+            with open('data.tmp') as f:
+                tmp = json.load(f)
+        except FileNotFoundError:
+            tmp = {}
+        with open('config.json') as f:
+            config = json.load(f)            
+        data = {**config['style'], **tmp}
+        self.ui.label_fond.setStyleSheet(f"background-color: {data['couleur_fond']}; border: 1px solid black;")
+        self.ui.label_texte.setStyleSheet(f"background-color: {data['couleur_texte']}; border: 1px solid black;")
+        self.ui.label_bouton.setStyleSheet(f"background-color: {data['couleur_bouton']}; border: 1px solid black;")
+        self.ui.label_bouton_texte.setStyleSheet(f"background-color: {data['couleur_bouton_texte']}; border: 1px solid black;")
+        self.ui.label_survol.setStyleSheet(f"background-color: {data['couleur_bouton_survol']}; border: 1px solid black;")
+    
+    
+    
+    # Fonction pour supprimer le fichier data.tmp à la fermeture de la fenêtre
+    def closeEvent(self, event):
+        try:
+            os.remove('data.tmp')
+        except FileNotFoundError:
+            pass
+        super().closeEvent(event)
+    
+    
+    
     # Fonction pour afficher le popup de prévisualisation
     def afficher_popup(self):
+        # Chargement des données depuis data.tmp
+        try: 
+            with open('data.tmp') as f:
+                tmp = json.load(f)
+        except FileNotFoundError:
+            tmp = {}
+            
         with open('config.json') as f:
-            tmp = json.load(f)
+            config = json.load(f)            
+        data = {**config['style'], **tmp}
+        
         fenetre = QDialog()
-        fenetre.setFixedSize(int(tmp['style']['largeur_popup']), int(tmp['style']['hauteur_popup']))
-        fenetre.setStyleSheet(f"background-color: {self.config_data['style']['couleur_fond']};")
+        fenetre.setFixedSize(int(data['largeur_popup']), int(data['hauteur_popup']))
+        fenetre.setStyleSheet(f"background-color: {data['couleur_fond']};")
         fenetre.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         fenetre.setWindowFlags(fenetre.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
         layout = QVBoxLayout(fenetre)
@@ -438,11 +478,11 @@ class MainWindow(QMainWindow):
         layout_texte = QVBoxLayout()
         layout_texte.setContentsMargins(20, 0, 20, 0)  # Appliquer une marge de 10 pixels
 
-        label = QLabel(self.config_data['text']['text_popup_1'])
+        label = QLabel(config['text']['text_popup_1'])
         label.setWordWrap(True)
-        label.setStyleSheet(f"color : {self.config_data['style']['couleur_texte']};")
-        police = self.config_data['style']['police']
-        taille_police = int(self.config_data['style']['taille_police'])
+        label.setStyleSheet(f"color : {data['couleur_texte']};")
+        police = data['police']
+        taille_police = int(data['taille_police'])
         font = QFont(police, taille_police)
         label.setFont(font)
 
@@ -452,23 +492,23 @@ class MainWindow(QMainWindow):
         # Ajouter le layout_texte au layout principal
         layout.addLayout(layout_texte)
 
-        bouton = QPushButton(f"{self.config_data['style']['texte_bouton']}")
+        bouton = QPushButton(f"{data['texte_bouton']}")
         bouton.adjustSize()
         taille_police = taille_police - 2
         bouton.setStyleSheet(f"""
         QPushButton:enabled {{
-            background-color: {self.config_data['style']['couleur_bouton']};
+            background-color: {data['couleur_bouton']};
             border-radius: 1px;
             border: 1px solid #4e6096;
-            color: {self.config_data['style']['couleur_bouton_texte']};
-            font-family: {self.config_data['style']['police']};
+            color: {data['couleur_bouton_texte']};
+            font-family: {data['police']};
             font-size: {taille_police}px;
             font-weight: bold;
             padding: 1px 5px;
             text-decoration: none;
         }}
         QPushButton:hover {{
-            background-color: {self.config_data['style']['couleur_bouton_survol']};
+            background-color: {data['couleur_bouton_survol']};
         }}
         QPushButton:pressed {{
             position: relative;
@@ -620,8 +660,22 @@ class MainWindow(QMainWindow):
         path = QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)
         translator.load("qt_" + locale, path)
         app.installTranslator(translator)
+        
+        # Affiche, par défaut, la couleur présent dans le QLineEdit
+        if type_modification == "fond":
+            couleur_initiale = QColor(self.ui.couleur_fond.text())
+        elif type_modification == "texte":      
+            couleur_initiale = QColor(self.ui.couleur_texte.text())
+        elif type_modification == "bouton":
+            couleur_initiale = QColor(self.ui.couleur_bouton.text())
+        elif type_modification == "bouton_texte":
+            couleur_initiale = QColor(self.ui.couleur_bouton_texte.text())
+        elif type_modification == "bouton_survol":
+            couleur_initiale = QColor(self.ui.couleur_bouton_survol.text())
+        
+        
         # Affiche une fenêtre de dialogue pour choisir la couleur
-        couleur = QtWidgets.QColorDialog.getColor()
+        couleur = QtWidgets.QColorDialog.getColor(couleur_initiale)
         if couleur.isValid():
             # Récupère le code hexadécimal de la couleur
             code_hexa = couleur.name()

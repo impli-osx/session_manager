@@ -11,6 +11,8 @@ import sys
 import json
 import fitz
 from PyQt6.QtCore import QUrl
+from pdf2image import convert_from_path
+from test import PdfViewer
 
 class FicheWindow(QMainWindow):
     def __init__(self):
@@ -89,9 +91,11 @@ class FicheWindow(QMainWindow):
             # Ajouter le QVBoxLayout au layout de la colonne
             column_layouts[j % 2].addLayout(group_layout)
             # Ajouter un QSpacerItem entre chaque groupe
-            if j < len(champs_sorted) - 1:  # Pas besoin d'ajouter un espace après le dernier groupe
+            if j < len(champs_sorted):  # Pas besoin d'ajouter un espace après le dernier groupe
                 spacer = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
                 column_layouts[j % 2].addItem(spacer)
+        # On compte le nombre de champs pour savoir dans quelle colonne ajouter le QComboBox
+        total_champs = len(champs_sorted)
 
         # Ajoutez le QLabel et le QComboBox à votre layout
         if config['fiche']['fiche_duree_session']:
@@ -103,13 +107,36 @@ class FicheWindow(QMainWindow):
         else:
             self.session_duration_label.hide()
             self.session_duration_combo.hide()
+        # On incrémente le nombre de champs
+        total_champs += 1
 
+        # QComboBox pour l'âge
+        age_layout = QVBoxLayout()
+        age_layout.addWidget(QLabel("Renseignez votre âge :"))
+        age_combo = QComboBox()
+        age_combo.addItems(["12-18 ans", "18-35 ans", "35-60 ans", "60 ans et plus"])
+        age_layout.addWidget(age_combo)
+        column_layouts[total_champs % 2].addLayout(age_layout)
+        total_champs += 1
+
+        # QComboBox pour le statut
+        statut_layout = QVBoxLayout()  
+        statut_layout.addWidget(QLabel("Renseignez votre statut :"))
+        statut_combo = QComboBox()
+        statut_combo.addItems(["Étudiant", "Salarié", "Demandeur d'emploi", "Retraité", "Autre"])
+        statut_layout.addWidget(statut_combo)
+        column_layouts[total_champs % 2].addLayout(statut_layout)
+
+
+
+
+        # Ajouter les colonnes au layout horizontal
         for i in range(2):
             column_layouts[i].setAlignment(Qt.AlignmentFlag.AlignTop)  # Ajouter cette ligne
             fields_layout.addLayout(column_layouts[i])
             if i == 0:
                 fields_layout.addSpacing(20)
-
+        # Ajouter le layout des colonnes au layout vertical
         columns_layout.addLayout(fields_layout)
         
         if not config['fiche']['fiche_duree_session']:
@@ -150,6 +177,8 @@ class FicheWindow(QMainWindow):
 
         # Ajouter une marge à droite pour le cadre PDF
         pdf_layout.setContentsMargins(0, 0, 50, 0)  # 50 pixels à droite
+        self.pdf_viewer = PdfViewer()
+        self.pdf_frame.layout().addWidget(self.pdf_viewer)
 
         # Définir la proportion de l'espace que chaque layout doit occuper
         columns_and_pdf_layout.setStretch(0, 2)  # Les colonnes doivent occuper 2/6 de l'espace
@@ -271,64 +300,9 @@ class FicheWindow(QMainWindow):
 
 
 
-    def show_pdf(self, filename):
-        try:
-            # Obtenir le chemin absolu du fichier
-            pdf_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
-            print(f"Chemin : {pdf_path} ")
-
-            # Créer une scène pour les pages du PDF
-            scene = QGraphicsScene()
-
-            # Utiliser QImageReader pour charger les images du PDF
-            image_reader = QImageReader(pdf_path)
-
-            # Convertir chaque page en image et l'ajouter à la scène
-            for i in range(image_reader.imageCount()):
-                print(f"Boucle {i}")
-                try:
-                    # Charger l'image avec QImageReader
-                    img = image_reader.read()
-
-                    # Afficher les dimensions de l'image avant redimensionnement
-                    print("Dimensions de l'image (avant redimensionnement) : ", img.width(), img.height())
-
-                    # Créer un QGraphicsPixmapItem pour afficher l'image sans redimensionnement
-                    pixmap_item = QGraphicsPixmapItem(QPixmap.fromImage(img))
-
-                    # Ajouter le QGraphicsPixmapItem à la scène
-                    scene.addItem(pixmap_item)
-
-                    print("Objet ajouté à la scène")
-
-                except Exception as conversion_error:
-                    print(f"Erreur lors de la conversion de l'image {i}: {conversion_error}")
-                    import traceback
-                    traceback.print_exc()  # Affiche la trace de la pile d'appels
-
-            # Créer un QGraphicsView pour afficher la scène
-            print("Création de la vue")
-            view = QGraphicsView(scene)
-            print("Création du QGraphicsView")
-
-            # Ajouter le QGraphicsView au cadre PDF
-            self.pdf_frame.layout().addWidget(view)
-            # Utiliser la variable de classe
-            print("Ajout de la vue au cadre PDF")
-
-            # Ajouter un message après la création du QGraphicsView pour vérifier si cette partie du code est atteinte
-            print("Fin du traitement")
-
-        except Exception as e:
-            print(f"Erreur générale : {e}")
-            import traceback
-            traceback.print_exc()
-        print("Fin du traitement")
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = FicheWindow()
-    window.show_pdf("reglement.pdf")
     window.show()
     app.exec()
