@@ -121,8 +121,6 @@ class FicheWindow(QMainWindow):
         age_layout.addWidget(self.age_combo)
         column_layouts[total_champs % 2].addLayout(age_layout)
         total_champs += 1
-        data_age = self.age_combo.currentText()
-        data['Age'] = data_age
 
 
         # QComboBox pour le statut
@@ -133,8 +131,6 @@ class FicheWindow(QMainWindow):
         self.statut_combo.addItems(["Étudiant", "Salarié", "Demandeur d'emploi", "Retraité", "Autre"])
         statut_layout.addWidget(self.statut_combo)
         column_layouts[total_champs % 2].addLayout(statut_layout)
-        data_status = self.statut_combo.currentText()
-        data['Statut'] = data_status
 
         # Ajouter les colonnes au layout horizontal
         for i in range(2):

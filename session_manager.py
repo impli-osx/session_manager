@@ -72,7 +72,10 @@ class FicheWindow(FicheWindow):
         for combo in combos:
             if combo.objectName() == "session_duration_combo":
                 self.data["ChoixDuréeSession"] = combo.currentText()
-    
+            elif combo.objectName() == "Age":
+                self.data["Age"] = combo.currentText()
+            elif combo.objectName() == "Statut":
+                self.data["Statut"] = combo.currentText()
     
     
     # Récupère les valeurs des différents champs
