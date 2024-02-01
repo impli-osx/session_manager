@@ -103,7 +103,7 @@ class FicheWindow(FicheWindow):
             champs = json.load(f)
         ordered_keys = [champ.get("label_content", "").replace(" ", "") for order, champ in sorted(champs.items(), key=lambda item: int(item[0]))]
         ordered_keys.append("ChoixDuréeSession")
-        ordered_keys.append("Âge")
+        ordered_keys.append("Age")
         ordered_keys.append("Statut")
         new_data_df = pd.DataFrame(data, columns=ordered_keys, index=[0])
         if not os.path.isfile('data.xlsx'):

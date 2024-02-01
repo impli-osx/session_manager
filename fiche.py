@@ -116,12 +116,13 @@ class FicheWindow(QMainWindow):
         age_layout = QVBoxLayout()
         age_layout.addWidget(QLabel("Renseignez votre âge :"))
         self.age_combo = QComboBox()
-        self.age_combo.setObjectName("Âge")
+        self.age_combo.setObjectName("Age")
         self.age_combo.addItems(["12-18 ans", "18-35 ans", "35-60 ans", "60 ans et plus"])
         age_layout.addWidget(self.age_combo)
         column_layouts[total_champs % 2].addLayout(age_layout)
         total_champs += 1
-        data.get['Âge']
+        data_age = self.age_combo.currentText()
+        data['Age'] = data_age
 
 
         # QComboBox pour le statut
@@ -132,7 +133,8 @@ class FicheWindow(QMainWindow):
         self.statut_combo.addItems(["Étudiant", "Salarié", "Demandeur d'emploi", "Retraité", "Autre"])
         statut_layout.addWidget(self.statut_combo)
         column_layouts[total_champs % 2].addLayout(statut_layout)
-        data.get['Status']
+        data_status = self.statut_combo.currentText()
+        data['Statut'] = data_status
 
         # Ajouter les colonnes au layout horizontal
         for i in range(2):
