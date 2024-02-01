@@ -103,6 +103,8 @@ class FicheWindow(FicheWindow):
             champs = json.load(f)
         ordered_keys = [champ.get("label_content", "").replace(" ", "") for order, champ in sorted(champs.items(), key=lambda item: int(item[0]))]
         ordered_keys.append("ChoixDuréeSession")
+        ordered_keys.append("Âge")
+        ordered_keys.append("Statut")
         new_data_df = pd.DataFrame(data, columns=ordered_keys, index=[0])
         if not os.path.isfile('data.xlsx'):
             new_data_df.to_excel('data.xlsx', sheet_name=current_year, index=False)
@@ -309,13 +311,9 @@ def end_session():
 
 
 
-# # Créer une application Qt
-# app = QApplication(sys.argv)
-# # Ne pas quitter l'application lorsque la dernière fenêtre est fermée
-# app.setQuitOnLastWindowClosed(False)
 # Créer et afficher la fenêtre FicheEntreeWindow
-#window = FicheWindow()
-#window.showFullScreen()
-creation_popup(config['text']['text_popup_1'])
+window = FicheWindow()
+window.showFullScreen()
+#creation_popup(config['text']['text_popup_1'])
 # Démarrer la boucle d'événements
 sys.exit(app.exec())

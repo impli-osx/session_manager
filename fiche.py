@@ -12,15 +12,17 @@ import json
 import fitz
 from PyQt6.QtCore import QUrl
 from pdf2image import convert_from_path
-from test import PdfViewer
+from pdfviewer import PdfViewer
 
 class FicheWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        data = {}
         self.session_duration_label = QLabel("Choix de la durée de votre session")
         self.session_duration_combo = QComboBox()
         self.session_duration_combo.setObjectName("session_duration_combo")
+
 
 
         self.pdf_scroll_area = QScrollArea(self)
@@ -113,22 +115,24 @@ class FicheWindow(QMainWindow):
         # QComboBox pour l'âge
         age_layout = QVBoxLayout()
         age_layout.addWidget(QLabel("Renseignez votre âge :"))
-        age_combo = QComboBox()
-        age_combo.addItems(["12-18 ans", "18-35 ans", "35-60 ans", "60 ans et plus"])
-        age_layout.addWidget(age_combo)
+        self.age_combo = QComboBox()
+        self.age_combo.setObjectName("Âge")
+        self.age_combo.addItems(["12-18 ans", "18-35 ans", "35-60 ans", "60 ans et plus"])
+        age_layout.addWidget(self.age_combo)
         column_layouts[total_champs % 2].addLayout(age_layout)
         total_champs += 1
+        data.get['Âge']
+
 
         # QComboBox pour le statut
         statut_layout = QVBoxLayout()  
         statut_layout.addWidget(QLabel("Renseignez votre statut :"))
-        statut_combo = QComboBox()
-        statut_combo.addItems(["Étudiant", "Salarié", "Demandeur d'emploi", "Retraité", "Autre"])
-        statut_layout.addWidget(statut_combo)
+        self.statut_combo = QComboBox()
+        self.statut_combo.setObjectName("Statut")
+        self.statut_combo.addItems(["Étudiant", "Salarié", "Demandeur d'emploi", "Retraité", "Autre"])
+        statut_layout.addWidget(self.statut_combo)
         column_layouts[total_champs % 2].addLayout(statut_layout)
-
-
-
+        data.get['Status']
 
         # Ajouter les colonnes au layout horizontal
         for i in range(2):
@@ -138,10 +142,7 @@ class FicheWindow(QMainWindow):
                 fields_layout.addSpacing(20)
         # Ajouter le layout des colonnes au layout vertical
         columns_layout.addLayout(fields_layout)
-        
-        if not config['fiche']['fiche_duree_session']:
-            self.session_duration_label.hide()
-            self.session_duration_combo.hide()
+    
 
         # Ajouter un spacer à la fin du layout vertical
         spacer = QSpacerItem(20, 40, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
