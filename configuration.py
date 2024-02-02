@@ -493,18 +493,17 @@ class MainWindow(QMainWindow):
         layout.addLayout(layout_texte)
 
         bouton = QPushButton(f"{data['texte_bouton']}")
-        bouton.adjustSize()
-        taille_police = taille_police - 2
+        bouton.setFixedSize(200,35)
         bouton.setStyleSheet(f"""
         QPushButton:enabled {{
             background-color: {data['couleur_bouton']};
-            border-radius: 1px;
+            border-radius: 10px;
             border: 1px solid #4e6096;
             color: {data['couleur_bouton_texte']};
             font-family: {data['police']};
             font-size: {taille_police}px;
             font-weight: bold;
-            padding: 1px 5px;
+            padding: 5px 1px;
             text-decoration: none;
         }}
         QPushButton:hover {{
@@ -515,17 +514,16 @@ class MainWindow(QMainWindow):
             top: 1px;
         }}
         """)
-        #bouton.setFont(font)
         bouton.clicked.connect(fenetre.close)
         layout.addWidget(bouton)
         # Créer un QHBoxLayout
         layout_bouton = QHBoxLayout()
         # Ajouter un QSpacerItem à gauche
-        layout_bouton.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        layout_bouton.addItem(QSpacerItem(20, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         # Ajouter le bouton au layout
         layout_bouton.addWidget(bouton)
         # Ajouter un QSpacerItem à droite
-        layout_bouton.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        layout_bouton.addItem(QSpacerItem(20, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         # Ajouter le layout_bouton au layout principal
         layout.addLayout(layout_bouton)
         fenetre.setLayout(layout)

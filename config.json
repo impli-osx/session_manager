@@ -1,6 +1,6 @@
 {
     "text": {
-        "text_popup_1": "Texte sur\ndeux lignes",
+        "text_popup_1": "Texte sur\ndeux lignes\net\nun\npeu\nplus",
         "text_popup_2": "Texte second popup",
         "text_popup_3": "Texte troisi\u00e8me popup",
         "text_popup_4": ""
@@ -29,11 +29,11 @@
         "hauteur_popup": "250",
         "police": "Calibri",
         "taille_police": "15",
-        "couleur_fond": "#ceeeff",
-        "couleur_texte": "#b6ffa0",
-        "couleur_bouton": "#fff2f6",
-        "couleur_bouton_texte": "#ffffff",
-        "couleur_bouton_survol": "#a87076",
+        "couleur_fond": "#eaeaea",
+        "couleur_texte": "#4c1a1b",
+        "couleur_bouton": "#92b7cf",
+        "couleur_bouton_texte": "#000000",
+        "couleur_bouton_survol": "#527ca8",
         "texte_bouton": "J'ai compris"
     },
     "fermeture": {

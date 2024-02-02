@@ -150,6 +150,14 @@ class FicheWindow(FicheWindow):
             self.save_to_excel(self.get_data())
         
         
+# Variables pour les timers
+variables = {
+    "session": config['timer']['duree_session'],
+    "avertissement": config['timer']['timer_popup_1'],
+    "avertissement2": config['timer']['timer_popup_2'],
+    "fermeture": config['fermeture']['timer_popup_3'],
+}
+
 
 
 # Fonction pour créer le popup d'après le fichier de configuration
@@ -195,8 +203,7 @@ def creation_popup(texte, fullscreen=False, use_timer=True):
 
     if use_timer:
         bouton = QPushButton(f"{config['style']['texte_bouton']}")
-        bouton.adjustSize()
-        taille_police = taille_police - 2
+        bouton.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)  # Faire en sorte que le bouton s'adapte au texte
         bouton.setStyleSheet(f"""
         QPushButton:enabled {{
             background-color: {config['style']['couleur_bouton']};
@@ -206,7 +213,7 @@ def creation_popup(texte, fullscreen=False, use_timer=True):
             font-family: {config['style']['police']};
             font-size: {taille_police}px;
             font-weight: bold;
-            padding: 1px 5px;
+            padding: 5px 5px;
             text-decoration: none;
         }}
         QPushButton:hover {{
@@ -217,7 +224,6 @@ def creation_popup(texte, fullscreen=False, use_timer=True):
             top: 1px;
         }}
         """)
-        #bouton.setFont(font)
         bouton.clicked.connect(fenetre.close)
         layout.addWidget(bouton)
         # Créer un QHBoxLayout
@@ -266,7 +272,8 @@ def timer_popup_1():
     #print(f"Timer popup 1 : {timer_1}") # Pour débugger
     timer1 = QTimer(app)
     timer1.stop()  # Arrêter le timer avant de le configurer
-    creation_popup_1 = partial(creation_popup, config['text']['text_popup_1'])
+    texte = config['text']['text_popup_1'].format(**variables)
+    creation_popup_1 = partial(creation_popup, texte)
     timer1.timeout.connect(creation_popup_1)
     timer1.timeout.connect(timer1.stop)
     timer1.start(timer_1 * 1000) # DEBUG
@@ -282,7 +289,8 @@ def timer_popup_2():
     global timer2
     timer2 = QTimer(app)
     timer2.stop()  # Arrêter le timer avant de le configurer
-    creation_popup_2 = partial(creation_popup, config['text']['text_popup_2'])
+    texte = config['text']['text_popup_2'].format(**variables)
+    creation_popup_2 = partial(creation_popup, texte)
     timer2.timeout.connect(creation_popup_2)
     timer2.timeout.connect(timer2.stop)
     timer2.start(timer_2 * 1000) # Convertir les secondes en millisecondes
@@ -297,7 +305,8 @@ def timer_fermeture():
     global timerfin
     timerfin = QTimer(app)
     timerfin.stop()  # Arrêter le timer avant de le configurer
-    creation_fin = partial(creation_popup, config['text']['text_popup_3'], fullscreen=True, use_timer=False)
+    texte = config['text']['text_popup_3'].format(**variables)
+    creation_fin = partial(creation_popup, texte, fullscreen=True, use_timer=False)
     timerfin.timeout.connect(creation_fin)
     timerfin.timeout.connect(timerfin.stop)
     timerfin.start(timerfermeture * 1000)
