@@ -208,7 +208,7 @@ def creation_popup(texte, popup=True):
         QPushButton:enabled {{
             background-color: {config['style']['couleur_bouton']};
             border-radius: 1px;
-            border: 1px solid #4e6096;
+            border: 1px solid black;
             color: {config['style']['couleur_bouton_texte']};
             font-family: {config['style']['police']};
             font-size: {taille_police}px;

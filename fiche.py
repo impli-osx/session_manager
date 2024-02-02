@@ -187,8 +187,8 @@ class FicheWindow(QMainWindow):
 
         # Définir la proportion de l'espace que chaque layout doit occuper
         columns_and_pdf_layout.setStretch(0, 2)  # Les colonnes doivent occuper 2/6 de l'espace
-        columns_and_pdf_layout.setStretch(1, 1)  # Le spacer doit occuper 1/6 de l'espace
-        columns_and_pdf_layout.setStretch(2, 8)  # Le cadre PDF doit occuper 3/6 de l'espace
+        columns_and_pdf_layout.setStretch(1, 0)  # Le spacer doit occuper 1/6 de l'espace
+        columns_and_pdf_layout.setStretch(2, 3)  # Le cadre PDF doit occuper 3/6 de l'espace
 
         # Ajouter le layout contenant les colonnes et le cadre PDF au layout principal
         main_layout.addLayout(columns_and_pdf_layout)

@@ -498,7 +498,7 @@ class MainWindow(QMainWindow):
         QPushButton:enabled {{
             background-color: {data['couleur_bouton']};
             border-radius: 10px;
-            border: 1px solid #4e6096;
+            border: 1px solid black;
             color: {data['couleur_bouton_texte']};
             font-family: {data['police']};
             font-size: {taille_police}px;
