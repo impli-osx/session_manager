@@ -303,13 +303,13 @@ class MainWindow(QMainWindow):
         self.ui = Ui_Configuration() # Crée une instance de Ui_MainWindow
         self.ui.setupUi(self) # Charge l'interface utilisateur
         
-        if not os.path.isdir('Aide'):
-            self.show_error("Le dossier 'Aide' n'a pas été trouvé dans le répertoire courant.")
+        if not os.path.isdir('aide'):
+            self.show_error("Le dossier 'aide' n'a pas été trouvé dans le répertoire courant.")
             sys.exit(1)
         aide_files = ['titres', 'textes', 'temps', 'fiche', 'gestion', 'style', 'accueil']
         for file in aide_files:
-            if not os.path.isfile(f'Aide/{file}.md'):
-                self.show_error(f"Le fichier d'aide '{file}.md' n'a pas été trouvé dans le dossier 'Aide'.")
+            if not os.path.isfile(f'aide/{file}.md'):
+                self.show_error(f"Le fichier d'aide '{file}.md' n'a pas été trouvé dans le dossier 'aide'.")
                 sys.exit(1)
         
         if not os.path.isfile('session_manager.exe'):
@@ -497,7 +497,7 @@ class MainWindow(QMainWindow):
         bouton.setStyleSheet(f"""
         QPushButton:enabled {{
             background-color: {data['couleur_bouton']};
-            border-radius: 10px;
+            border-radius: 15px;
             border: 1px solid black;
             color: {data['couleur_bouton_texte']};
             font-family: {data['police']};
@@ -637,7 +637,7 @@ class MainWindow(QMainWindow):
     # Fonction pour afficher l'aide 
     def afficher_aide(self, type_aide):
         try:
-            chemin_fichier = os.path.join("Aide", f"{type_aide}.md")
+            chemin_fichier = os.path.join("aide", f"{type_aide}.md")
             with open(chemin_fichier, "r",encoding="utf-8") as f:
                 aide = f.read()
             aide_html = markdown.markdown(aide)  # Convertit le Markdown en HTML
