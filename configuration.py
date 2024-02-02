@@ -779,8 +779,7 @@ class MainWindow(QMainWindow):
                 "text" :{
                     "text_popup_1" : self.ui.text_popup_1.toPlainText(), # Récupère le texte du champ text_popup_1
                     "text_popup_2" : self.ui.text_popup_2.toPlainText(), # Récupère le texte du champ text_popup_2
-                    "text_popup_3" : self.ui.text_popup_3.toPlainText(), # Récupère le texte du champ text_popup_3
-                    "text_popup_4" : self.ui.text_fermeture.toPlainText(), # Récupère le texte du champ text_popup_4
+                    "text_popup_3" : self.ui.text_fermeture.toPlainText(), # Récupère le texte du champ text_popup_4
                 },
                 "timer" :{
                     "delai_fermeture" : self.ui.delai_fermeture.text(), # Etc etc... other champ, same principe
@@ -839,7 +838,6 @@ class MainWindow(QMainWindow):
         # Charge les données dans l'interface utilisateur
         self.ui.text_popup_1.setPlainText(data.get("text", {}).get("text_popup_1", ""))
         self.ui.text_popup_2.setPlainText(data.get("text", {}).get("text_popup_2", ""))
-        self.ui.text_popup_3.setPlainText(data.get("text", {}).get("text_popup_3", ""))
         self.ui.text_fermeture.setPlainText(data.get("text", {}).get("text_fermeture", ""))
         self.ui.delai_fermeture.setText(data.get("timer", {}).get("delai_fermeture", ""))
         self.ui.duree_session.setText(data.get("timer", {}).get("duree_session", ""))

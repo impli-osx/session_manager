@@ -1,16 +1,15 @@
 {
     "text": {
-        "text_popup_1": "Texte sur\ndeux lignes\net\nun\npeu\nplus",
-        "text_popup_2": "Texte second popup",
-        "text_popup_3": "Texte troisi\u00e8me popup",
-        "text_popup_4": ""
+        "text_popup_1": "Votre session va se terminer dans {avertissement} minutes.\n\nPensez \u00e0 enregistrer vos donn\u00e9es et votre travail.\n\nVotre session se fermera automatiquement, il ne sera pas possible de r\u00e9cup\u00e9rer vos donn\u00e9es une fois le d\u00e9lai imparti termin\u00e9.",
+        "text_popup_2": "Attention, votre session va arriver \u00e0 son terme.\n\nVous serez d\u00e9connect\u00e9 dans {avertissement2} minutes. \n\nPensez \u00e0 enregistrer vos donn\u00e9es imm\u00e9diatement.",
+        "text_popup_3": "Votre session est maintenant termin\u00e9e.\n\nLa mairie de Louhans-Chateaurenaud vous remercie d'avoir utilis\u00e9 son point Cyber.\n\nNous esp\u00e9rons avoir r\u00e9pondu \u00e0 l'ensemble de vos attentes.\nN'h\u00e9sitez pas \u00e0 nous signaler le moindre disfonctionnement.\n\n\nNous vous souhaitons une excellente fin de journ\u00e9e.\n\nA bient\u00f4t."
     },
     "timer": {
-        "delai_fermeture": "10",
+        "delai_fermeture": "15",
         "duree_session": "60",
         "timer_popup_1": "45",
-        "timer_popup_2": "15",
-        "timer_popup_3": "30"
+        "timer_popup_2": "3",
+        "timer_popup_3": "40"
     },
     "fiche": {
         "fiche_log": true,

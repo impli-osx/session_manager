@@ -153,7 +153,7 @@ class FicheWindow(FicheWindow):
 # Variables pour les timers
 variables = {
     "session": config['timer']['duree_session'],
-    "avertissement": config['timer']['timer_popup_1'],
+    "avertissement": (config['timer']['duree_session'] - config['timer']['timer_popup_1']),
     "avertissement2": config['timer']['timer_popup_2'],
     "fermeture": config['fermeture']['timer_popup_3'],
 }

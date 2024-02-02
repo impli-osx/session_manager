@@ -123,16 +123,6 @@ class Ui_Configuration(object):
         self.text_popup_2.setGeometry(QRect(10, 40, 811, 241))
         self.text_popup_2.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.onglet_popup.addTab(self.onglet_popup_2, "")
-        self.onglet_popup_3 = QWidget()
-        self.onglet_popup_3.setObjectName(u"onglet_popup_3")
-        self.label_popup_3 = QLabel(self.onglet_popup_3)
-        self.label_popup_3.setObjectName(u"label_popup_3")
-        self.label_popup_3.setGeometry(QRect(10, 10, 211, 16))
-        self.text_popup_3 = QPlainTextEdit(self.onglet_popup_3)
-        self.text_popup_3.setObjectName(u"text_popup_3")
-        self.text_popup_3.setGeometry(QRect(10, 40, 811, 241))
-        self.text_popup_3.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.onglet_popup.addTab(self.onglet_popup_3, "")
         self.onglet_popup_4 = QWidget()
         self.onglet_popup_4.setObjectName(u"onglet_popup_4")
         self.label_16 = QLabel(self.onglet_popup_4)
@@ -348,7 +338,7 @@ class Ui_Configuration(object):
 
         self.retranslateUi(Configuration)
 
-        self.onglet.setCurrentIndex(3)
+        self.onglet.setCurrentIndex(0)
         self.onglet_popup.setCurrentIndex(0)
 
 
@@ -382,8 +372,6 @@ class Ui_Configuration(object):
         self.onglet_popup.setTabText(self.onglet_popup.indexOf(self.onglet_popup_1), QCoreApplication.translate("Configuration", u"Premi\u00e8re fen\u00eatre", None))
         self.label_text_2.setText(QCoreApplication.translate("Configuration", u"Texte affich\u00e9 dans la seconde fen\u00eatre :", None))
         self.onglet_popup.setTabText(self.onglet_popup.indexOf(self.onglet_popup_2), QCoreApplication.translate("Configuration", u"Seconde fen\u00eatre", None))
-        self.label_popup_3.setText(QCoreApplication.translate("Configuration", u"Texte affich\u00e9 dans la troisi\u00e8me fen\u00eatre :", None))
-        self.onglet_popup.setTabText(self.onglet_popup.indexOf(self.onglet_popup_3), QCoreApplication.translate("Configuration", u"Troisi\u00e8me fen\u00eatre", None))
         self.label_16.setText(QCoreApplication.translate("Configuration", u"Texte affich\u00e9 dans la fen\u00eatre de fermeture de session :", None))
         self.onglet_popup.setTabText(self.onglet_popup.indexOf(self.onglet_popup_4), QCoreApplication.translate("Configuration", u"Fen\u00eatre de femerture", None))
         self.onglet.setTabText(self.onglet.indexOf(self.textes), QCoreApplication.translate("Configuration", u"Textes", None))

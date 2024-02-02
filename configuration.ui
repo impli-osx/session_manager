@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="accueil">
      <attribute name="title">
@@ -361,37 +361,6 @@
         </property>
        </widget>
        <widget class="QPlainTextEdit" name="text_popup_2">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>40</y>
-          <width>811</width>
-          <height>241</height>
-         </rect>
-        </property>
-        <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QWidget" name="onglet_popup_3">
-       <attribute name="title">
-        <string>Troisième fenêtre</string>
-       </attribute>
-       <widget class="QLabel" name="label_popup_3">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>211</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Texte affiché dans la troisième fenêtre :</string>
-        </property>
-       </widget>
-       <widget class="QPlainTextEdit" name="text_popup_3">
         <property name="geometry">
          <rect>
           <x>10</x>
