@@ -838,7 +838,7 @@ class MainWindow(QMainWindow):
         # Charge les données dans l'interface utilisateur
         self.ui.text_popup_1.setPlainText(data.get("text", {}).get("text_popup_1", ""))
         self.ui.text_popup_2.setPlainText(data.get("text", {}).get("text_popup_2", ""))
-        self.ui.text_femerture.setPlainText(data.get("text", {}).get("text_fermeture", ""))
+        self.ui.text_fermeture.setPlainText(data.get("text", {}).get("text_fermeture", ""))
         self.ui.delai_fermeture.setText(data.get("timer", {}).get("delai_fermeture", ""))
         self.ui.duree_session.setText(data.get("timer", {}).get("duree_session", ""))
         self.ui.timer_popup_1.setText(data.get("timer", {}).get("timer_popup_1", ""))

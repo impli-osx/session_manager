@@ -2,7 +2,7 @@
     "text": {
         "text_popup_1": "Votre session va se terminer dans {avertissement} minutes.\n\nPensez \u00e0 enregistrer vos donn\u00e9es et votre travail.\n\nVotre session se fermera automatiquement, il ne sera pas possible de r\u00e9cup\u00e9rer vos donn\u00e9es une fois le d\u00e9lai imparti termin\u00e9.",
         "text_popup_2": "Attention, votre session va arriver \u00e0 son terme.\n\nVous serez d\u00e9connect\u00e9 dans {avertissement2} minutes. \n\nPensez \u00e0 enregistrer vos donn\u00e9es imm\u00e9diatement.",
-        "text_fermeture": ""
+        "text_fermeture": "Votre session est maintenant termin\u00e9e.\nCette fen\u00eatre se fermera dans {fermeture} secondes et la session sera d\u00e9connect\u00e9e.\n\nLa mairie de Louhans-Chateaurenaud esp\u00e9re que le point Cyber a pu r\u00e9pondre \u00e0 vos attentes et besoins.\n\n\nNous vous remercierons d'\u00eatre pass\u00e9 par nos services et vous souhaitons une tr\u00e8s bonne journ\u00e9e.\n\n\nA bient\u00f4t."
     },
     "timer": {
         "delai_fermeture": "15",
@@ -24,15 +24,15 @@
         "session_activation": false
     },
     "style": {
-        "largeur_popup": "500",
+        "largeur_popup": "600",
         "hauteur_popup": "300",
         "police": "Calibri",
         "taille_police": "15",
-        "couleur_fond": "#eaeaea",
-        "couleur_texte": "#4c1a1b",
-        "couleur_bouton": "#92b7cf",
+        "couleur_fond": "#ead5bc",
+        "couleur_texte": "#000000",
+        "couleur_bouton": "#e8e1c7",
         "couleur_bouton_texte": "#000000",
-        "couleur_bouton_survol": "#527ca8",
+        "couleur_bouton_survol": "#a89a7e",
         "texte_bouton": "J'ai compris"
     },
     "fermeture": {
