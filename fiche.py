@@ -62,7 +62,7 @@ class FicheWindow(QMainWindow):
 
         # Créer deux colonnes pour les QLabel et QLineEdit
         fields_layout = QHBoxLayout()
-        column_layouts = [QVBoxLayout(), QVBoxLayout()]
+        form_layouts = [QFormLayout(), QFormLayout()]
 
         # Chargez les données de fiche.json
         with open('fiche.json', 'r') as f:
@@ -78,84 +78,75 @@ class FicheWindow(QMainWindow):
         # Triez les champs par le numéro d'ordre (qui est la clé du dictionnaire)
         champs_sorted = sorted(champs.items(), key=lambda item: int(item[0]))
 
+        # Créer une police pour les widgets
+        font = QFont('Arial', 10)  # taille de la police
+
+        total_champs = 0
+
         # Parcourez tous les champs
         for j, (order, champ) in enumerate(champs_sorted):
-            # Crée un QVBoxLayout pour chaque groupe QLabel et QLineEdit
-            group_layout = QVBoxLayout()
             # Crée un QLabel pour le champ
             label = QLabel(champ.get("label_content", ""))
-            group_layout.addWidget(label)
+            label.setFont(font)  # Définir la police pour le QLabel
             # Crée un QLineEdit pour le champ si nécessaire et l'ajoute au QVBoxLayout
             if champ.get("add_line_edit", False):
                 line_edit = QLineEdit()
+                line_edit.setFont(font)  # Définir la police pour le QLineEdit
                 line_edit.setObjectName(champ.get("label_content", "").replace(" ", ""))
-                group_layout.addWidget(line_edit)
-            # Ajouter le QVBoxLayout au layout de la colonne
-            column_layouts[j % 2].addLayout(group_layout)
-            # Ajouter un QSpacerItem entre chaque groupe
-            if j < len(champs_sorted):  # Pas besoin d'ajouter un espace après le dernier groupe
-                spacer = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
-                column_layouts[j % 2].addItem(spacer)
-        # On compte le nombre de champs pour savoir dans quelle colonne ajouter le QComboBox
-        total_champs = len(champs_sorted)
+                form_layouts[j % 2].addRow(label, line_edit)
+                form_layouts[j % 2].setVerticalSpacing(10)  # Ajouter un espace après chaque champ
 
         # Ajoutez le QLabel et le QComboBox à votre layout
         if config['fiche']['fiche_duree_session']:
-            group_layout = QVBoxLayout()
-            group_layout.addWidget(self.session_duration_label)
-            group_layout.addWidget(self.session_duration_combo)
-            # Ajouter le QVBoxLayout au layout de la colonne
-            column_layouts[len(champs_sorted) % 2].addLayout(group_layout)
+            self.session_duration_label.setFont(font)  # Définir la police pour le QLabel
+            self.session_duration_combo.setFont(font)  # Définir la police pour le QComboBox
+            form_layouts[len(champs_sorted) % 2].addRow(self.session_duration_label, self.session_duration_combo)
+            form_layouts[len(champs_sorted) % 2].setVerticalSpacing(10)  # Ajouter un espace après chaque champ
         else:
             self.session_duration_label.hide()
             self.session_duration_combo.hide()
+
         # On incrémente le nombre de champs
         total_champs += 1
 
         # QComboBox pour l'âge
-        age_layout = QVBoxLayout()
-        age_layout.addWidget(QLabel("Renseignez votre âge :"))
         self.age_combo = QComboBox()
+        age_label = QLabel("Renseignez votre âge :")
+        age_label.setFont(font)  # Définir la police pour le QLabel
         self.age_combo.setObjectName("Age")
         self.age_combo.addItems(["12-18 ans", "18-35 ans", "35-60 ans", "60 ans et plus"])
-        age_layout.addWidget(self.age_combo)
-        column_layouts[total_champs % 2].addLayout(age_layout)
+        self.age_combo.setFont(font)  # Définir la police pour le QComboBox
+        form_layouts[total_champs % 2].addRow(age_label, self.age_combo)
+        form_layouts[total_champs % 2].setVerticalSpacing(10)  # Ajouter un espace après chaque champ
         total_champs += 1
-
 
         # QComboBox pour le statut
-        statut_layout = QVBoxLayout()  
-        statut_layout.addWidget(QLabel("Renseignez votre statut :"))
         self.statut_combo = QComboBox()
+        statut_label = QLabel("Renseignez votre statut :")
+        statut_label.setFont(font)  # Définir la police pour le QLabel
         self.statut_combo.setObjectName("Statut")
-        self.statut_combo.addItems(["Étudiant", "Salarié", "Demandeur d'emploi", "Retraité", "Autre"])
-        statut_layout.addWidget(self.statut_combo)
-        column_layouts[total_champs % 2].addLayout(statut_layout)
+        self.statut_combo.addItems(["Étudiant", "Salarié", "Demandeur d'emploi", "Retraité"])
+        self.statut_combo.setFont(font)  # Définir la police pour le QComboBox
+        form_layouts[total_champs % 2].addRow(statut_label, self.statut_combo)
+        form_layouts[total_champs % 2].setVerticalSpacing(10)  # Ajouter un espace après chaque champ
         total_champs += 1
-        
-        
-        # Checkbox pour savoir si la personne est déjà venue
-        venue_layout = QVBoxLayout()
-        self.venue_box = QCheckBox("Êtes-vous déjà venu ?")
-        self.venue_box.setStyleSheet("QCheckBox {margin-top: 23px; margin-left: 1px; }")
-        venue_layout.addWidget(self.venue_box)
-        self.venue_box.setObjectName("Venue")
-        column_layouts[total_champs % 2].addLayout(venue_layout)
 
+        # Checkbox pour savoir si la personne est déjà venue
+        self.venue_box = QCheckBox("Êtes-vous déjà venu ?")
+        self.venue_box.setObjectName("Venue")
+        self.venue_box.setFont(font)  # Définir la police pour le QCheckBox
+        form_layouts[total_champs % 2].addRow(self.venue_box)
+        form_layouts[total_champs % 2].setVerticalSpacing(10)  # Ajouter un espace après chaque champ
         total_champs += 1
-        
-        
-        
-        
+
         # Ajouter les colonnes au layout horizontal
         for i in range(2):
-            column_layouts[i].setAlignment(Qt.AlignmentFlag.AlignTop)  # Ajouter cette ligne
-            fields_layout.addLayout(column_layouts[i])
+            fields_layout.addLayout(form_layouts[i])
             if i == 0:
                 fields_layout.addSpacing(20)
+
         # Ajouter le layout des colonnes au layout vertical
         columns_layout.addLayout(fields_layout)
-    
 
         # Ajouter un spacer à la fin du layout vertical
         spacer = QSpacerItem(20, 40, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -197,7 +188,7 @@ class FicheWindow(QMainWindow):
         # Définir la proportion de l'espace que chaque layout doit occuper
         columns_and_pdf_layout.setStretch(0, 2)  # Les colonnes doivent occuper 2/6 de l'espace
         columns_and_pdf_layout.setStretch(1, 1)  # Le spacer doit occuper 1/6 de l'espace
-        columns_and_pdf_layout.setStretch(2, 3)  # Le cadre PDF doit occuper 3/6 de l'espace
+        columns_and_pdf_layout.setStretch(2, 8)  # Le cadre PDF doit occuper 3/6 de l'espace
 
         # Ajouter le layout contenant les colonnes et le cadre PDF au layout principal
         main_layout.addLayout(columns_and_pdf_layout)
@@ -315,11 +306,10 @@ class FicheWindow(QMainWindow):
 
 
 
-# if __name__ == "__main__":
-#     app = QApplication.instance()
-#     if app is None:
-#         app = QApplication(sys.argv)
-#     app = QApplication(sys.argv)
-#     window = FicheWindow()
-#     window.show()
-#     app.exec()
+if __name__ == "__main__":
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
+    window = FicheWindow()
+    window.show()
+    app.exec()
