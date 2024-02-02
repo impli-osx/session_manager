@@ -318,12 +318,12 @@ def end_session():
     # Fermer la session en fonction de la valeur de session_fermeture
     if config['fermeture']['fermeture_session'] == 'Déconnecter':
         # Déconnecter l'utilisateur
-        #os.system('logoff')
-        print("Fin de session. Déconnexion.") # Pour débugger
+        os.system('logoff')
+        #♣print("Fin de session. Déconnexion.") # Pour débugger
     else:
         # Verrouiller la session
-        #os.system('rundll32.exe user32.dll,LockWorkStation')
-        print("Fin de session. Verrouillage.") # Pour débugger
+        os.system('rundll32.exe user32.dll,LockWorkStation')
+        #print("Fin de session. Verrouillage.") # Pour débugger
     app.quit() # Terminer l'application Qt
 
 
