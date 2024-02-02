@@ -1,4 +1,4 @@
-# Permet de définir les textes affichés dans les popups
+#~# Permet de définir les textes affichés dans les popups
 
 
 **Texte de la première fenêtre** : Généralement un texte pour informer l'user qu'il lui X minutes avant la fin de session.<br>

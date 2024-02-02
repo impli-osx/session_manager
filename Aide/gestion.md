@@ -1,4 +1,4 @@
-# Cet onglet permet de définir la gestion des sessions
+## Cet onglet permet de définir la gestion des sessions
 
 
 **Type de fermeture** : Ici, vous avez deux possibilités : Verrouillage ou déconnecter.<br>

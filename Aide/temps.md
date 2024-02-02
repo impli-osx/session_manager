@@ -1,4 +1,4 @@
-# Permet de définir les temps entre l'affichage et la fermeture des popups
+## Permet de définir les temps entre l'affichage et la fermeture des popups
 
 
 **Délai avant la fermeture automatique d'une fenêtre** : C'est le temps qu'un popup mettra avant de se fermer automatiquement.<br>

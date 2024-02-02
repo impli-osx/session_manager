@@ -1,4 +1,4 @@
-# Cet onglet permet de d'activer Session Manager
+## Cet onglet permet de d'activer Session Manager
 
 
 **Choix de l'utilisateur visé** : Permet de définir l'utilisateur de l'ordinateur sur lequel Session Manager sera activé.

@@ -1,4 +1,4 @@
-# La fiche d'entrée est la fenêtre affichée à l'ouverture d'une session managée
+## La fiche d'entrée est la fenêtre affichée à l'ouverture d'une session managée
 
 
 Cette fiche permet d'afficher une fenêtre, à remplir obligatoirement, avant d'accéder à la session invitée.<br>

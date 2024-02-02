@@ -1,4 +1,4 @@
-# Permet de définir le style graphique des popup
+## Permet de définir le style graphique des popup
 
 
 Les popups sont les fenêtre qui apparaissent à des intervalles définies pour rappeler à l'user que la session arrive à son terme.
