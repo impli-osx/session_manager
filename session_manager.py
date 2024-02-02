@@ -77,9 +77,9 @@ class FicheWindow(FicheWindow):
             elif combo.objectName() == "Statut":
                 self.data["Statut"] = combo.currentText()
         if self.venue_box.isChecked():
-            self.data["venue"] = "Oui" 
+            self.data["Venue"] = "Oui" 
         else:
-            self.data["venue"] = "Non"
+            self.data["Venue"] = "Non"
                 
     
     # Récupère les valeurs des différents champs

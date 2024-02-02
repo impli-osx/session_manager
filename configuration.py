@@ -880,7 +880,7 @@ class MainWindow(QMainWindow):
 
 # Point d'entrée de l'application
 if __name__ == "__main__":
-    app = QApplication([]) # Crée une instance de QApplication
+    app = QApplication(sys.argv) # Crée une instance de QApplication
     window = MainWindow() # Crée une instance de MainWindow
     window.show() # Affiche la fenêtre
     app.exec() # Lance l'application

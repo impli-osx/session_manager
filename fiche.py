@@ -139,7 +139,7 @@ class FicheWindow(QMainWindow):
         self.venue_box = QCheckBox("Êtes-vous déjà venu ?")
         self.venue_box.setStyleSheet("QCheckBox {margin-top: 23px; margin-left: 1px; }")
         venue_layout.addWidget(self.venue_box)
-        self.venue_box.setObjectName("venue")
+        self.venue_box.setObjectName("Venue")
         column_layouts[total_champs % 2].addLayout(venue_layout)
 
         total_champs += 1
@@ -315,8 +315,11 @@ class FicheWindow(QMainWindow):
 
 
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = FicheWindow()
-    window.show()
-    app.exec()
+# if __name__ == "__main__":
+#     app = QApplication.instance()
+#     if app is None:
+#         app = QApplication(sys.argv)
+#     app = QApplication(sys.argv)
+#     window = FicheWindow()
+#     window.show()
+#     app.exec()
