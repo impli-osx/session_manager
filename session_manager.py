@@ -161,7 +161,7 @@ variables = {
 
 
 # Fonction pour créer le popup d'après le fichier de configuration
-def creation_popup(texte, fullscreen=False, use_timer=True):
+def creation_popup(texte, popup=True):
     #print(f"Appel fonction popup : {texte}, {largeur}, {hauteur}, {police}, {taille_police}, {delai}") # Pour débugger
     global fenetre
     fenetre = QDialog()
@@ -175,7 +175,7 @@ def creation_popup(texte, fullscreen=False, use_timer=True):
     layout_texte = QVBoxLayout()
     layout_texte.setContentsMargins(20, 0, 20, 0)  # Appliquer une marge de 10 pixels
 
-    if fullscreen:
+    if not popup:
         # Ajouter un QSpacerItem en haut pour centrer le texte
         layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
 
@@ -190,18 +190,18 @@ def creation_popup(texte, fullscreen=False, use_timer=True):
     # Ajouter le label au layout_texte au lieu du layout principal
     layout_texte.addWidget(label)
 
-    if fullscreen:
+    if not popup:
         fenetre.setStyleSheet("background-color: white;")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
     # Ajouter le layout_texte au layout principal
     layout.addLayout(layout_texte)
 
-    if fullscreen:
+    if not popup:
         # Ajouter un QSpacerItem en bas pour centrer le texte
         layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
 
-    if use_timer:
+    if popup:
         bouton = QPushButton(f"{config['style']['texte_bouton']}")
         bouton.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)  # Faire en sorte que le bouton s'adapte au texte
         bouton.setStyleSheet(f"""
@@ -237,9 +237,9 @@ def creation_popup(texte, fullscreen=False, use_timer=True):
         # Ajouter le layout_bouton au layout principal
         layout.addLayout(layout_bouton)
     fenetre.setLayout(layout)
-    if use_timer:
+    if popup:
         QTimer.singleShot(int(config['timer']['delai_fermeture']) * 1000, fenetre.close)
-    if fullscreen:
+    if popup:
         fenetre.showFullScreen()
     else:
         fenetre.show()
