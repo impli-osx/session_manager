@@ -2,7 +2,7 @@
     "text": {
         "text_popup_1": "Votre session va se terminer dans {avertissement} minutes.\n\nPensez \u00e0 enregistrer vos donn\u00e9es et votre travail.\n\nVotre session se fermera automatiquement, il ne sera pas possible de r\u00e9cup\u00e9rer vos donn\u00e9es une fois le d\u00e9lai imparti termin\u00e9.",
         "text_popup_2": "Attention, votre session va arriver \u00e0 son terme.\n\nVous serez d\u00e9connect\u00e9 dans {avertissement2} minutes. \n\nPensez \u00e0 enregistrer vos donn\u00e9es imm\u00e9diatement.",
-        "text_popup_3": "Votre session est maintenant termin\u00e9e.\n\nLa mairie de Louhans-Chateaurenaud vous remercie d'avoir utilis\u00e9 son point Cyber.\n\nNous esp\u00e9rons avoir r\u00e9pondu \u00e0 l'ensemble de vos attentes.\nN'h\u00e9sitez pas \u00e0 nous signaler le moindre disfonctionnement.\n\n\nNous vous souhaitons une excellente fin de journ\u00e9e.\n\nA bient\u00f4t."
+        "text_fermeture": ""
     },
     "timer": {
         "delai_fermeture": "15",
@@ -25,7 +25,7 @@
     },
     "style": {
         "largeur_popup": "500",
-        "hauteur_popup": "250",
+        "hauteur_popup": "300",
         "police": "Calibri",
         "taille_police": "15",
         "couleur_fond": "#eaeaea",
