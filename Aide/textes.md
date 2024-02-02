@@ -1,6 +1,16 @@
-Cet onglet sert à définir le texte des popus qui vont s'ouvrir.<br>
-Le texte doit être explicite de façon à ce que l'utilisateur comprenne parfaitement ce qui va se passer.<br>
-Il est conseillé, pour le second et le dernier popup, d'inciter l'utilisateur à sauvegarder ses données.
+# Permet de définir les textes affichés dans les popups
+
+
+**Texte de la première fenêtre** : Généralement un texte pour informer l'user qu'il lui X minutes avant la fin de session.<br>
+En fonction du temps défini, ceci n'est pas un message d'urgence.
+
+
+**Texte de la seconde fenêtre** : Ici, ça devient un peu plus urgent. Il convient d'informer l'user du peu de temps qu'il lui reste.<br>
+Il faut également lui rappeler de sauvegarder ses données.
+
+
+**Texte de la fenêtre de fermeture** : L'user ne pourra plus sauvegarder ses données. Il est temps, ici, de le remercier d'avoir utilisé le point Cuyber de la mairie.<br>A noter que l'user ne peut avoir aucun interaction avec cette fenêtre.
+
 
 **Important** : Vous pouvez utiliser les variables {session}, {avertissement}, {avertissement2} et {fermeture} dans les zones de textes.<br>
 Ces variables seront automatiquement remplacées par leur valeur numéraire.
