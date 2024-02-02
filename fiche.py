@@ -137,9 +137,12 @@ class FicheWindow(QMainWindow):
         # Checkbox pour savoir si la personne est déjà venue
         venue_layout = QVBoxLayout()
         self.venue_box = QCheckBox("Êtes-vous déjà venu ?")
+        self.venue_box.setStyleSheet("QCheckBox {margin-top: 23px; margin-left: 1px; }")
         venue_layout.addWidget(self.venue_box)
         self.venue_box.setObjectName("venue")
         column_layouts[total_champs % 2].addLayout(venue_layout)
+
+        total_champs += 1
         
         
         
