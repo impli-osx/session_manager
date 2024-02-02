@@ -131,7 +131,19 @@ class FicheWindow(QMainWindow):
         self.statut_combo.addItems(["Étudiant", "Salarié", "Demandeur d'emploi", "Retraité", "Autre"])
         statut_layout.addWidget(self.statut_combo)
         column_layouts[total_champs % 2].addLayout(statut_layout)
-
+        total_champs += 1
+        
+        
+        # Checkbox pour savoir si la personne est déjà venue
+        venue_layout = QVBoxLayout()
+        self.venue_box = QCheckBox("Êtes-vous déjà venu ?")
+        venue_layout.addWidget(self.venue_box)
+        self.venue_box.setObjectName("venue")
+        column_layouts[total_champs % 2].addLayout(venue_layout)
+        
+        
+        
+        
         # Ajouter les colonnes au layout horizontal
         for i in range(2):
             column_layouts[i].setAlignment(Qt.AlignmentFlag.AlignTop)  # Ajouter cette ligne

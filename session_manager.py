@@ -5,7 +5,7 @@ import pandas as pd
 import zipfile
 import openpyxl
 from functools import partial
-from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox, QMessageBox
+from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox, QMessageBox, QCheckBox
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import QTimer, Qt
 from fiche import FicheWindow as FicheWindow
@@ -76,7 +76,11 @@ class FicheWindow(FicheWindow):
                 self.data["Age"] = combo.currentText()
             elif combo.objectName() == "Statut":
                 self.data["Statut"] = combo.currentText()
-    
+        if self.venue_box.isChecked():
+            self.data["venue"] = "Oui" 
+        else:
+            self.data["venue"] = "Non"
+                
     
     # Récupère les valeurs des différents champs
     def get_data(self):
@@ -108,6 +112,7 @@ class FicheWindow(FicheWindow):
         ordered_keys.append("ChoixDuréeSession")
         ordered_keys.append("Age")
         ordered_keys.append("Statut")
+        ordered_keys.append("Venue")
         new_data_df = pd.DataFrame(data, columns=ordered_keys, index=[0])
         if not os.path.isfile('data.xlsx'):
             new_data_df.to_excel('data.xlsx', sheet_name=current_year, index=False)
