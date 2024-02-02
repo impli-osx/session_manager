@@ -306,7 +306,7 @@ class MainWindow(QMainWindow):
         if not os.path.isdir('aide'):
             self.show_error("Le dossier 'aide' n'a pas été trouvé dans le répertoire courant.")
             sys.exit(1)
-        aide_files = ['titres', 'textes', 'temps', 'fiche', 'gestion', 'style', 'accueil']
+        aide_files = ['textes', 'temps', 'fiche', 'gestion', 'style', 'accueil']
         for file in aide_files:
             if not os.path.isfile(f'aide/{file}.md'):
                 self.show_error(f"Le fichier d'aide '{file}.md' n'a pas été trouvé dans le dossier 'aide'.")
