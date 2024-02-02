@@ -22,11 +22,11 @@ La durée effective de la session se définie dans l'onglet 'Temps'.
 
 **Gestion des champs** : Ces options sont là pour définir les champs présents dans la fiche d'entrée.<br>
 Vous pouvez ici :<br>
-* Définir de nouveaux champs sous les formes suivantes :<br>
-    * QLabel : Un texte non modifiable par l'user.<br>
-    * QLabel + QLineEdit : Un texte (coourt) ainsi qu'une zone de texte à remplir par l'user.<br>
-* Modifier l'ordre d'affichage des champs. Chaque champ doit avoir un numéro d'ordre unique. Le 1 sera affiché en premier, le 2 en second, etc.<br>
-* Supprimer des champs : les champs n'apparaîtront plus sur la fiche.<br>
+- Définir de nouveaux champs sous les formes suivantes :<br>
+  - QLabel : Un texte non modifiable par l'user.<br>
+  - QLabel + QLineEdit : Un texte (coourt) ainsi qu'une zone de texte à remplir par l'user.<br>
+- Modifier l'ordre d'affichage des champs. Chaque champ doit avoir un numéro d'ordre unique. Le 1 sera affiché en premier, le 2 en second, etc.<br>
+- Supprimer des champs : les champs n'apparaîtront plus sur la fiche.<br>
 
 
 Attention, les champs sont TOUS obligatoires. Les champs sont également tous collectés dans le fichier excel.
