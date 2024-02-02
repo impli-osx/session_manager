@@ -15,9 +15,11 @@ Exemple : Les fiches remplies pendant l'année 2024 sont stockées dans la feuil
 Les données collectées en 2025 sont stockées dans la feuille <2025>.<br>
 
 
+
 **Choix des durées de sessions possibles** : Défini le temps que l'user choisi pour sa durée de session.<br>
 Attention, ce menu à choix multiple n'est présent qu'à titre statistique. Cela n'influe en rien sur la durée effective de la session<br>
 La durée effective de la session se définie dans l'onglet 'Temps'.
+
 
 
 **Gestion des champs** : Ces options sont là pour définir les champs présents dans la fiche d'entrée.<br>
@@ -29,14 +31,14 @@ Vous pouvez ici :
 3. Supprimer des champs : les champs n'apparaîtront plus sur la fiche.
 
 
+
 Attention, les champs sont TOUS obligatoires. Les champs sont également tous collectés dans le fichier excel.
+
 
 
 Si vous avez un doute, ne touchez pas cette partie.
 
 
 
-
-Pour terminer : 
 **Afficher la fenêtre d'entrée** : Ceci permet d'afficher la fiche d'entrée. Bien que cette fiche soit à remplir, les données ne seront pas collectées dans le fichier excel. Cela permet uniquement d'avoir un aperçu.
 Si les modifications apportées ne sont pas prises en compte en temps réel, vous devez fermer configuration.exe et l'ouvrir à nouveau.
