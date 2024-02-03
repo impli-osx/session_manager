@@ -239,7 +239,7 @@ def creation_popup(texte, popup=True):
     fenetre.setLayout(layout)
     if popup:
         QTimer.singleShot(int(config['timer']['delai_fermeture']) * 1000, fenetre.close)
-    if popup:
+    if not popup:
         fenetre.showFullScreen()
     else:
         fenetre.show()
