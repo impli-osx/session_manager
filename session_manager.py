@@ -9,7 +9,6 @@ from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLay
 from PyQt6.QtGui import QFont, QPixmap
 from PyQt6.QtCore import QTimer, Qt
 from fiche import FicheWindow
-from PyQt6.QtWidgets import QApplication
 from openpyxl import Workbook
 from datetime import datetime
 from zipfile import BadZipFile
@@ -232,7 +231,6 @@ def creation_popup(texte):
 
 # Fonction d'affichge de la fenêtre de fermeture
 def fermeture(texte):
-    popup = QApplication([])
     # Créer une fenêtre
     fenetre = QMainWindow()
     # Créer un QLabel pour le texte et le logo
@@ -263,7 +261,6 @@ def fermeture(texte):
     # Créer un QTimer pour fermer la fenêtre après le délai
     timer = QTimer()
     timer.timeout.connect(fenetre.close)
-    timer.timeout.connect(popup.quit)
     #timer.start(int(config['timer']['timer_popup_3']) * 1000)  # Convertir le délai en millisecondes
     timer.start(int(5) * 1000)  # Convertir le délai en millisecondes
     # Ignorer l'événement de fermeture pour empêcher la fermeture de la fenêtre
@@ -272,7 +269,6 @@ def fermeture(texte):
     fenetre.showFullScreen()
     # Afficher la fenêtre
     fenetre.show()
-    popup.exec()
 
 
 
@@ -335,7 +331,7 @@ def timer_fermeture():
     timerfin = QTimer()
     timerfin.stop()  # Arrêter le timer avant de le configurer
     texte = config['text']['text_fermeture'].format(**variables)
-    creation_fin = partial(fermeture(texte))
+    creation_fin = partial(fermeture, texte)
     timerfin.timeout.connect(creation_fin)
     timerfin.timeout.connect(timerfin.stop)
     timerfin.start(timerfermeture * 1000)
@@ -358,8 +354,8 @@ def end_session():
 
 
 # Créer et afficher la fenêtre FicheEntreeWindow
-window = FicheWindow()
+window = FicheEntree()
 window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
 window.showFullScreen()
-#app.exec()
+app.exec()
 sys.exit(app.exec())

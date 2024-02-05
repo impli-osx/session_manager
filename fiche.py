@@ -309,11 +309,10 @@ class FicheWindow(QMainWindow):
 
 
 
-
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
     window = FicheWindow()
     app.exec()
-#sys.exit(app.exec())    
-    
     
