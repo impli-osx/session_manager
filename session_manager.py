@@ -5,8 +5,8 @@ import pandas as pd
 import zipfile
 import openpyxl
 from functools import partial
-from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox, QMessageBox, QCheckBox
-from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox, QMessageBox, QCheckBox, QWidget, QMainWindow
+from PyQt6.QtGui import QFont, QPixmap
 from PyQt6.QtCore import QTimer, Qt
 from fiche import FicheWindow as FicheWindow
 from PyQt6.QtWidgets import QApplication
@@ -152,17 +152,16 @@ class FicheWindow(FicheWindow):
         
 # Variables pour les timers
 variables = {
-    "session": config['timer']['duree_session'],
-    "avertissement": (config['timer']['duree_session'] - config['timer']['timer_popup_1']),
-    "avertissement2": config['timer']['timer_popup_2'],
-    "fermeture": config['fermeture']['timer_popup_3'],
+    "session": int(config['timer']['duree_session']),
+    "avertissement": (int(config['timer']['duree_session']) - int(config['timer']['timer_popup_1'])),
+    "avertissement2": int(config['timer']['timer_popup_2']),
+    "fermeture": int(config['timer']['timer_popup_3']),
 }
 
 
 
 # Fonction pour créer le popup d'après le fichier de configuration
-def creation_popup(texte, popup=True):
-    #print(f"Appel fonction popup : {texte}, {largeur}, {hauteur}, {police}, {taille_police}, {delai}") # Pour débugger
+def creation_popup(texte):
     global fenetre
     fenetre = QDialog()
     fenetre.setFixedSize(int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']))
@@ -175,10 +174,6 @@ def creation_popup(texte, popup=True):
     layout_texte = QVBoxLayout()
     layout_texte.setContentsMargins(20, 0, 20, 0)  # Appliquer une marge de 10 pixels
 
-    if not popup:
-        # Ajouter un QSpacerItem en haut pour centrer le texte
-        layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
-
     label = QLabel(texte)
     label.setWordWrap(True)
     label.setStyleSheet(f"color : {config['style']['couleur_texte']};")
@@ -190,61 +185,91 @@ def creation_popup(texte, popup=True):
     # Ajouter le label au layout_texte au lieu du layout principal
     layout_texte.addWidget(label)
 
-    if not popup:
-        fenetre.setStyleSheet("background-color: white;")
-        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
     # Ajouter le layout_texte au layout principal
     layout.addLayout(layout_texte)
 
-    if not popup:
-        # Ajouter un QSpacerItem en bas pour centrer le texte
-        layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
-
-    if popup:
-        bouton = QPushButton(f"{config['style']['texte_bouton']}")
-        bouton.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)  # Faire en sorte que le bouton s'adapte au texte
-        bouton.setStyleSheet(f"""
-        QPushButton:enabled {{
-            background-color: {config['style']['couleur_bouton']};
-            border-radius: 1px;
-            border: 1px solid black;
-            color: {config['style']['couleur_bouton_texte']};
-            font-family: {config['style']['police']};
-            font-size: {taille_police}px;
-            font-weight: bold;
-            padding: 5px 5px;
-            text-decoration: none;
-        }}
-        QPushButton:hover {{
-            background-color: {config['style']['couleur_bouton_survol']};
-        }}
-        QPushButton:pressed {{
-            position: relative;
-            top: 1px;
-        }}
-        """)
-        bouton.clicked.connect(fenetre.close)
-        layout.addWidget(bouton)
-        # Créer un QHBoxLayout
-        layout_bouton = QHBoxLayout()
-        # Ajouter un QSpacerItem à gauche
-        layout_bouton.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
-        # Ajouter le bouton au layout
-        layout_bouton.addWidget(bouton)
-        # Ajouter un QSpacerItem à droite
-        layout_bouton.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
-        # Ajouter le layout_bouton au layout principal
-        layout.addLayout(layout_bouton)
+    bouton = QPushButton(f"{config['style']['texte_bouton']}")
+    bouton.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)  # Faire en sorte que le bouton s'adapte au texte
+    bouton.setStyleSheet(f"""
+    QPushButton:enabled {{
+        background-color: {config['style']['couleur_bouton']};
+        border-radius: 1px;
+        border: 1px solid black;
+        color: {config['style']['couleur_bouton_texte']};
+        font-family: {config['style']['police']};
+        font-size: {taille_police}px;
+        font-weight: bold;
+        padding: 5px 5px;
+        text-decoration: none;
+    }}
+    QPushButton:hover {{
+        background-color: {config['style']['couleur_bouton_survol']};
+    }}
+    QPushButton:pressed {{
+        position: relative;
+        top: 1px;
+    }}
+    """)
+    bouton.clicked.connect(fenetre.close)
+    layout.addWidget(bouton)
+    # Créer un QHBoxLayout
+    layout_bouton = QHBoxLayout()
+    # Ajouter un QSpacerItem à gauche
+    layout_bouton.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+    # Ajouter le bouton au layout
+    layout_bouton.addWidget(bouton)
+    # Ajouter un QSpacerItem à droite
+    layout_bouton.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+    # Ajouter le layout_bouton au layout principal
+    layout.addLayout(layout_bouton)
     fenetre.setLayout(layout)
-    if popup:
-        QTimer.singleShot(int(config['timer']['delai_fermeture']) * 1000, fenetre.close)
-    if not popup:
-        fenetre.showFullScreen()
-    else:
-        fenetre.show()
+    QTimer.singleShot(int(config['timer']['delai_fermeture']) * 1000, fenetre.close)
+    fenetre.show()
     #print("Popup créée.") # Pour débugger
 
+
+    
+def fermeture(texte):
+    popup = QApplication([])
+    # Créer une fenêtre
+    fenetre = QMainWindow()
+    # Créer un QLabel pour le texte et le logo
+    label_texte = QLabel(texte, fenetre)
+    char = config['style']['police']
+    taille = int(config['style']['taille_police'])
+    police = QFont(char, taille) 
+    label_texte.setFont(police)
+    # Récupérer le répertoire courant du script
+    repertoire_courant = os.path.dirname(os.path.abspath(__file__))
+    # Définir le chemin du logo
+    logo = os.path.join(repertoire_courant, 'img', 'logo.png')
+    label_logo = QLabel(fenetre)
+    label_logo.setPixmap(QPixmap(logo))
+    # Centrer le texte
+    label_texte.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    # Créer un layout vertical et y ajouter le logo et le texte
+    layout = QVBoxLayout()
+    layout.addWidget(label_logo, alignment=Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+    layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))  # Ajouter un QSpacerItem avant le texte
+    layout.addWidget(label_texte)
+    layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))  # Ajouter un QSpacerItem après le texte
+    # Créer un widget central pour la fenêtre et y appliquer le layout
+    widget_central = QWidget()
+    widget_central.setLayout(layout)
+    fenetre.setCentralWidget(widget_central)
+    # Créer un QTimer pour fermer la fenêtre après le délai
+    timer = QTimer()
+    timer.timeout.connect(fenetre.close)
+    timer.timeout.connect(popup.quit)
+    timer.start(int(config['timer']['timer_popup_3']) * 1000)  # Convertir le délai en millisecondes
+    # Ignorer l'événement de fermeture pour empêcher la fermeture de la fenêtre
+    fenetre.setWindowFlags(Qt.WindowType.CustomizeWindowHint | Qt.WindowType.WindowTitleHint)
+    # Mettre la fenêtre en plein écran
+    fenetre.showFullScreen()
+    # Afficher la fenêtre
+    fenetre.show()
+
+    popup.exec()
 
 
 # Fonction pour créer le timer de la durée de la session
@@ -306,7 +331,7 @@ def timer_fermeture():
     timerfin = QTimer(app)
     timerfin.stop()  # Arrêter le timer avant de le configurer
     texte = config['text']['text_popup_3'].format(**variables)
-    creation_fin = partial(creation_popup, texte, fullscreen=True, use_timer=False)
+    creation_fin = partial(fermeture(texte))
     timerfin.timeout.connect(creation_fin)
     timerfin.timeout.connect(timerfin.stop)
     timerfin.start(timerfermeture * 1000)
@@ -329,8 +354,10 @@ def end_session():
 
 
 # Créer et afficher la fenêtre FicheEntreeWindow
-window = FicheWindow()
-window.showFullScreen()
+#window = FicheWindow()
+#window.showFullScreen()
+#window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
+fermeture("hello world")
 #creation_popup(config['text']['text_popup_1'])
 # Démarrer la boucle d'événements
 sys.exit(app.exec())

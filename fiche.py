@@ -39,7 +39,7 @@ class FicheWindow(QMainWindow):
 
         # Ajouter un logo
         logo = QLabel(self)
-        pixmap = QPixmap('img\\logo_mairie.png')
+        pixmap = QPixmap('img\\logo.png')
         logo.setPixmap(pixmap)
         logo.resize(pixmap.width(), pixmap.height())  # Ajuster la taille du QLabel
         main_layout.addWidget(logo, alignment=Qt.AlignmentFlag.AlignLeft)
