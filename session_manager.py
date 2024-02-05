@@ -228,7 +228,7 @@ def creation_popup(texte):
     #print("Popup créée.") # Pour débugger
 
 
-    
+# Fonction d'affichge de la fenêtre de fermeture
 def fermeture(texte):
     popup = QApplication([])
     # Créer une fenêtre
@@ -236,9 +236,10 @@ def fermeture(texte):
     # Créer un QLabel pour le texte et le logo
     label_texte = QLabel(texte, fenetre)
     char = config['style']['police']
-    taille = int(config['style']['taille_police'])
+    taille = int(20)
     police = QFont(char, taille) 
     label_texte.setFont(police)
+    label_texte.setStyleSheet(f"color: #476e9e;")
     # Récupérer le répertoire courant du script
     repertoire_courant = os.path.dirname(os.path.abspath(__file__))
     # Définir le chemin du logo
@@ -261,15 +262,16 @@ def fermeture(texte):
     timer = QTimer()
     timer.timeout.connect(fenetre.close)
     timer.timeout.connect(popup.quit)
-    timer.start(int(config['timer']['timer_popup_3']) * 1000)  # Convertir le délai en millisecondes
+    #timer.start(int(config['timer']['timer_popup_3']) * 1000)  # Convertir le délai en millisecondes
+    timer.start(int(5) * 1000)  # Convertir le délai en millisecondes
     # Ignorer l'événement de fermeture pour empêcher la fermeture de la fenêtre
     fenetre.setWindowFlags(Qt.WindowType.CustomizeWindowHint | Qt.WindowType.WindowTitleHint)
     # Mettre la fenêtre en plein écran
     fenetre.showFullScreen()
     # Afficher la fenêtre
     fenetre.show()
-
     popup.exec()
+
 
 
 # Fonction pour créer le timer de la durée de la session
@@ -354,10 +356,9 @@ def end_session():
 
 
 # Créer et afficher la fenêtre FicheEntreeWindow
-#window = FicheWindow()
-#window.showFullScreen()
-#window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
-fermeture("hello world")
-#creation_popup(config['text']['text_popup_1'])
+window = FicheWindow()
+window.showFullScreen()
+window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
+#fermeture(config['text']['text_fermeture']) #Debug
 # Démarrer la boucle d'événements
 sys.exit(app.exec())
