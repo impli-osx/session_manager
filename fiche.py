@@ -14,6 +14,9 @@ from PyQt6.QtCore import QUrl
 from pdf2image import convert_from_path
 from pdfviewer import PdfViewer
 
+
+
+
 class FicheWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -307,9 +310,12 @@ class FicheWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-    app = QApplication.instance()
+    app = QApplication(sys.argv)
     if app is None:
         app = QApplication(sys.argv)
     window = FicheWindow()
     window.show()
     app.exec()
+    
+    
+    

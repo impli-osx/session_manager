@@ -8,7 +8,7 @@ from functools import partial
 from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox, QMessageBox, QCheckBox, QWidget, QMainWindow
 from PyQt6.QtGui import QFont, QPixmap
 from PyQt6.QtCore import QTimer, Qt
-from fiche import FicheWindow as FicheWindow
+from fiche import FicheWindow
 from PyQt6.QtWidgets import QApplication
 from openpyxl import Workbook
 from datetime import datetime
@@ -16,8 +16,10 @@ from zipfile import BadZipFile
 from openpyxl import load_workbook
 
 
+
 # Créer une application Qt
 app = QApplication(sys.argv)
+
 # Ne pas quitter l'application lorsque la dernière fenêtre est fermée
 app.setQuitOnLastWindowClosed(False)
 
@@ -149,16 +151,15 @@ class FicheWindow(FicheWindow):
             #print(self.data) # Pour débugger
             self.save_to_excel(self.get_data())
         
-        
-# Variables pour les timers
+
+
+# Variables remplacer les {} dans les textes des popups
 variables = {
     "session": int(config['timer']['duree_session']),
     "avertissement": (int(config['timer']['duree_session']) - int(config['timer']['timer_popup_1'])),
     "avertissement2": int(config['timer']['timer_popup_2']),
     "fermeture": int(config['timer']['timer_popup_3']),
 }
-
-
 
 # Fonction pour créer le popup d'après le fichier de configuration
 def creation_popup(texte):
@@ -281,7 +282,7 @@ def timer_duree_session():
     #print(f"Durée session : {duree_session}") # Pour débugger
     # Créer un timer
     global timer
-    timer = QTimer()
+    timer = QTimer(app)
     # Connecter le signal timeout du timer à la fonction de fermeture de session
     timer.timeout.connect(end_session)
     # Démarrer le timer
@@ -330,7 +331,7 @@ def timer_fermeture():
     timerfermeture = (int(config['timer']['duree_session']) * 60)
     #print(f"Timer fermeture : {timerfermeture}") # Pour débugger
     global timerfin
-    timerfin = QTimer(app)
+    timerfin = QTimer()
     timerfin.stop()  # Arrêter le timer avant de le configurer
     texte = config['text']['text_popup_3'].format(**variables)
     creation_fin = partial(fermeture(texte))
@@ -357,8 +358,11 @@ def end_session():
 
 # Créer et afficher la fenêtre FicheEntreeWindow
 window = FicheWindow()
+print("Fenêtre FicheEntreeWindow créée.")
 window.showFullScreen()
+print("Fenêtre FicheEntreeWindow affichée.")
 window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
+print("Fenêtre FicheEntreeWindow au premier plan.")
 #fermeture(config['text']['text_fermeture']) #Debug
 # Démarrer la boucle d'événements
 sys.exit(app.exec())
