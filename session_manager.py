@@ -18,13 +18,12 @@ from openpyxl import load_workbook
 
 
 # Créer une application Qt
-if not QApplication.instance():
-    app = QApplication(sys.argv)
-else:
-    print("L'application existe déjà.") # Pour débugger
+app = QApplication(sys.argv)
 
 # Ne pas quitter l'application lorsque la dernière fenêtre est fermée
 app.setQuitOnLastWindowClosed(False)
+
+
 
 def load_config():
     try:
@@ -56,7 +55,6 @@ class FicheEntree(FicheWindow):
         super().__init__(*args, **kwargs)
         self.data = {}  # Initialisez self.data dans le constructeur
         self.fields = []
-        
         
         if not os.path.isfile('configuration.exe'):
             show_error("Le fichier 'configuration.exe' n'a pas été trouvé dans le répertoire courant.")
@@ -359,23 +357,9 @@ def end_session():
 
 
 
-# # Créer et afficher la fenêtre FicheEntreeWindow
-window = FicheEntree()
-window.show()
-# print("Fenêtre FicheEntreeWindow créée.")
-# window.showFullScreen()
-# print("Fenêtre FicheEntreeWindow affichée.")
-# window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
-# print("Fenêtre FicheEntreeWindow au premier plan.")
-# #fermeture(config['text']['text_fermeture']) #Debug
-# # Démarrer la boucle d'événements
-# sys.exit(app.exec())
-#app = QApplication(sys.argv)
-
-# Créer une instance de la fenêtre et l'afficher
-# window = test()
-# window.show()
-
-# Exécuter la boucle d'événements de l'application
-if __name__ == "__main__":
-    sys.exit(app.exec())
+# Créer et afficher la fenêtre FicheEntreeWindow
+window = FicheWindow()
+window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
+window.showFullScreen()
+#app.exec()
+sys.exit(app.exec())

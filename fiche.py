@@ -256,7 +256,7 @@ class FicheWindow(QMainWindow):
         main_layout.setStretch(3, 1)  # Le QPushButton doit occuper 2/10 de l'espace
 
         # Afficher la fenêtre en plein écran
-        self.showFullScreen()
+        self.show()
 
 
         # Désactive le bouton 'connecter' au démarrage
@@ -310,8 +310,10 @@ class FicheWindow(QMainWindow):
 
 
 
-if not QApplication.instance():
-    app = QApplication([])
-        
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = FicheWindow()
+    app.exec()
+#sys.exit(app.exec())    
     
     
