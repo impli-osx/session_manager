@@ -18,7 +18,10 @@ from openpyxl import load_workbook
 
 
 # Créer une application Qt
-app = QApplication(sys.argv)
+if not QApplication.instance():
+    app = QApplication(sys.argv)
+else:
+    print("L'application existe déjà.") # Pour débugger
 
 # Ne pas quitter l'application lorsque la dernière fenêtre est fermée
 app.setQuitOnLastWindowClosed(False)
@@ -47,7 +50,7 @@ global config
 config = load_config()
     
     
-class FicheWindow(FicheWindow):
+class FicheEntree(FicheWindow):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -86,8 +89,8 @@ class FicheWindow(FicheWindow):
     
     # Récupère les valeurs des différents champs
     def get_data(self):
+        print("test") # Pour débugger"
         return self.data
-    
     
     # Ajuste la largeur des colonnes du fichier Excel
     def adjust_column_widths(self, sheet):
@@ -333,7 +336,7 @@ def timer_fermeture():
     global timerfin
     timerfin = QTimer()
     timerfin.stop()  # Arrêter le timer avant de le configurer
-    texte = config['text']['text_popup_3'].format(**variables)
+    texte = config['text']['text_fermeture'].format(**variables)
     creation_fin = partial(fermeture(texte))
     timerfin.timeout.connect(creation_fin)
     timerfin.timeout.connect(timerfin.stop)
@@ -356,13 +359,23 @@ def end_session():
 
 
 
-# Créer et afficher la fenêtre FicheEntreeWindow
-window = FicheWindow()
-print("Fenêtre FicheEntreeWindow créée.")
-window.showFullScreen()
-print("Fenêtre FicheEntreeWindow affichée.")
-window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
-print("Fenêtre FicheEntreeWindow au premier plan.")
-#fermeture(config['text']['text_fermeture']) #Debug
-# Démarrer la boucle d'événements
-sys.exit(app.exec())
+# # Créer et afficher la fenêtre FicheEntreeWindow
+window = FicheEntree()
+window.show()
+# print("Fenêtre FicheEntreeWindow créée.")
+# window.showFullScreen()
+# print("Fenêtre FicheEntreeWindow affichée.")
+# window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
+# print("Fenêtre FicheEntreeWindow au premier plan.")
+# #fermeture(config['text']['text_fermeture']) #Debug
+# # Démarrer la boucle d'événements
+# sys.exit(app.exec())
+#app = QApplication(sys.argv)
+
+# Créer une instance de la fenêtre et l'afficher
+# window = test()
+# window.show()
+
+# Exécuter la boucle d'événements de l'application
+if __name__ == "__main__":
+    sys.exit(app.exec())
