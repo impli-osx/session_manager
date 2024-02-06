@@ -24,11 +24,11 @@
         "session_activation": false
     },
     "style": {
-        "largeur_popup": "600",
+        "largeur_popup": "500",
         "hauteur_popup": "300",
         "police": "Calibri",
         "taille_police": "15",
-        "couleur_fond": "#ead5bc",
+        "couleur_fond": "#eae8d3",
         "couleur_texte": "#000000",
         "couleur_bouton": "#e8e1c7",
         "couleur_bouton_texte": "#000000",
