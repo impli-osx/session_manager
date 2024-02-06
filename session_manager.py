@@ -163,13 +163,13 @@ variables = {
 
 # Fonction pour créer le popup d'après le fichier de configuration
 def creation_popup(texte):
-    global fenetre
-    fenetre = QDialog()
-    fenetre.setFixedSize(int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']))
-    fenetre.setStyleSheet(f"background-color: {config['style']['couleur_fond']};")
-    fenetre.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-    fenetre.setWindowFlags(fenetre.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
-    layout = QVBoxLayout(fenetre)
+    global popup
+    popup = QDialog()
+    popup.setFixedSize(int(config['style']['largeur_popup']), int(config['style']['hauteur_popup']))
+    popup.setStyleSheet(f"background-color: {config['style']['couleur_fond']};")
+    popup.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+    popup.setWindowFlags(popup.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
+    layout = QVBoxLayout(popup)
 
     # Créer un nouveau layout pour le label
     layout_texte = QVBoxLayout()
@@ -190,7 +190,8 @@ def creation_popup(texte):
     layout.addLayout(layout_texte)
 
     bouton = QPushButton(f"{config['style']['texte_bouton']}")
-    bouton.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)  # Faire en sorte que le bouton s'adapte au texte
+    # bouton.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)  # Faire en sorte que le bouton s'adapte au texte
+    bouton.setFixedSize(200,35)
     bouton.setStyleSheet(f"""
     QPushButton:enabled {{
         background-color: {config['style']['couleur_bouton']};
@@ -211,7 +212,7 @@ def creation_popup(texte):
         top: 1px;
     }}
     """)
-    bouton.clicked.connect(fenetre.close)
+    bouton.clicked.connect(popup.close)
     layout.addWidget(bouton)
     # Créer un QHBoxLayout
     layout_bouton = QHBoxLayout()
@@ -223,14 +224,15 @@ def creation_popup(texte):
     layout_bouton.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
     # Ajouter le layout_bouton au layout principal
     layout.addLayout(layout_bouton)
-    fenetre.setLayout(layout)
-    QTimer.singleShot(int(config['timer']['delai_fermeture']) * 1000, fenetre.close)
-    fenetre.show()
+    popup.setLayout(layout)
+    QTimer.singleShot(int(config['timer']['delai_fermeture']) * 1000, popup.close)
+    popup.show()
     #print("Popup créée.") # Pour débugger
 
 
 # Fonction d'affichge de la fenêtre de fermeture
 def fermeture(texte):
+    global fenetre
     # Créer une fenêtre
     fenetre = QMainWindow()
     # Créer un QLabel pour le texte et le logo
@@ -240,6 +242,8 @@ def fermeture(texte):
     police = QFont(char, taille) 
     label_texte.setFont(police)
     label_texte.setStyleSheet(f"color: #476e9e;")
+    # Ignorer l'événement de fermeture pour empêcher la fermeture de la fenêtre
+    fenetre.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
     # Récupérer le répertoire courant du script
     repertoire_courant = os.path.dirname(os.path.abspath(__file__))
     # Définir le chemin du logo
@@ -259,16 +263,15 @@ def fermeture(texte):
     widget_central.setLayout(layout)
     fenetre.setCentralWidget(widget_central)
     # Créer un QTimer pour fermer la fenêtre après le délai
-    timer = QTimer()
+    timer = QTimer(app)
     timer.timeout.connect(fenetre.close)
-    #timer.start(int(config['timer']['timer_popup_3']) * 1000)  # Convertir le délai en millisecondes
-    timer.start(int(5) * 1000)  # Convertir le délai en millisecondes
-    # Ignorer l'événement de fermeture pour empêcher la fermeture de la fenêtre
-    fenetre.setWindowFlags(Qt.WindowType.CustomizeWindowHint | Qt.WindowType.WindowTitleHint)
+    timer.start(int(config['timer']['timer_popup_3']) * 1000)  # Convertir le délai en millisecondes
+    #timer.start(int(5) * 1000)  # DEBUG
     # Mettre la fenêtre en plein écran
     fenetre.showFullScreen()
     # Afficher la fenêtre
     fenetre.show()
+    # app.exec()
 
 
 
@@ -344,12 +347,12 @@ def end_session():
     if config['fermeture']['fermeture_session'] == 'Déconnecter':
         # Déconnecter l'utilisateur
         os.system('logoff')
-        #♣print("Fin de session. Déconnexion.") # Pour débugger
+        #print("Fin de session. Déconnexion.") # Pour débugger
     else:
         # Verrouiller la session
         os.system('rundll32.exe user32.dll,LockWorkStation')
         #print("Fin de session. Verrouillage.") # Pour débugger
-    app.quit() # Terminer l'application Qt
+    sys.exit(app.exec()) # Terminer l'application Qt
 
 
 
@@ -358,4 +361,4 @@ window = FicheEntree()
 window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
 window.showFullScreen()
 app.exec()
-sys.exit(app.exec())
+# sys.exit(app.exec())
