@@ -86,7 +86,6 @@ class FicheEntree(FicheWindow):
     
     # Récupère les valeurs des différents champs
     def get_data(self):
-        print("test") # Pour débugger"
         return self.data
     
     # Ajuste la largeur des colonnes du fichier Excel
@@ -150,7 +149,35 @@ class FicheEntree(FicheWindow):
             self.update_data()
             #print(self.data) # Pour débugger
             self.save_to_excel(self.get_data())
-        
+                # Vérifier que tous les champs sont remplis
+        all_fields_filled = all(line_edit.text() for line_edit in self.findChildren(QLineEdit))
+
+        # Vérifier que la case du règlement est cochée
+        reglement_checked = self.reglement.isChecked()
+
+        # Réinitialiser le style de tous les champs
+        for line_edit in self.findChildren(QLineEdit):
+            line_edit.setStyleSheet("")
+
+        if not all_fields_filled or not reglement_checked:
+            # Si tous les champs ne sont pas remplis ou que la case du règlement n'est pas cochée, annuler la fermeture de la fenêtre
+            event.ignore()
+
+            # Afficher un message d'erreur
+            error_message = QMessageBox()
+            error_message.setIcon(QMessageBox.Icon.Warning)
+            error_message.setWindowTitle("Erreur")
+            error_message.setText("Vous devez remplir tous les champs pour vous connecter à votre session.")
+            error_message.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
+            error_message.exec()
+
+            # Encadrer les champs non remplis en rouge
+            for line_edit in self.findChildren(QLineEdit):
+                if not line_edit.text():
+                    line_edit.setStyleSheet("border: 1px solid red;")
+        else:
+            # Si tous les champs sont remplis et que la case du règlement est cochée, fermer la fenêtre
+            event.accept()
 
 
 # Variables remplacer les {} dans les textes des popups
