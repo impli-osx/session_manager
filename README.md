@@ -10,6 +10,8 @@ J'en profite pour remercier Github Copilot qui a su m'éclairer quand j'en avais
 Le code-source est disponible auprès de Mr Antoine Armanet. Conseiller numérique de la mairie de Louhans-Chateaurenaud.<br>
 Il est également disponible, sur demande, en m'envoyant un mail à contact@m-faivre.fr
 
+Vous pouvez également le trouver sur le Github du projet : https://github.com/impli-osx/session_manager
+
 ## Installation
 
 Pour installer Session Manager, il suffit de copier l'ensemble du répertoire n'importe où sur le PC hôte.<br>

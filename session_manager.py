@@ -99,7 +99,7 @@ class FicheEntree(FicheWindow):
                         max_length = len(cell.value)
                 except:
                     pass
-            adjusted_width = (max_length + 2)
+            adjusted_width = (max_length + 4)
             sheet.column_dimensions[column[0].column_letter].width = adjusted_width
 
 
@@ -107,6 +107,8 @@ class FicheEntree(FicheWindow):
     # Enregistre les données dans le fichier Excel
     def save_to_excel(self, data):
         current_year = str(datetime.now().year)
+        current_date = datetime.now().strftime('%d/%m/%Y')
+        current_time = datetime.now().strftime('%H:%M')
         with open('fiche.json', 'r') as f:
             champs = json.load(f)
         ordered_keys = [champ.get("label_content", "").replace(" ", "") for order, champ in sorted(champs.items(), key=lambda item: int(item[0]))]
@@ -115,12 +117,16 @@ class FicheEntree(FicheWindow):
         ordered_keys.append("Statut")
         ordered_keys.append("Venue")
         new_data_df = pd.DataFrame(data, columns=ordered_keys, index=[0])
+        new_data_df.insert(0, "Date", current_date)
+        new_data_df.insert(0, "Heure", current_time)
+        print(new_data_df) # Pour débugger
         if not os.path.isfile('data.xlsx'):
             new_data_df.to_excel('data.xlsx', sheet_name=current_year, index=False)
         else:
             book = load_workbook('data.xlsx')
             if current_year in book.sheetnames:
                 data_df = pd.read_excel('data.xlsx', sheet_name=current_year, engine='openpyxl')
+                print(data_df) # Pour débugger
                 data_df = pd.concat([data_df, new_data_df], ignore_index=True)
             else:
                 data_df = new_data_df
@@ -272,7 +278,7 @@ def fermeture(texte):
     # Ignorer l'événement de fermeture pour empêcher la fermeture de la fenêtre
     fenetre.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
     # Récupérer le répertoire courant du script
-    repertoire_courant = os.path.dirname(os.path.abspath(__file__))
+    repertoire_courant = os.path.dirname(sys.executable)
     # Définir le chemin du logo
     logo = os.path.join(repertoire_courant, 'img', 'logo.png')
     label_logo = QLabel(fenetre)
@@ -387,5 +393,6 @@ def end_session():
 window = FicheEntree()
 window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
 window.showFullScreen()
+
 app.exec()
 # sys.exit(app.exec())

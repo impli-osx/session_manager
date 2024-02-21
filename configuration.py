@@ -4,16 +4,16 @@ import subprocess
 import pickle
 import ctypes
 import ctypes.wintypes
-import psutil
+import subprocess
+import chardet
 import winshell
 import threading
 import markdown
 import sys
-from psutil import users as psutil_users
 from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QMessageBox, QComboBox, QDialog, QVBoxLayout, QLineEdit,
                              QPushButton, QLabel, QCheckBox, QScrollArea, QWidget, QFrame, QTableWidget,
-                             QTableWidgetItem, QSpacerItem, QSizePolicy, QHBoxLayout)
+                             QTableWidgetItem, QSpacerItem, QSizePolicy, QHBoxLayout, QScrollArea)
 from PyQt6.QtGui import QFontDatabase, QMovie, QFont, QColor
 from PyQt6.QtCore import Qt, QTimer, QObject, pyqtSignal, QThread, QSize, QTranslator, QLocale, QLibraryInfo
 from PyQt6.QtWebEngineWidgets import QWebEngineView # Importe la classe QWebEngineView
@@ -281,18 +281,28 @@ class ModifierOrdreDialog(QDialog):
 class Worker(QObject):
     output = pyqtSignal(str)
            
+    # def run_gpupdate(self):
+    #     try:
+    #         # Exécute la commande et capture la sortie
+    #         result = subprocess.run(["gpupdate", "/force"], capture_output=True, text=True, check=True, creationflags=subprocess.CREATE_NO_WINDOW)
+    #         lines = result.stdout.split('\n')
+    #         non_empty_lines = [line for line in lines if line.strip() != '']
+    #         cleaned_output = '\n'.join(non_empty_lines)
+    #         self.output.emit(cleaned_output)
+    #     except subprocess.CalledProcessError as e:
+    #         # Si la commande échoue, affiche l'erreur dans le label
+    #         self.output.emit(f"Erreur : {e.stderr}")
     def run_gpupdate(self):
+        process = subprocess.Popen(['gpupdate', '/force'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, creationflags=subprocess.CREATE_NO_WINDOW)
+        output, _ = process.communicate()
+        # Utilisez chardet pour déterminer l'encodage de la sortie
+        encoding = chardet.detect(output)['encoding']
+        # Décodez la sortie en utilisant l'encodage déterminé
         try:
-            # Exécute la commande et capture la sortie
-            result = subprocess.run(["gpupdate", "/force"], capture_output=True, text=True, check=True)
-            lines = result.stdout.split('\n')
-            non_empty_lines = [line for line in lines if line.strip() != '']
-            cleaned_output = '\n'.join(non_empty_lines)
-            self.output.emit(cleaned_output)
-        except subprocess.CalledProcessError as e:
-            # Si la commande échoue, affiche l'erreur dans le label
-            self.output.emit(f"Erreur : {e.stderr}")
-            
+            output = output.decode(encoding)
+        except UnicodeDecodeError:
+            output = output.decode('utf-8', 'ignore')
+        self.output.emit(output)
 
 # Classe principale de l'application
 class MainWindow(QMainWindow):
@@ -315,6 +325,46 @@ class MainWindow(QMainWindow):
         if not os.path.isfile('session_manager.exe'):
             self.show_error("Le fichier 'session_manager.exe' n'a pas été trouvé dans le répertoire courant.")
             sys.exit(1)
+            # Récupération des users
+            
+            
+        # def get_users():
+        #     command = "net user"
+        #     output = subprocess.check_output(command)
+        #     encoding = chardet.detect(output)['encoding']
+        #     users_to_exclude = ['Administrateur', 'Invit']
+        #     users = []
+        #     for line in output.decode(encoding).splitlines():
+        #         user = line.strip()
+        #         if user and user not in users_to_exclude and re.match(r"^[a-zA-Z0-9_\- ]+$", user):
+        #             users.append(user)
+        #     return users
+        
+        
+        def get_users():
+            try:
+                # Exécute une commande PowerShell pour obtenir la liste des utilisateurs
+                result = subprocess.run(["powershell", "-Command", "Get-WmiObject -Class Win32_UserAccount | Select-Object Name | Out-File -FilePath .\\users.txt -Encoding utf8"], capture_output=True, text=True)
+                if os.path.exists('.\\users.txt'):
+                    with open('.\\users.txt', 'r', encoding='utf-8') as file:
+                        users = file.read().split('\n')
+                    # Supprime le fichier une fois qu'il n'est plus utilisé
+                    os.remove('.\\users.txt')
+                    # Supprime la première ligne vide
+                    users.pop(0)
+                    # Retire les éléments vides de la liste (dû aux sauts de ligne)
+                    users = [user.strip() for user in users if user.strip() != '']
+                    # Exclut les utilisateurs 'Administrateur', 'Invit', 'WDAGUtilityAccount', et les lignes non désirées
+                    users_to_exclude = ['Administrateur', 'Invité', 'WDAGUtilityAccount', 'Name', '----', 'DefaultAccount']
+                    users = [user for user in users if user not in users_to_exclude]
+                    return users
+                else:
+                    self.show_error("Erreur", "Erreur lors de l'exécution de la commande PowerShell : " + result.stderr)
+                    return []
+            except Exception as e:
+                self.show_error("Erreur lors de la récupération de la liste des utilisateurs : " + str(e))
+                return []
+        
         
         
         self.charger_conf() # Charge les données à partir du fichier JSON
@@ -333,9 +383,8 @@ class MainWindow(QMainWindow):
         self.ui.mod_bouton_texte.clicked.connect(lambda: self.modifier_couleur('bouton_texte')) # Modifie la couleur du texte des boutons
         self.ui.mod_bouton_survol.clicked.connect(lambda: self.modifier_couleur('bouton_survol')) # Modifie la couleur des boutons au survol
         self.ui.police.addItems(QFontDatabase.families()) # Ajoute les polices disponibles dans la liste déroulante
-        users = psutil_users() # Récupère la liste des utilisateurs
-        user_names = [user.name for user in users] # Récupère les noms des utilisateurs
-        self.ui.session_user.addItems(user_names) # Ajoute les noms des utilisateurs dans la liste déroulante
+        users = get_users() # Récupère la liste des utilisateurs
+        self.ui.session_user.addItems(users) # Ajoute les noms des utilisateurs dans la liste déroulante
         self.ui.session_activation.stateChanged.connect(self.session_activation_changed)
         # Crée l'instance de classe pour l'ajout de champs de la fiche d'entrée
         self.ajouterchamp = AjouterChampDialog()
@@ -398,6 +447,7 @@ class MainWindow(QMainWindow):
             data = {}
         if data.get('fiche', {}).get('fiche_log', False):
             self.ui.fiche_log.setEnabled(True)
+
 
 
     # Gestion des erreurs
@@ -590,19 +640,24 @@ class MainWindow(QMainWindow):
     # Fonction pour créer le raccourci
     def create_shortcut(self):
         try:
+            if getattr(sys, 'frozen', False):
+                # Le programme a été compilé avec PyInstaller
+                directory = os.path.dirname(sys.executable)
+            else:
+                # Le programme est exécuté en tant que script Python
+                directory = os.path.dirname(os.path.abspath(__file__))
             # Défini current_folder comme le répertoire courant
-            current_folder = os.path.dirname(os.path.abspath(__file__))
-            file_path = os.path.join(current_folder, "session_manager.exe")
+            file_path = os.path.join(directory, "session_manager.exe")
             # Vérifie que le fichier session_manager.exe existe dans le répertoire courant
             if not os.path.exists(file_path):
-                return f"Erreur : l'éxecutable session_manager.exe est introuvable dans le répertoire courant.\nIl doit se trouver dans le répertoire : {current_folder}."
+                return f"Erreur : l'éxecutable session_manager.exe est introuvable dans le répertoire courant.\nIl doit se trouver dans le répertoire : {directory}."
             # Récupère le nom de l'utilisateur sélectionné dans la liste déroulante
             user = self.ui.session_user.currentText()
             shortcut_path = f"C:\\Users\\{user}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\session_manager.lnk"
             # Crée le raccourci
             with winshell.shortcut(shortcut_path) as shortcut:
                 shortcut.path = file_path
-                shortcut.working_directory = current_folder
+                shortcut.working_directory = directory
             return "Le raccourci a été créé correctement."
         except FileNotFoundError:
             return "Erreur : le fichier session_manager.exe n'a pas été trouvé."
@@ -637,7 +692,13 @@ class MainWindow(QMainWindow):
     # Fonction pour afficher l'aide 
     def afficher_aide(self, type_aide):
         try:
-            chemin_fichier = os.path.join("aide", f"{type_aide}.md")
+            if getattr(sys, 'frozen', False):
+                # Le programme a été compilé avec PyInstaller
+                directory = os.path.dirname(sys.executable)
+            else:
+                # Le programme est exécuté en tant que script Python
+                directory = os.path.dirname(os.path.abspath(__file__))
+            chemin_fichier = os.path.join(directory, "aide\\"f"{type_aide}.md")
             with open(chemin_fichier, "r",encoding="utf-8") as f:
                 aide = f.read()
             aide_html = markdown.markdown(aide)  # Convertit le Markdown en HTML
@@ -709,6 +770,7 @@ class MainWindow(QMainWindow):
         self.movie.start()
         # Démarre le thread
         self.gpupdate_thread.start()  
+    
         
         
         
@@ -850,7 +912,7 @@ class MainWindow(QMainWindow):
         self.ui.fiche_15min.setChecked(data.get("fiche", {}).get("fiche_15min", False))
         self.ui.fiche_30min.setChecked(data.get("fiche", {}).get("fiche_30min", False))
         self.ui.fiche_1h.setChecked(data.get("fiche", {}).get("fiche_1h", False))
-        self.ui.session_user.setCurrentText(data.get("session", {}).get("session_user", ""))
+        QTimer.singleShot(100, lambda: self.ui.session_user.setCurrentText(data.get("session", {}).get("session_user", "")))
         self.ui.session_activation.setChecked(data.get("session", {}).get("session_activation", False))
         self.ui.largeur_popup.setText(data.get("style", {}).get("largeur_popup", ""))
         self.ui.hauteur_popup.setText(data.get("style", {}).get("hauteur_popup", ""))
