@@ -6,8 +6,8 @@ import zipfile
 import openpyxl
 from functools import partial
 from PyQt6.QtWidgets import QApplication, QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QLineEdit, QComboBox, QMessageBox, QCheckBox, QWidget, QMainWindow
-from PyQt6.QtGui import QFont, QPixmap
-from PyQt6.QtCore import QTimer, Qt
+from PyQt6.QtGui import QFont, QPixmap, QGuiApplication
+from PyQt6.QtCore import QTimer, Qt, QPoint
 from fiche import FicheWindow
 from openpyxl import Workbook
 from datetime import datetime
@@ -46,7 +46,8 @@ def show_error(message):
     
 global config
 config = load_config()
-    
+global count_window
+count_window = None
     
 class FicheEntree(FicheWindow):
     
@@ -148,6 +149,9 @@ class FicheEntree(FicheWindow):
         super().closeEvent(event)
         timer_duree_session()
         timer_popup_2()
+        global count_window
+        count_window = CountdownWindow(int(config['timer']['duree_session']) * 60)
+        count_window.show()
         if config['fermeture']['fermeture_popup']:
             timer_fermeture()
         # Si le log est activé, enregistrer les données dans le fichier Excel
@@ -386,6 +390,60 @@ def end_session():
         os.system('rundll32.exe user32.dll,LockWorkStation')
         #print("Fin de session. Verrouillage.") # Pour débugger
     sys.exit(app.exec()) # Terminer l'application Qt
+
+
+
+class CountdownWindow(QWidget):
+    def __init__(self, timeout, parent=None):
+        super(CountdownWindow, self).__init__(parent)
+        self.time_left = timeout
+
+        self.label = QLabel(self.format_time(self.time_left), self)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.setFont(QFont(config['style']['police'], int(config['style']['taille_police'])))  # Définit la police et la taille du texte
+        self.label.setStyleSheet(f"color: {config['style']['couleur_texte']};")  # Définit la couleur du texte
+
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.label)
+
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_countdown)
+        self.timer.start(1000)
+
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.oldPos = self.pos()
+
+        self.setFixedSize(200, 100)  # Définit la taille de la fenêtre
+
+        screen_geometry = QGuiApplication.primaryScreen().geometry()
+        x = (screen_geometry.width() - self.width()) // 2
+        self.move(x, 0)
+
+    def format_time(self, seconds):
+        minutes, seconds = divmod(seconds, 60)
+        return f"Temps restant :\n {minutes:02d}:{seconds:02d}"
+
+    def update_countdown(self):
+        self.time_left -= 1
+        if self.time_left <= 0:
+            self.timer.stop()
+            self.label.setText("Terminé !")
+            self.close()
+        else:
+            self.label.setText(self.format_time(self.time_left))
+
+    def closeEvent(self, event):
+        if self.time_left > 0:
+            event.ignore()
+
+    # def mousePressEvent(self, event):
+    #     self.oldPos = event.globalPosition()
+
+    # def mouseMoveEvent(self, event):
+    #     delta = QPoint(event.globalPosition().toPoint() - self.oldPos.toPoint())
+    #     self.move(self.x() + delta.x(), self.y() + delta.y())
+    #     self.oldPos = event.globalPosition()
 
 
 
