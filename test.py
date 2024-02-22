@@ -2,9 +2,9 @@ import requests
 import json
 
 # Remplacez ces valeurs par les informations spécifiques à votre configuration OPNsense
-OPNSENSE_URL = "https://adresse_de_votre_opnsense"
-API_KEY = "votre_clef_api"
-API_SECRET = "votre_secret_api"
+OPNSENSE_URL = "https://192.168.20.30"
+API_KEY = "FTcNY9W94G/aTdayZRyGBeR+74xzpIgxY+EtmIxiFkQaSReYaab1wgpHEo6ocFMiiS0fC26Rvdq/lH+4"
+API_SECRET = "1qD5x1CBqc96hHwzLIALEjswdMclRIMqJCGpX1c9k+kjeot/qZ8C3XU1iSmKRXdvs5mUSnepTbhTOLi2"
 
 # Endpoint et données pour la génération du token
 endpoint = "/api/captiveportal/voucher/generateVouchers"
